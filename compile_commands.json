@@ -1,0 +1,128 @@
+[
+ {
+  "directory": "C:\\BGE",
+  "arguments": [
+   "clang++",
+   "-Wall",
+   "-std=c++17",
+   "-Iexternal",
+   "-IC:/lua/src",
+   "-O2",
+   "-DNDEBUG",
+   "-march=x86-64-v2",
+   "-mtune=generic",
+   "-fno-math-errno",
+   "-fno-trapping-math",
+   "-c",
+   "src/core.cpp",
+   "-o",
+   "build/core.o"
+  ],
+  "file": "src/core.cpp"
+ },
+ {
+  "directory": "C:\\BGE",
+  "arguments": [
+   "clang++",
+   "-Wall",
+   "-std=c++17",
+   "-Iexternal",
+   "-IC:/lua/src",
+   "-O2",
+   "-DNDEBUG",
+   "-march=x86-64-v2",
+   "-mtune=generic",
+   "-fno-math-errno",
+   "-fno-trapping-math",
+   "-c",
+   "src/gfx.cpp",
+   "-o",
+   "build/gfx.o"
+  ],
+  "file": "src/gfx.cpp"
+ },
+ {
+  "directory": "C:\\BGE",
+  "arguments": [
+   "clang++",
+   "-Wall",
+   "-std=c++17",
+   "-Iexternal",
+   "-IC:/lua/src",
+   "-O2",
+   "-DNDEBUG",
+   "-march=x86-64-v2",
+   "-mtune=generic",
+   "-fno-math-errno",
+   "-fno-trapping-math",
+   "-c",
+   "src/glad.cpp",
+   "-o",
+   "build/glad.o"
+  ],
+  "file": "src/glad.cpp"
+ },
+ {
+  "directory": "C:\\BGE",
+  "arguments": [
+   "clang++",
+   "-Wall",
+   "-std=c++17",
+   "-Iexternal",
+   "-IC:/lua/src",
+   "-O2",
+   "-DNDEBUG",
+   "-march=x86-64-v2",
+   "-mtune=generic",
+   "-fno-math-errno",
+   "-fno-trapping-math",
+   "-c",
+   "src/main.cpp",
+   "-o",
+   "build/main.o"
+  ],
+  "file": "src/main.cpp"
+ },
+ {
+  "directory": "C:\\BGE",
+  "arguments": [
+   "clang++",
+   "-Wall",
+   "-std=c++17",
+   "-Iexternal",
+   "-IC:/lua/src",
+   "-O2",
+   "-DNDEBUG",
+   "-march=x86-64-v2",
+   "-mtune=generic",
+   "-fno-math-errno",
+   "-fno-trapping-math",
+   "-c",
+   "src/bgp.cpp",
+   "-o",
+   "build/bgp.o"
+  ],
+  "file": "src/bgp.cpp"
+ },
+ {
+  "directory": "C:\\BGE",
+  "arguments": [
+   "clang++",
+   "-Wall",
+   "-std=c++17",
+   "-Iexternal",
+   "-IC:/lua/src",
+   "-O2",
+   "-DNDEBUG",
+   "-march=x86-64-v2",
+   "-mtune=generic",
+   "-fno-math-errno",
+   "-fno-trapping-math",
+   "-c",
+   "src/script_expo.cpp",
+   "-o",
+   "build/script_expo.o"
+  ],
+  "file": "src/script_expo.cpp"
+ }
+]

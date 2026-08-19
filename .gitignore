@@ -1,0 +1,10 @@
+# Pastas de saída e compilação
+bin/
+build/
+
+# Executáveis
+*.exe
+*.out
+*.app
+
+.cache/
