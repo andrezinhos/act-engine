@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdio>
+
 #include <cstdbool>
 #include "glad.h"
 #include "glfw/glfw3.h"
@@ -18,27 +18,30 @@ struct CoreState{
     Shader dshader;
     Mesh dmesh;
     Texture dtex;
+
+    double lastTime = 0.0f;
+    float targetfps;
+    float duration;
 };
 
-namespace core {
-    inline double lastTime = 0.0f;
-    inline float targetfps;
-    inline float duration;
-    inline CoreState state;
+class core {
+private:
+    static void init();
+    static void LoadDefault();
+    static void UnloadDefault();
+public:
+    static CoreState state;
 
-    void LoadDefault();
-    void UnloadDefault();
-    void WindowFlag(Flags flag);
-    void init();
-    void TargetFPS(double fps);
-    void MainWindow(int width, int height, const char* title);
+    static void WindowFlag(Flags flag);
+    static void TargetFPS(double fps);
+    static void MainWindow(int width, int height, const char* title);
 
-    void DrawBegin();
-    void DrawEnd();
-    void CamBegin(Camera2D& cam);
-    void CamEnd();
+    static void DrawBegin();
+    static void DrawEnd();
+    static void CamBegin(Camera2D& cam);
+    static void CamEnd();
 
-    void ScreenClear(Color color);
-    bool Loop();
-    void Finish();
+    static void ScreenClear(Color color);
+    static bool Loop();
+    static void Finish();
 };

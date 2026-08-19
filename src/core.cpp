@@ -1,10 +1,12 @@
 #include "core.hpp"
 #include "gmath.hpp"
 #include "bgp.hpp"
+#include <cstdio>
 #include <chrono>
 #include <thread>
 
-constexpr const char* VERSION = "0.5.0";
+constexpr const char* VERSION = "0.6.0";
+CoreState core::state;
 
 /*
 void frameCallback(GLFWwindow* window, int w, int h){
@@ -70,8 +72,8 @@ void core::init(){
 }
 
 void core::TargetFPS(double fps){
-    targetfps = fps;
-    duration = 1 / targetfps;
+    state.targetfps = fps;
+    state.duration = 1 / state.targetfps;
 }
 
 bool startWindow(int width, int height, const char* title){
@@ -143,11 +145,11 @@ void core::ScreenClear(Color color){
 
 double LockCPU(){
     double currTime = glfwGetTime();
-    double elapsed = currTime - core::lastTime;
+    double elapsed = currTime - core::state.lastTime;
 
-    if (elapsed < core::duration){
+    if (elapsed < core::state.duration){
         std::this_thread::sleep_for(
-            std::chrono::duration<double>(core::duration - elapsed)
+            std::chrono::duration<double>(core::state.duration - elapsed)
         );
     }
 
@@ -155,7 +157,7 @@ double LockCPU(){
 }
 
 bool core::Loop(){
-    core::lastTime = LockCPU();
+    core::state.lastTime = LockCPU();
     if (state.flags_active[0] == 1) glfwSwapInterval(1);
     glfwPollEvents();
     glfwSwapBuffers(core::state.win);

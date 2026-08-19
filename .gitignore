@@ -5,5 +5,5 @@ build/
 *.out
 *.app
 
+compile_commands.json
 .cache/
-*.json

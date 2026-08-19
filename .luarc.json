@@ -1,0 +1,10 @@
+{
+    "diagnostics.globals": [
+        "eng",
+        "flags",
+        "color",
+        "vec2",
+        "cam_2d",
+        "render"
+    ]
+}

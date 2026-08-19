@@ -201,8 +201,8 @@ void bgp::SetTex2D(GLenum color, int width, int height, const void* data){
 
 Shader bgp::DefaultShader(){
     Shader shader = {};
-    std::string vsPath = LoadShaderFile("simple.vert");
-    std::string fsPath = LoadShaderFile("simple.frag");
+    std::string vsPath = LoadShaderFile("assets/shaders/simple.vert");
+    std::string fsPath = LoadShaderFile("assets/shaders/simple.frag");
 
     const char* srcvs = vsPath.c_str();
     const char* srcfs = fsPath.c_str();
