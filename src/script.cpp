@@ -41,6 +41,13 @@ void ios::start_types(){
         "b", &Color::b
     );
 
+    script.new_enum("key",
+        "w", Keys::W,
+        "a", Keys::A,
+        "s", Keys::S,
+        "d", Keys::D
+    );
+
     sol::table color_table = script.create_table();
     color_table["red"] = Red;
     color_table["green"] = Green;
@@ -59,15 +66,6 @@ void ios::start_funcs(){
     /* CORE FUNCS */
     sol::table core_table = script.create_table();
 
-    core_table["debug"] = [](const std::string& msg){
-        printf("[DEBUG] %s\n", msg.c_str());
-    };
-
-    core_table["err"] = [](const std::string& msg){
-        printf("[ERROR] %s\n", msg.c_str());
-        std::abort();
-    };
-
     core_table["win_flag"] = [](Flags flag){
         core::WindowFlag(flag);
     };
@@ -83,11 +81,6 @@ void ios::start_funcs(){
     core_table["loop"] = core::Loop;
     core_table["stop"] = core::Finish;
 
-    core_table["load_tex"] = [](const std::string& path) -> Texture {
-        Image image = gfx::LoadImage(path.c_str());
-        return gfx::LoadTexture(image);
-    };
-
     core_table["begin_draw"] = core::DrawBegin;
     core_table["end_draw"] = core::DrawEnd;
 
@@ -98,6 +91,28 @@ void ios::start_funcs(){
     core_table["cam_end"] = core::CamEnd;
 
     script["eng"] = core_table;
+
+    /* IO FUNCS */
+
+    sol::table ios_table = script.create_table();
+
+    ios_table["debug"] = [](const std::string& msg){
+        printf("[DEBUG] %s\n", msg.c_str());
+    };
+
+    ios_table["err"] = [](const std::string& msg){
+        printf("[ERROR] %s\n", msg.c_str());
+        std::abort();
+    };
+
+    ios_table["load_tex"] = [](const std::string& path) -> Texture {
+        Image image = gfx::LoadImage(path.c_str());
+        return gfx::LoadTexture(image);
+    };
+
+    script["ios"] = ios_table;
+
+    /* RENDER FUNCS */
 
     sol::table gfx_table = script.create_table();
 

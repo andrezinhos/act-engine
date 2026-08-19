@@ -5,6 +5,8 @@
         "color",
         "vec2",
         "cam_2d",
-        "render"
+        "render",
+        "key",
+        "ios"
     ]
 }
