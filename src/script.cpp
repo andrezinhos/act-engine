@@ -1,11 +1,12 @@
-#include "gfx.hpp"
+#include "mkr.hpp"
 #include "ios.hpp"
 #include "core.hpp"
-#include "sol.hpp"
 #include "utils.hpp"
 #include <string>
+#define SOL_ALL_SAFETIES_ON 1
+#include "sol.hpp"
 
-sol::state ios::script;
+sol::state script;
 
 void ios::start_types(){
     script.new_enum("flags",
@@ -20,6 +21,14 @@ void ios::start_types(){
         "zero", &Vec2::Zero
     );
 
+    script.new_usertype<Vec3>("vec3",
+        sol::constructors<Vec3(float, float, float)>(),
+        "x", &Vec3::x,
+        "y", &Vec3::y,
+        "z", &Vec3::z,
+        "zero", &Vec3::Zero
+    );
+
     script.new_usertype<Camera2D>("cam_2d",
         sol::constructors<Camera2D(Vec2, float, float)>(),
         "position", &Camera2D::position,
@@ -29,7 +38,7 @@ void ios::start_types(){
 
     script.new_usertype<Texture>("tex_2d",
         sol::meta_function::garbage_collect, sol::destructor([](Texture& tex){
-            gfx::UnloadTexture(tex);
+            mkr::UnloadTexture(tex);
         }),
         "width", &Texture::width,
         "height", &Texture::height
@@ -48,17 +57,15 @@ void ios::start_types(){
         "d", Keys::D
     );
 
-    sol::table color_table = script.create_table();
-    color_table["red"] = Red;
-    color_table["green"] = Green;
-    color_table["blue"] = Blue;
-    color_table["white"] = White;
-    color_table["black"] = Black;
-    script["color"] = color_table;
+    script["red"] = Red;
+    script["green"] = Green;
+    script["blue"] = Blue;
+    script["white"] = White;
+    script["black"] = Black;
 }
+
 void ios::init_script(){
     script.open_libraries(sol::lib::base, sol::lib::package);
-
     start_types();
 }
 
@@ -66,28 +73,21 @@ void ios::start_funcs(){
     /* CORE FUNCS */
     sol::table core_table = script.create_table();
 
-    core_table["win_flag"] = [](Flags flag){
-        core::WindowFlag(flag);
-    };
+    core_table["win_flag"] = [](Flags flag){ core::WindowFlag(flag); };
+    core_table["fps"] = [](double fps){ core::TargetFPS(fps); };
+    core_table["delta"] = core::GetDelta;
 
     core_table["start"] = [](int width, int height, const std::string& title){
         core::MainWindow(width, height, title.c_str());
     };
 
-    core_table["clear"] = [](Color color){
-        core::ScreenClear(color);
-    };
+    core_table["clear"] = [](Color color){ core::ScreenClear(color); };
 
     core_table["loop"] = core::Loop;
     core_table["stop"] = core::Finish;
-
     core_table["begin_draw"] = core::DrawBegin;
     core_table["end_draw"] = core::DrawEnd;
-
-    core_table["cam_begin"] = [](Camera2D& cam){
-        core::CamBegin(cam);
-    };
-
+    core_table["cam_begin"] = [](Camera2D& cam){ core::CamBegin(cam); };
     core_table["cam_end"] = core::CamEnd;
 
     script["eng"] = core_table;
@@ -106,21 +106,21 @@ void ios::start_funcs(){
     };
 
     ios_table["load_tex"] = [](const std::string& path) -> Texture {
-        Image image = gfx::LoadImage(path.c_str());
-        return gfx::LoadTexture(image);
+        Image image = mkr::LoadImage(path.c_str());
+        return mkr::LoadTexture(image, LINEAR);
     };
 
     script["ios"] = ios_table;
 
     /* RENDER FUNCS */
 
-    sol::table gfx_table = script.create_table();
+    sol::table mkr_table = script.create_table();
 
-    gfx_table["draw_tex"] = [](Texture* tex, Vec2 position, Vec2 size){
-        gfx::DrawTexture(tex, position, size, White);
+    mkr_table["draw_tex"] = [](Texture* tex, Vec2 position, Vec2 size){
+        mkr::DrawTexture(tex, position, size, White);
     };
 
-    script["render"] = gfx_table;
+    script["render"] = mkr_table;
 }
 
 void ios::LoadScriptFuncs(){

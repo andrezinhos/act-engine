@@ -1,8 +1,7 @@
 #pragma once
-
+#include "gmath.hpp"
 #include <cstdbool>
-#include "glad.h"
-#include "glfw/glfw3.h"
+#include <cstdint>
 #include "utils.hpp"
 
 enum Flags{
@@ -19,9 +18,13 @@ struct CoreState{
     Mesh dmesh;
     Texture dtex;
 
+    uint32_t tvao;
+    uint32_t tvbo;
+
     double lastTime = 0.0f;
-    float targetfps;
-    float duration;
+    float delta;
+    double targetfps;
+    double duration;
 };
 
 class core {
@@ -32,6 +35,8 @@ private:
 public:
     static CoreState state;
 
+    static float GetDelta();
+
     static void WindowFlag(Flags flag);
     static void TargetFPS(double fps);
     static void MainWindow(int width, int height, const char* title);
@@ -39,6 +44,7 @@ public:
     static void DrawBegin();
     static void DrawEnd();
     static void CamBegin(Camera2D& cam);
+    static void CamBegin(Camera3D& cam);
     static void CamEnd();
 
     static void ScreenClear(Color color);

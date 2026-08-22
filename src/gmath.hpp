@@ -15,6 +15,16 @@ struct Vec2{
     static Vec2 One(){
         return {1.0f, 1.0f};
     }
+
+    static Vec2 AddVec2(Vec2 v1, Vec2 v2){
+        Vec2 result = {v1.x + v2.x, v1.y + v2.y};
+        return result;
+    }
+
+    static Vec2 SubtractVec2(Vec2 v1, Vec2 v2){
+        Vec2 result = {v1.x - v2.x, v1.y - v2.y};
+        return result;
+    }
 };
 
 struct Vec3{
@@ -29,11 +39,37 @@ struct Vec3{
     static Vec3 One(){
         return {1.0f, 1.0f, 1.0f};
     }
+
+    static Vec3 AddVec3(Vec3 v1, Vec3 v2){
+        Vec3 result = {v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
+        return result;
+    }
+
+    static  Vec3 SubtractVec3(Vec3 v1, Vec3 v2){
+        Vec3 result = {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
+        return result;
+    }
+
+    Vec3 operator+(const Vec3& other) const {
+        return Vec3(x + other.x, y + other.y, z + other.z);
+    }
+
+    // Sobrecarga do operador -
+    Vec3 operator-(const Vec3& other) const {
+        return Vec3(x - other.x, y - other.y, z - other.z);
+    }
+
+    // Sobrecarga do operador *
+    Vec3 operator*(float scalar) const {
+        return Vec3(x * scalar, y * scalar, z * scalar);
+    }
 };
 
 struct Vec4{
     float x, y, z, w;
 };
+
+typedef Vec4 Quaternion;
 
 struct Matrix{
     float m[4][4];
@@ -51,14 +87,30 @@ struct Matrix{
 };
 
 struct Transform {
-    Vec3 position = Vec3::Zero();
-    Vec3 rotation = Vec3::Zero();
-    Vec3 scale = Vec3::One();
+    Vec3 position;
+    Vec3 rotation;
+    Vec3 scale;
+};
+
+struct Camera2D{
+    Vec2 position;
+    float rotation;
+    float zoom;
+    Camera2D(Vec2 position, float rotation, float zoom)
+        : position(position), rotation(rotation), zoom(zoom) {}
+};
+
+struct Camera3D{
+    Vec3 position;
+    Vec3 target;
+    Vec3 up;
+    float fovy;
+    Camera3D(Vec3 position, Vec3 target, Vec3 up, float fovy)
+        : position(position), target(target), up(up), fovy(fovy) {}
 };
 
 namespace gmath{
-
-    inline float rads(float angle){
+    inline float Rads(float angle){
         float result = angle * PI / 180.0f;
 
         return result;
@@ -84,57 +136,28 @@ namespace gmath{
         return result;
     }
 
-    inline float CastToFloat(int value){
-        return static_cast<float>(value);
-    }
-
-    inline Vec2 CastToVec2(int v1, int v2){
-        float x = CastToFloat(v1);
-        float y = CastToFloat(v2);
-        Vec2 result = {x, y};
+    // finds the magnitude of a Vec2
+    inline float Length(Vec2 v){
+        float result = std::hypot(v.x, v.y);
         return result;
     }
 
-    inline Vec2 AddVec2(Vec2 v1, Vec2 v2){
-        Vec2 result = {v1.x + v2.x, v1.y + v2.y};
+    inline float Length(Vec3 v){
+        float result = std::hypot(v.x, v.y, v.z);
         return result;
     }
 
-    inline Vec2 SubtractVec2(Vec2 v1, Vec2 v2){
-        Vec2 result = {v1.x - v2.x, v1.y - v2.y};
-        return result;
+    inline Vec2 Normalize(Vec2 v){
+        float len = Length(v);
+        if (len == 0) return Vec2::Zero();
+        return {v.x / len, v.y / len};
     }
 
-    inline float LengthVec2(Vec2 v){
-        float result = sqrtf(v.x*v.x + v.y*v.y);
-        return result;
+    inline Vec3 Normalize(Vec3 v){
+        float len = Length(v);
+        if (len == 0) return Vec3::Zero();
+        return {v.x / len, v.y / len, v.z / len};
     }
-
-    inline void IncreaseVec2(Vec2& v1, Vec2& v2){
-        v1.x += v2.x;
-        v1.y += v2.y;
-    }
-
-    inline void DecreaseVec2(Vec2& v1, Vec2& v2){
-        v1.x -= v2.x;
-        v1.y -= v2.y;
-    }
-
-    inline Vec3 AddVec3(Vec3 v1, Vec3 v2){
-        Vec3 result = {v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
-        return result;
-    }
-
-    inline Vec3 SubtractVec3(Vec3 v1, Vec3 v2){
-        Vec3 result = {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
-        return result;
-    }
-
-    inline float LengthVec3(Vec3 v){
-        float result = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
-        return result;
-    }
-
 
     inline Matrix TranslateMatrix(Vec3 position){
         Matrix result = Matrix::Identity();
@@ -149,7 +172,7 @@ namespace gmath{
     inline Matrix MatrixRotateX(float angle){
         Matrix result = Matrix::Identity();
 
-        float rad = rads(angle);
+        float rad = Rads(angle);
 
         float cos = cosf(rad);
         float sin = sinf(rad);
@@ -165,7 +188,7 @@ namespace gmath{
     inline Matrix MatrixRotateY(float angle){
         Matrix result = Matrix::Identity();
 
-        float rad = rads(angle);
+        float rad = Rads(angle);
 
         float cos = cosf(rad);
         float sin = sinf(rad);
@@ -181,7 +204,7 @@ namespace gmath{
     inline Matrix MatrixRotateZ(float angle){
         Matrix result = Matrix::Identity();
 
-        float rad = rads(angle);
+        float rad = Rads(angle);
 
         float cos = cosf(rad);
         float sin = sinf(rad);
@@ -202,6 +225,22 @@ namespace gmath{
         result.at(2, 2) = scale.z;
 
         return result;
+    }
+
+    inline Vec3 Cross(Vec3 v1, Vec3 v2){
+        return {
+           (v1.y*v2.z) - (v1.z*v2.y),
+           (v1.z*v2.x) - (v1.x*v2.z),
+           (v1.x*v2.y) - (v1.y*v2.x)
+        };
+    }
+
+    inline float Dot(Vec2 v1, Vec2 v2){
+        return (v1.x*v2.x) + (v1.y*v2.y);
+    }
+
+    inline float Dot(Vec3 v1, Vec3 v2){
+        return (v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z);
     }
 
     // the result is: the rows of the left one, by the cols of the right one
@@ -314,7 +353,7 @@ namespace gmath{
         return result;
     }
 
-    inline Matrix GetMatrix(Vec3& position, Vec3& rotation, Vec3& scale){
+    inline Matrix GetMatrixModel(Vec3& position, Vec3& rotation, Vec3& scale){
         Matrix t = TranslateMatrix(position);
         Matrix rx = MatrixRotateX(rotation.x);
         Matrix ry = MatrixRotateY(rotation.y);
@@ -331,6 +370,24 @@ namespace gmath{
         );
     }
 
+    inline Matrix LookAt(Vec3 eye, Vec3 target, Vec3 upChute){
+        Vec3 forward = Normalize(Vec3::SubtractVec3(target, eye));
+        Vec3 side = Normalize(Cross(forward, upChute));
+        Vec3 up = Normalize(Cross(side, forward));
+
+        Matrix result = Matrix::Identity();
+
+        result.m[0][0] = side.x; result.m[1][0] = side.y; result.m[2][0] = side.z;
+        result.m[0][1] = up.x; result.m[1][1] = up.y; result.m[2][1] = up.z;
+        result.m[0][2] = -forward.x; result.m[1][2] = -forward.y; result.m[2][2] = -forward.z;
+
+        result.m[3][0] = -Dot(side, eye);
+        result.m[3][1] = -Dot(up, eye);
+        result.m[3][2] = Dot(forward, eye);
+
+        return result;
+    }
+
     inline Matrix OrthoMatrix(float left, float right, float top, float bottom){
         Matrix result = Matrix::Identity();
 
@@ -340,6 +397,35 @@ namespace gmath{
 
         result.at(3, 0) = -(right + left) / (right - left);
         result.at(3, 1) = -(top + bottom) / (top - bottom);
+
+        return result;
+    }
+
+    inline Matrix GetViewMatrix(Camera2D& cam){
+        Matrix t = gmath::TranslateMatrix({-cam.position.x, -cam.position.y, 0.0f});
+        Matrix r = gmath::MatrixRotateZ(-cam.rotation);
+        Matrix s = gmath::ScaleMatrix({cam.zoom, cam.zoom, 1.0});
+
+        return gmath::MultiplyMatrix(gmath::MultiplyMatrix(s, r), t);
+    }
+
+    inline Matrix GetProjectionMatrix(int width, int height){
+        return gmath::OrthoMatrix(
+            0.0f, static_cast<float>(width),
+            0.0f, static_cast<float>(height)
+        );
+    }
+
+    inline Matrix PerspectiveMatrix(float fov, float aspect, float near, float far){
+        float fovrad = Rads(fov);
+        float f = 1.0f / tanf(fovrad * 0.5f);
+
+        Matrix result = {};
+        result.m[0][0] = f / aspect;
+        result.m[1][1] = f;
+        result.m[2][2] = -(far + near) / (far - near);
+        result.m[2][3] = -1.0f;
+        result.m[3][2] = -(2.0f * far * near) / (far - near);
 
         return result;
     }

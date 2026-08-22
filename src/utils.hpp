@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include "gmath.hpp"
 #include "glad.h"
+#include "glfw/glfw3.h"
 
 struct Color {
     float r, g, b;
@@ -27,20 +27,13 @@ struct Shader {
     GLint uproj;
     GLint uview;
     GLint utex;
+    GLint umodel;
 };
 
 struct Mesh{
     uint32_t vao, vbo, ebo;
     std::vector<Verts> vertices;
     std::vector<uint32_t> indices;
-};
-
-struct Camera2D{
-    Vec2 position;
-    float rotation;
-    float zoom;
-    Camera2D(Vec2 position, float rotation, float zoom)
-        : position(position), rotation(rotation), zoom(zoom) {}
 };
 
 struct Image{

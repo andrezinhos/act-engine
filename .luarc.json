@@ -7,6 +7,10 @@
         "cam_2d",
         "render",
         "key",
-        "ios"
+        "ios",
+        "cam_3d",
+        "vec3",
+        "black",
+        "white"
     ]
 }

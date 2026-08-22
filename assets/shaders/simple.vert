@@ -8,10 +8,10 @@ out vec3 ncolor;
 out vec2 texCoord;
 uniform mat4 uProj;
 uniform mat4 uView;
+uniform mat4 uModel;
 
-void main()
-{
-    gl_Position = uProj * uView * vec4(aPos, 1.0);
+void main() {
+    gl_Position = uProj * uView * uModel * vec4(aPos, 1.0);
     ncolor = aColor;
     texCoord = aTex;
 }

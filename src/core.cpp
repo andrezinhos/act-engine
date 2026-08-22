@@ -1,13 +1,13 @@
 #include "core.hpp"
+#include "glfw/glfw3.h"
 #include "gmath.hpp"
-#include "bgp.hpp"
 #include "ios.hpp"
+#include "mkr.hpp"
+#include "utils.hpp"
 #include <cstdio>
-#include <chrono>
-#include <thread>
 
 constexpr const char* VERSION = "0.6.0";
-CoreState core::state;
+CoreState core::state = {};
 
 /*
 void frameCallback(GLFWwindow* window, int w, int h){
@@ -33,18 +33,18 @@ void UnloadDefaultTexture(){
 }
 
 void UnloadDefaultBatch(){
-    if (bgp::batch.vao != 0 && bgp::batch.vbo != 0 && bgp::batch.ebo != 0){
-        glDeleteVertexArrays(1, &bgp::batch.vao);
-        glDeleteBuffers(1, &bgp::batch.vbo);
-        glDeleteBuffers(1, &bgp::batch.ebo);
+    if (mkr::batch.vao != 0 && mkr::batch.vbo != 0 && mkr::batch.ebo != 0){
+        glDeleteVertexArrays(1, &mkr::batch.vao);
+        glDeleteBuffers(1, &mkr::batch.vbo);
+        glDeleteBuffers(1, &mkr::batch.ebo);
     }
 }
 
 void core::LoadDefault(){
-    state.dshader = bgp::DefaultShader();
-    state.dmesh = bgp::DefaultQuad();
-    state.dtex = bgp::DefaultTexture();
-    bgp::DefaultBatch();
+    state.dshader = mkr::DefaultShader();
+    state.dmesh = mkr::DefaultQuad();
+    state.dtex = mkr::DefaultTexture();
+    mkr::DefaultBatch();
 }
 
 void core::UnloadDefault(){
@@ -64,21 +64,24 @@ void core::WindowFlag(Flags flag){
 
 void core::init(){
     bool has_init = glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    if (has_init) printf("GGE v%s\n", VERSION);
+    if (has_init) printf("ACT ENGINE v%s\n", VERSION);
 }
 
 void core::TargetFPS(double fps){
     state.targetfps = fps;
-    state.duration = 1 / state.targetfps;
+    state.duration = 1.0f / fps;
+}
+
+float core::GetDelta(){
+    return state.delta;
 }
 
 bool startWindow(int width, int height, const char* title){
-
     if (core::state.flags_active[1] == 1) glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     core::state.win = glfwCreateWindow(width, height, title, NULL, NULL);
     if (core::state.flags_active[2] == 1) glfwMaximizeWindow(core::state.win);
@@ -90,12 +93,13 @@ bool startWindow(int width, int height, const char* title){
     }
 
     glfwMakeContextCurrent(core::state.win);
+    if (core::state.flags_active[0] == 1) glfwSwapInterval(1);
 
     /* for some reason, this makes the camera useless, so for now is off */
     // glfwSetFramebufferSizeCallback(win, frameCallback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-        printf("Error to Load GLAD");
+        printf("Error to Load OpenGL Context");
         glfwDestroyWindow(core::state.win);
         glfwTerminate();
         return false;
@@ -113,6 +117,7 @@ void core::MainWindow(int width, int height, const char *title){
 
     if (win_started){
         LoadDefault();
+        state.lastTime = glfwGetTime();
         printf("[INFO] ENGINE INITIALIZED\n");
     }
 }
@@ -123,20 +128,23 @@ void core::DrawBegin(){
 }
 
 void core::DrawEnd(){
-    bgp::Flush();
+    mkr::Flush();
+    glfwSwapBuffers(core::state.win);
 }
 
 void core::CamBegin(Camera2D &camera){
-    Matrix proj = bgp::GetProjectionMatrix(state.win_width, state.win_height);
-    Matrix view = bgp::GetViewMatrix(camera);
+    Matrix proj = gmath::GetProjectionMatrix(state.win_width, state.win_height);
+    Matrix view = gmath::GetViewMatrix(camera);
+    Matrix model = Matrix::Identity();
 
-    bgp::SetUniform(state.dshader.uproj, proj);
-    bgp::SetUniform(state.dshader.uview, view);
+    mkr::SetUniform(state.dshader.uproj, proj);
+    mkr::SetUniform(state.dshader.uview, view);
+    mkr::SetUniform(state.dshader.umodel, model);
 }
 
 void core::CamEnd(){
     Matrix view = Matrix::Identity();
-    bgp::SetUniform(state.dshader.uview, view);
+    mkr::SetUniform(state.dshader.uview, view);
 }
 
 void core::ScreenClear(Color color){
@@ -148,20 +156,31 @@ double LockCPU(){
     double currTime = glfwGetTime();
     double elapsed = currTime - core::state.lastTime;
 
-    if (elapsed < core::state.duration){
-        std::this_thread::sleep_for(
-            std::chrono::duration<double>(core::state.duration - elapsed)
-        );
+    // debug print
+    // printf("duration: %.3f | elapsed: %.3f\n", core::state.duration, elapsed);
+
+    if (elapsed <= core::state.duration){
+#ifdef _WIN32
+        /*
+            we do this to avoid in Windows
+            cut by half the real fps target
+        */
+        glfwWaitEventsTimeout((core::state.duration - elapsed) / 15.6f);
+#else
+        glfwWaitEventsTimeout(core::state.duration - elapsed);
+#endif
     }
 
-    return glfwGetTime();
+    double newTime = glfwGetTime();
+    core::state.delta = newTime - core::state.lastTime;
+    core::state.lastTime = newTime;
+
+    return newTime;
 }
 
 bool core::Loop(){
-    core::state.lastTime = LockCPU();
-    if (state.flags_active[0] == 1) glfwSwapInterval(1);
+    LockCPU();
     glfwPollEvents();
-    glfwSwapBuffers(core::state.win);
     if (glfwWindowShouldClose(state.win)) return false;
     return true;
 }
