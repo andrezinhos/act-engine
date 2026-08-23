@@ -13,7 +13,7 @@ LDFLAGS += -lgdi32 -lopengl32 -luser32 -lshell32
 SRC = $(wildcard src/*.cpp)
 OBJ = $(patsubst src/%.cpp, build/%.o, $(SRC))
 
-RELEASE: $(OBJ)
+$(TARGET): $(OBJ)
 	@if not exist bin mkdir bin
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
@@ -22,4 +22,4 @@ build/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(TARGET)
+	rm -f $(OBJ) $(TARGET)
