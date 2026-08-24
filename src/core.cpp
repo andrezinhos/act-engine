@@ -203,6 +203,7 @@ bool special_esc(){
 
 bool core::Loop(){
     LockCPU();
+    ios::InputUpdate();
     glfwPollEvents();
     if (glfwWindowShouldClose(state.win) || special_esc()) return false;
     return true;

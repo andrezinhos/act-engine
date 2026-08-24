@@ -50,13 +50,13 @@ void ios::start_types(){
         "b", &Color::b
     );
 
-    script.new_enum("key",
-        "w", Keys::W,
-        "a", Keys::A,
-        "s", Keys::S,
-        "d", Keys::D
-    );
-
+	script.new_enum("key",
+		"w", Keys::W,
+		"a", Keys::A,
+		"s", Keys::S,
+		"d", Keys::D
+	);
+	
     script["red"] = Red;
     script["green"] = Green;
     script["blue"] = Blue;
@@ -108,6 +108,14 @@ void ios::start_funcs(){
     ios_table["load_tex"] = [](const std::string& path) -> Texture {
         Image image = mkr::LoadImage(path.c_str());
         return mkr::LoadTexture(image, LINEAR);
+    };
+
+    ios_table["key_down"] = [](Keys key){
+    	return ios::KeyDown(key);
+    };
+
+    ios_table["key_pressed"] = [](Keys key){
+    	return ios::KeyPressed(key);
     };
 
     script["ios"] = ios_table;

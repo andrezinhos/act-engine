@@ -19,6 +19,7 @@ add_executable(app
   src/core.cpp
   src/mkr.cpp
   src/mkr_funcs.cpp
+  src/inputs.cpp
   src/script.cpp
 )
 
