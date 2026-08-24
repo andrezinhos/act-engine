@@ -1,21 +1,20 @@
-eng.win_flag(flags.vsync)
 eng.fps(60)
 
 eng.start(800, 600, "Window")
 
--- local tex = ios.load_tex("assets/sprites/smile.png")
-local pos = vec3.zero();
-local cam = cam_3d.new(vec3.new(0, 0, 5), vec3.zero(), vec3.new(0, 1, 0), 45)
+local tex = ios.load_tex("assets/sprites/smile.png")
+local pos = vec2.zero();
+local cam = cam_2d.new(vec2.zero(), 0, 1)
 
 while eng.loop() do
-    eng.clear(black)
+	eng.clear(black)
     eng.begin_draw();
-    eng.cam_begin_3d(cam)
+    eng.cam_begin(cam)
 
-    render.draw_cube(pos, vec3.new(10, 10, 10), blue)
+    render.draw_tex(tex, pos, vec2.new(100, 100))
 
     eng.cam_end()
-    -- eng.end_draw();
+    eng.end_draw();
 end
 
 eng.stop()

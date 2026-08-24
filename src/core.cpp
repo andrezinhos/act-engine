@@ -1,18 +1,20 @@
 #include "core.hpp"
-#include "glfw/glfw3.h"
 #include "gmath.hpp"
 #include "mkr.hpp"
+#include "ios.hpp"
 #include "utils.hpp"
 #include <cstdio>
 
 constexpr const char* VERSION = "0.6.0";
 CoreState core::state = {};
 
-/*
 void frameCallback(GLFWwindow* window, int w, int h){
+	if (w == 0 || h == 0) return;
+
     glViewport(0, 0, w, h);
+    core::state.win_width = w;
+    core::state.win_height = h;
 }
-*/
 
 void UnloadDefaultShader(){
     if (core::state.dshader.id != 0) glDeleteProgram(core::state.dshader.id);
@@ -58,6 +60,11 @@ void core::WindowFlag(Flags flag){
         case VSYNC: state.flags_active[0] = 1; break;
         case RESIZABLE: state.flags_active[1] = 1; break;
         case MAXIMIZED: state.flags_active[2] = 1; break;
+        case FULLSCREEN: state.flags_active[3] = 1; break;
+
+        case SD: core::state.win_width = 800; core::state.win_height = 600; break;
+        case HD: core::state.win_width = 1280; core::state.win_height = 720; break;
+        case FULL_HD: core::state.win_width = 1920; core::state.win_height = 1080; break;
     }
 }
 
@@ -81,8 +88,20 @@ float core::GetDelta(){
 }
 
 bool startWindow(int width, int height, const char* title){
+
+	if (core::state.flags_active[3] == 1) {
+		core::state.moni = glfwGetPrimaryMonitor();
+		core::state.mode = glfwGetVideoMode(core::state.moni);
+
+		glfwWindowHint(GLFW_RED_BITS, core::state.mode->redBits);
+		glfwWindowHint(GLFW_GREEN_BITS, core::state.mode->greenBits);
+		glfwWindowHint(GLFW_BLUE_BITS, core::state.mode->blueBits);
+		glfwWindowHint(GLFW_REFRESH_RATE, core::state.mode->refreshRate);
+	}
+
+	
     if (core::state.flags_active[1] == 1) glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    core::state.win = glfwCreateWindow(width, height, title, NULL, NULL);
+    core::state.win = glfwCreateWindow(width, height, title, core::state.moni, nullptr);
     if (core::state.flags_active[2] == 1) glfwMaximizeWindow(core::state.win);
 
     if (!core::state.win){
@@ -90,12 +109,11 @@ bool startWindow(int width, int height, const char* title){
         glfwTerminate();
         return false;
     }
+	glfwSetFramebufferSizeCallback(core::state.win, frameCallback);
 
     glfwMakeContextCurrent(core::state.win);
     if (core::state.flags_active[0] == 1) glfwSwapInterval(1);
 
-    /* for some reason, this makes the camera useless, so for now is off */
-    // glfwSetFramebufferSizeCallback(win, frameCallback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         printf("Error to Load OpenGL Context");
@@ -104,7 +122,14 @@ bool startWindow(int width, int height, const char* title){
         return false;
     }
 
-    glViewport(0, 0, width, height);
+	// this is for in case of wrong viewport
+	// on start of the window, specially in the maximized flag
+    int fb_w, fb_h;
+    glfwGetFramebufferSize(core::state.win, &fb_w, &fb_h);
+    glViewport(0, 0, fb_w, fb_h);
+    core::state.win_width = fb_w;
+    core::state.win_height = fb_h;
+
     return true;
 }
 
@@ -118,7 +143,7 @@ void core::MainWindow(int width, int height, const char *title){
         LoadDefault();
         state.lastTime = glfwGetTime();
         printf("[INFO] ENGINE INITIALIZED\n");
-    }
+    } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");
 }
 
 void core::DrawBegin(){
@@ -155,15 +180,10 @@ double LockCPU(){
     double currTime = glfwGetTime();
     double elapsed = currTime - core::state.lastTime;
 
-    // debug print
-    // printf("duration: %.3f | elapsed: %.3f\n", core::state.duration, elapsed);
-
     if (elapsed <= core::state.duration){
 #ifdef _WIN32
-        /*
-            we do this to avoid in Windows
-            cut by half the real fps target
-        */
+        // we do this in Windows to avoid
+        // cut by half the real fps target
         glfwWaitEventsTimeout((core::state.duration - elapsed) / 15.6f);
 #else
         glfwWaitEventsTimeout(core::state.duration - elapsed);
@@ -177,10 +197,14 @@ double LockCPU(){
     return newTime;
 }
 
+bool special_esc(){
+	return glfwGetKey(core::state.win, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+}
+
 bool core::Loop(){
     LockCPU();
     glfwPollEvents();
-    if (glfwWindowShouldClose(state.win)) return false;
+    if (glfwWindowShouldClose(state.win) || special_esc()) return false;
     return true;
 }
 

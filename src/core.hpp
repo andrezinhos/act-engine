@@ -8,12 +8,19 @@ enum Flags{
     VSYNC,
     RESIZABLE,
     MAXIMIZED,
+    FULLSCREEN,
+
+	SD,
+    HD,
+    FULL_HD,
 };
 
 struct CoreState{
+	GLFWmonitor* moni = nullptr;
+	const GLFWvidmode* mode = nullptr; 
     GLFWwindow* win = nullptr;
     int win_width, win_height;
-    int flags_active[3];
+    int flags_active[4];
     Shader dshader;
     Mesh dmesh;
     Texture dtex;
