@@ -406,7 +406,7 @@ namespace gmath{
         Matrix r = gmath::MatrixRotateZ(-cam.rotation);
         Matrix s = gmath::ScaleMatrix({cam.zoom, cam.zoom, 1.0});
 
-        return gmath::MultiplyMatrix(gmath::MultiplyMatrix(s, r), t);
+        return gmath::MultiplyMatrix(gmath::MultiplyMatrix(t, r), s);
     }
 
     inline Matrix GetProjectionMatrix(int width, int height){

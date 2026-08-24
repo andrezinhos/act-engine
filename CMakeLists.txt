@@ -10,7 +10,7 @@ set(LUA_HEADERS "C:/lua/src")
 set(LUA_LIB "C:/lua/src/liblua.a")
 
 set(GLFW_HEADERS ${CMAKE_SOURCE_DIR}/external/glfw)
-set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3.a)
+set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3dll.a)
 
 # executable files
 add_executable(app

@@ -17,7 +17,7 @@ enum Flags{
 
 struct CoreState{
 	GLFWmonitor* moni = nullptr;
-	const GLFWvidmode* mode = nullptr; 
+	const GLFWvidmode* mode = nullptr;
     GLFWwindow* win = nullptr;
     int win_width, win_height;
     int flags_active[4];
@@ -43,6 +43,8 @@ public:
     static CoreState state;
 
     static float GetDelta();
+    static int GetWindowWidth();
+    static int GetWindowHeight();
 
     static void WindowFlag(Flags flag);
     static void TargetFPS(double fps);

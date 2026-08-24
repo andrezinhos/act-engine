@@ -77,6 +77,9 @@ void ios::start_funcs(){
     core_table["fps"] = [](double fps){ core::TargetFPS(fps); };
     core_table["delta"] = core::GetDelta;
 
+    core_table["win_width"] = core::GetWindowWidth;
+    core_table["win_height"] = core::GetWindowHeight;
+
     core_table["start"] = [](int width, int height, const std::string& title){
         core::MainWindow(width, height, title.c_str());
     };

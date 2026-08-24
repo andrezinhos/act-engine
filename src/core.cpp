@@ -87,6 +87,14 @@ float core::GetDelta(){
     return state.delta;
 }
 
+int core::GetWindowWidth(){
+	return core::state.win_width;
+}
+
+int core::GetWindowHeight(){
+	return core::state.win_height;
+}
+
 bool startWindow(int width, int height, const char* title){
 
 	if (core::state.flags_active[3] == 1) {
@@ -99,7 +107,7 @@ bool startWindow(int width, int height, const char* title){
 		glfwWindowHint(GLFW_REFRESH_RATE, core::state.mode->refreshRate);
 	}
 
-	
+
     if (core::state.flags_active[1] == 1) glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     core::state.win = glfwCreateWindow(width, height, title, core::state.moni, nullptr);
     if (core::state.flags_active[2] == 1) glfwMaximizeWindow(core::state.win);
@@ -152,7 +160,6 @@ void core::DrawBegin(){
 }
 
 void core::DrawEnd(){
-    mkr::Flush();
     glfwSwapBuffers(core::state.win);
 }
 
@@ -167,6 +174,7 @@ void core::CamBegin(Camera2D &camera){
 }
 
 void core::CamEnd(){
+    mkr::Flush();
     Matrix view = Matrix::Identity();
     mkr::SetUniform(state.dshader.uview, view);
 }
