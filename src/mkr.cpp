@@ -101,11 +101,20 @@ void mkr::DrawTexture(Texture *tex, Vec2 position, Vec2 size, Color color){
     else batch.calls.back().count += 6;
 }
 
-void mkr::DrawRectangle(Vec2 position, float size, Color color){
+void mkr::DrawSprite(Sprite& sprite, float size, Color color){
+	Vec2 tex_size = {
+		static_cast<float>(sprite.texture.width * size),	
+		static_cast<float>(sprite.texture.height * size)
+	};
+
+	DrawTexture(&sprite.texture, sprite.position, tex_size, color);
+}
+
+void mkr::DrawRectangle(Vec2 position, Vec2 size, Color color){
     uint32_t base = batch.verts.size();
     uint32_t indexStart = batch.indices.size();
 
-    SetVertsVal(position, {size, size}, color);
+    SetVertsVal(position, size, color);
     SendIndices(base);
 
     if (batch.calls.empty()){

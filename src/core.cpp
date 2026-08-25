@@ -5,7 +5,7 @@
 #include "utils.hpp"
 #include <cstdio>
 
-constexpr const char* VERSION = "0.6.0";
+constexpr const char* VERSION = "0.9.2";
 CoreState core::state = {};
 
 void frameCallback(GLFWwindow* window, int w, int h){
@@ -62,6 +62,7 @@ void core::WindowFlag(Flags flag){
         case MAXIMIZED: state.flags_active[2] = 1; break;
         case FULLSCREEN: state.flags_active[3] = 1; break;
 
+		//not implemented
         case SD: core::state.win_width = 800; core::state.win_height = 600; break;
         case HD: core::state.win_width = 1280; core::state.win_height = 720; break;
         case FULL_HD: core::state.win_width = 1920; core::state.win_height = 1080; break;
@@ -168,9 +169,8 @@ void core::CamBegin(Camera2D &camera){
     Matrix view = gmath::GetViewMatrix(camera);
     Matrix model = Matrix::Identity();
 
-    mkr::SetUniform(state.dshader.uproj, proj);
-    mkr::SetUniform(state.dshader.uview, view);
-    mkr::SetUniform(state.dshader.umodel, model);
+    Matrix mvp = gmath::MultiplyMatrix(gmath::MultiplyMatrix(proj, view), model);
+    mkr::SetUniform(state.dshader.umodel, mvp);
 }
 
 void core::CamEnd(){
@@ -182,6 +182,13 @@ void core::CamEnd(){
 void core::ScreenClear(Color color){
     glClearColor(color.r, color.g, color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void core::Follow(Camera2D& cam, Sprite& sprite){
+	cam.position = {
+		sprite.position.x - (GetWindowWidth()/2) + (sprite.texture.width/2),
+		sprite.position.y - (GetWindowHeight()/2) + (sprite.texture.height/2),
+	};
 }
 
 double LockCPU(){

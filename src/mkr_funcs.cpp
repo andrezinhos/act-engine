@@ -21,7 +21,7 @@ std::vector<unsigned char> mkr::LoadBytes(const char* path){
     size_t size = file.tellg();
     file.seekg(0, std::ios::beg);
 
-    std::vector<uint8_t> buffer(size);
+    std::vector<unsigned char> buffer(size);
 
     file.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
     file.close();
@@ -263,9 +263,7 @@ Shader mkr::DefaultShader(){
         printf("Error to compile program:\n%s", log);
     } else printf("[INFO] DEFAULT SHADER COMPILED\n");
 
-    GetUniformLoc(shader, PROJ, "uProj");
-    GetUniformLoc(shader, VIEW, "uView");
-    GetUniformLoc(shader, MODEL, "uModel");
+    GetUniformLoc(shader, MODEL, "uMvp");
     GetUniformLoc(shader, TEX_2D, "uTexture");
 
     glDeleteShader(vsFile);
@@ -307,6 +305,9 @@ void mkr::DefaultBatch(){
         VSIZE(MAX_VERTS), ISIZE(MAX_INDICES),
         DYNAMIC
     );
+
+    batch.verts.reserve(MAX_VERTS);
+    batch.indices.reserve(MAX_INDICES);
 }
 
 void mkr::Delete(type t, uint32_t &obj){

@@ -44,6 +44,11 @@ void ios::start_types(){
         "height", &Texture::height
     );
 
+    script.new_usertype<Sprite>("sprite",
+        "position", &Sprite::position,
+        "texture", &Sprite::texture
+    );
+
     script.new_usertype<Color>("Color",
         "r", &Color::r,
         "g", &Color::g,
@@ -56,7 +61,7 @@ void ios::start_types(){
 		"s", Keys::S,
 		"d", Keys::D
 	);
-	
+
     script["red"] = Red;
     script["green"] = Green;
     script["blue"] = Blue;
@@ -127,8 +132,8 @@ void ios::start_funcs(){
 
     sol::table mkr_table = script.create_table();
 
-    mkr_table["draw_tex"] = [](Texture* tex, Vec2 position, Vec2 size){
-        mkr::DrawTexture(tex, position, size, White);
+    mkr_table["draw_sprite"] = [](Sprite& sprite, float size, Color color){
+        mkr::DrawSprite(sprite, size, color);
     };
 
     script["render"] = mkr_table;
@@ -136,6 +141,5 @@ void ios::start_funcs(){
 
 void ios::LoadScriptFuncs(){
     start_funcs();
-
     script.script_file("init.lua");
 }

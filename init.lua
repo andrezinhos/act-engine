@@ -19,11 +19,14 @@ while eng.loop() do
 
 	if ios.key_down(key.w) then
 		pos.y = pos.y - 500 * eng.delta()
-	elseif ios.key_down(key.s) then
+	end
+	if ios.key_down(key.s) then
 		pos.y = pos.y + 500 * eng.delta()
-	elseif ios.key_down(key.a) then
+	end
+	if ios.key_down(key.a) then
 		pos.x = pos.x - 500 * eng.delta()
-	elseif ios.key_down(key.d) then
+	end
+	if ios.key_down(key.d) then
 		pos.x = pos.x + 500 * eng.delta()
 	end
 

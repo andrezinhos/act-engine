@@ -3,6 +3,7 @@
 #include <cstdbool>
 #include <cstdint>
 #include "utils.hpp"
+#include "mkr.hpp"
 
 enum Flags{
     VSYNC,
@@ -55,6 +56,8 @@ public:
     static void CamBegin(Camera2D& cam);
     static void CamBegin(Camera3D& cam);
     static void CamEnd();
+
+    static void Follow(Camera2D& cam, Sprite& sprite);
 
     static void ScreenClear(Color color);
     static bool Loop();

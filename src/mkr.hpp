@@ -39,6 +39,11 @@ struct Batch{
     uint32_t ebo;
 };
 
+struct Sprite{
+	Vec2 position;
+	Texture texture;	
+};
+
 class mkr{
 private:
     static std::vector<unsigned char> LoadBytes(const char* path);
@@ -79,6 +84,8 @@ private:
     static void Delete(type t, uint32_t& obj);
     static void Delete(type t, unsigned char& obj);
 
+    static void DrawTexture(Texture* tex, Vec2 position, Vec2 size, Color color);
+
     friend class core;
 public:
     static Batch batch;
@@ -91,9 +98,8 @@ public:
     static void UnloadImage(Image& image);
     static void UnloadTexture(Texture& texture);
 
-    static void DrawRectangle(Vec2 position, float size, Color color);
-    static void DrawTexture(Texture* tex, Vec2 position, Vec2 size, Color color);
-    static void DrawCube(Vec3 pos, Vec3 size, Color color);
+    static void DrawRectangle(Vec2 position, Vec2 size, Color color);
+    static void DrawSprite(Sprite& sprite, float size, Color color);
 
     static void UnloadMesh(Mesh& mesh);
 };
