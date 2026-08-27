@@ -5,15 +5,15 @@
 #include "utils.hpp"
 #include <cstdio>
 
-constexpr const char* VERSION = "0.9.2";
+constexpr const char* VERSION = "0.9.3";
 CoreState core::state = {};
 
 void frameCallback(GLFWwindow* window, int w, int h){
 	if (w == 0 || h == 0) return;
 
     glViewport(0, 0, w, h);
-    core::state.win_width = w;
-    core::state.win_height = h;
+    core::state.window.win_width = w;
+    core::state.window.win_height = h;
 }
 
 void UnloadDefaultShader(){
@@ -61,11 +61,6 @@ void core::WindowFlag(Flags flag){
         case RESIZABLE: state.flags_active[1] = 1; break;
         case MAXIMIZED: state.flags_active[2] = 1; break;
         case FULLSCREEN: state.flags_active[3] = 1; break;
-
-		//not implemented
-        case SD: core::state.win_width = 800; core::state.win_height = 600; break;
-        case HD: core::state.win_width = 1280; core::state.win_height = 720; break;
-        case FULL_HD: core::state.win_width = 1920; core::state.win_height = 1080; break;
     }
 }
 
@@ -89,44 +84,42 @@ float core::GetDelta(){
 }
 
 int core::GetWindowWidth(){
-	return core::state.win_width;
+	return core::state.window.win_width;
 }
 
 int core::GetWindowHeight(){
-	return core::state.win_height;
+	return core::state.window.win_height;
 }
 
 bool startWindow(int width, int height, const char* title){
 
 	if (core::state.flags_active[3] == 1) {
-		core::state.moni = glfwGetPrimaryMonitor();
-		core::state.mode = glfwGetVideoMode(core::state.moni);
+		core::state.window.moni = glfwGetPrimaryMonitor();
+		core::state.window.mode = glfwGetVideoMode(core::state.window.moni);
 
-		glfwWindowHint(GLFW_RED_BITS, core::state.mode->redBits);
-		glfwWindowHint(GLFW_GREEN_BITS, core::state.mode->greenBits);
-		glfwWindowHint(GLFW_BLUE_BITS, core::state.mode->blueBits);
-		glfwWindowHint(GLFW_REFRESH_RATE, core::state.mode->refreshRate);
+		glfwWindowHint(GLFW_RED_BITS, core::state.window.mode->redBits);
+		glfwWindowHint(GLFW_GREEN_BITS, core::state.window.mode->greenBits);
+		glfwWindowHint(GLFW_BLUE_BITS, core::state.window.mode->blueBits);
+		glfwWindowHint(GLFW_REFRESH_RATE, core::state.window.mode->refreshRate);
 	}
 
-
     if (core::state.flags_active[1] == 1) glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    core::state.win = glfwCreateWindow(width, height, title, core::state.moni, nullptr);
-    if (core::state.flags_active[2] == 1) glfwMaximizeWindow(core::state.win);
+    core::state.window.main = glfwCreateWindow(width, height, title, core::state.window.moni, nullptr);
+    if (core::state.flags_active[2] == 1) glfwMaximizeWindow(core::state.window.main);
 
-    if (!core::state.win){
+    if (!core::state.window.main){
         printf("Error to Create Window");
         glfwTerminate();
         return false;
     }
-	glfwSetFramebufferSizeCallback(core::state.win, frameCallback);
+	glfwSetFramebufferSizeCallback(core::state.window.main, frameCallback);
 
-    glfwMakeContextCurrent(core::state.win);
+    glfwMakeContextCurrent(core::state.window.main);
     if (core::state.flags_active[0] == 1) glfwSwapInterval(1);
-
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         printf("Error to Load OpenGL Context");
-        glfwDestroyWindow(core::state.win);
+        glfwDestroyWindow(core::state.window.main);
         glfwTerminate();
         return false;
     }
@@ -134,18 +127,18 @@ bool startWindow(int width, int height, const char* title){
 	// this is for in case of wrong viewport
 	// on start of the window, specially in the maximized flag
     int fb_w, fb_h;
-    glfwGetFramebufferSize(core::state.win, &fb_w, &fb_h);
+    glfwGetFramebufferSize(core::state.window.main, &fb_w, &fb_h);
     glViewport(0, 0, fb_w, fb_h);
-    core::state.win_width = fb_w;
-    core::state.win_height = fb_h;
+    core::state.window.win_width = fb_w;
+    core::state.window.win_height = fb_h;
 
     return true;
 }
 
 void core::MainWindow(int width, int height, const char *title){
     core::init();
-    core::state.win_width = width;
-    core::state.win_height = height;
+    core::state.window.win_width = width;
+    core::state.window.win_height = height;
     bool win_started = startWindow(width, height, title);
 
     if (win_started){
@@ -161,11 +154,11 @@ void core::DrawBegin(){
 }
 
 void core::DrawEnd(){
-    glfwSwapBuffers(core::state.win);
+    glfwSwapBuffers(core::state.window.main);
 }
 
 void core::CamBegin(Camera2D &camera){
-    Matrix proj = gmath::GetProjectionMatrix(state.win_width, state.win_height);
+    Matrix proj = gmath::GetProjectionMatrix(state.window.win_width, state.window.win_height);
     Matrix view = gmath::GetViewMatrix(camera);
     Matrix model = Matrix::Identity();
 
@@ -186,8 +179,8 @@ void core::ScreenClear(Color color){
 
 void core::Follow(Camera2D& cam, Sprite& sprite){
 	cam.position = {
-		sprite.position.x - (GetWindowWidth()/2) + (sprite.texture.width/2),
-		sprite.position.y - (GetWindowHeight()/2) + (sprite.texture.height/2),
+		sprite.position.x - ((float)GetWindowWidth()/2) + ((float)sprite.texture.width/2),
+		sprite.position.y - ((float)GetWindowHeight()/2) + ((float)sprite.texture.height/2),
 	};
 }
 
@@ -213,19 +206,19 @@ double LockCPU(){
 }
 
 bool special_esc(){
-	return glfwGetKey(core::state.win, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+	return glfwGetKey(core::state.window.main, GLFW_KEY_ESCAPE) == GLFW_PRESS;
 }
 
 bool core::Loop(){
     LockCPU();
     ios::InputUpdate();
     glfwPollEvents();
-    if (glfwWindowShouldClose(state.win) || special_esc()) return false;
+    if (glfwWindowShouldClose(state.window.main) || special_esc()) return false;
     return true;
 }
 
 void core::Finish(){
     UnloadDefault();
-    glfwDestroyWindow(state.win);
+    glfwDestroyWindow(state.window.main);
     glfwTerminate();
 }

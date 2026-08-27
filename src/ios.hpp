@@ -19,7 +19,6 @@ public:
     static void init_script();
     static void LoadScriptFuncs();
 
-
 	static void InputUpdate();
     static bool KeyDown(Keys key);
     static bool KeyPressed(Keys key);

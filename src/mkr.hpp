@@ -5,6 +5,9 @@
 #include "gmath.hpp"
 #include "utils.hpp"
 
+constexpr size_t MAX_VERTS = 1000;
+constexpr size_t MAX_INDICES = 1500;
+
 enum type {
     ARR,
     BUF,
@@ -41,7 +44,7 @@ struct Batch{
 
 struct Sprite{
 	Vec2 position;
-	Texture texture;	
+	Texture texture;
 };
 
 class mkr{
@@ -54,8 +57,6 @@ private:
     static void SetVertsVal(Vec3 position, Vec2 size, Color color);
     static std::vector<Verts> SetStdNDC();
     static void SendIndices(uint32_t base);
-
-    static void TextureActive(int num);
 
     static void Flush();
     static void FigureDraw(type t, size_t size, void* offset);

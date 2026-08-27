@@ -6,9 +6,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-constexpr size_t MAX_VERTS = 1000;
-constexpr size_t MAX_INDICES = 1500;
-
 size_t VSIZE(size_t size){ return size * sizeof(Verts); }
 size_t ISIZE(size_t size){ return size * sizeof(uint32_t); }
 
@@ -17,6 +14,8 @@ Batch mkr::batch = {};
 std::vector<unsigned char> mkr::LoadBytes(const char* path){
     std::ifstream file(path, std::ios::binary);
 
+    if (!file.is_open()) return {};
+    
     file.seekg(0, std::ios::end);
     size_t size = file.tellg();
     file.seekg(0, std::ios::beg);
@@ -31,6 +30,8 @@ std::vector<unsigned char> mkr::LoadBytes(const char* path){
 
 std::string mkr::LoadShaderFile(const char* path){
     std::ifstream file(path, std::ios::binary);
+    
+    if (!file.is_open()) return "";
 
     file.seekg(0, std::ios::end);
     size_t size = file.tellg();
@@ -88,11 +89,6 @@ void mkr::SendIndices(uint32_t base){
     batch.indices.push_back(base + 1);
     batch.indices.push_back(base + 2);
     batch.indices.push_back(base + 3);
-}
-
-void mkr::TextureActive(int num){
-    if (num == 0) glActiveTexture(GL_TEXTURE0);
-    if (num == 1) glActiveTexture(GL_TEXTURE1);
 }
 
 void mkr::Flush(){

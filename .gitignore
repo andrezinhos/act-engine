@@ -1,9 +1,6 @@
+compile_commands.json
+
 bin/
 build/
 
-*.exe
-*.out
-*.app
-
-compile_commands.json
 .cache/

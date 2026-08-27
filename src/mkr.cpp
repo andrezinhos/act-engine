@@ -15,11 +15,11 @@ Shader mkr::LoadShader(const char *vs, const char *fs){
     const char* srcvs = vsPath.c_str();
     const char* srcfs = fsPath.c_str();
 
-    unsigned char vsFile = glCreateShader(GL_VERTEX_SHADER);
+    unsigned int vsFile = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vsFile, 1, &srcvs, nullptr);
     glCompileShader(vsFile);
 
-    unsigned char fsFile = glCreateShader(GL_FRAGMENT_SHADER);
+    unsigned int fsFile = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fsFile, 1, &srcfs, nullptr);
     glCompileShader(fsFile);
 
@@ -89,6 +89,7 @@ void mkr::UnloadTexture(Texture &tex){
 }
 
 void mkr::DrawTexture(Texture *tex, Vec2 position, Vec2 size, Color color){
+    if (batch.verts.size() + 4  > MAX_VERTS || batch.indices.size() + 6  > MAX_INDICES) mkr::Flush();
     uint32_t base = batch.verts.size();
     uint32_t indexStart = batch.indices.size();
 
@@ -103,7 +104,7 @@ void mkr::DrawTexture(Texture *tex, Vec2 position, Vec2 size, Color color){
 
 void mkr::DrawSprite(Sprite& sprite, float size, Color color){
 	Vec2 tex_size = {
-		static_cast<float>(sprite.texture.width * size),	
+		static_cast<float>(sprite.texture.width * size),
 		static_cast<float>(sprite.texture.height * size)
 	};
 

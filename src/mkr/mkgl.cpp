@@ -1,0 +1,116 @@
+#include "mkgl.hpp"
+#include <string>
+#include <fstream>
+
+DState mkgl::state = {};
+
+std::string mkgl::loadShaderFile(const std::string& path){
+    std::ifstream file(path, std::ios::binary);
+
+    file.seekg(0, std::ios::end);
+    size_t size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::string types(size, '\0');
+    file.read(&types[0], size);
+
+    return types;
+}
+
+uint mkgl::genBuff(types b){
+    uint obj;
+    if (b == types::arr) glGenVertexArrays(1, &obj);
+    if (b == types::buff || b == types::element) glGenBuffers(1, &obj);
+
+    return obj;
+}
+
+void mkgl::bindBuff(uint& vo, types b){
+    if (b == types::arr) glBindVertexArray(vo);
+    if (b == types::buff) glBindBuffer(GL_ARRAY_BUFFER, vo);
+    if (b == types::element) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vo);
+}
+
+void mkgl::unbind(){
+    glBindVertexArray(0);
+}
+
+void mkgl::bindDataStatic(types b, const void* data, size_t size){
+    if (b == types::buff) glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    if (b == types::element) glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+}
+
+void mkgl::bindDataDynamic(types b, const void* data, size_t size){
+    if (b == types::buff) glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+    if (b == types::element) glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+}
+
+void mkgl::sendAttribPtr(int layout, int size, int stride, int ptr){
+    glVertexAttribPointer(layout, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(ptr * sizeof(float)));
+    glEnableVertexAttribArray(layout);
+}
+
+std::vector<vertex> mkgl::SetNDC(){
+    return {
+        {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+        {{0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+        {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+    };
+}
+
+bool mkgl::getShaderError(uint& shader){
+    int pass;
+    char log[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &pass);
+
+    if (!pass){
+        glGetShaderInfoLog(shader, 512, nullptr, log);
+        printf("ERROR ON COMPILING SHADER:\n %s", log);
+        return false;
+    }
+
+    return true;
+}
+
+bool mkgl::getShaderProgError(uint& prog){
+    int pass;
+    char log[512];
+    glGetProgramiv(prog, GL_LINK_STATUS, &pass);
+
+    if (!pass){
+        glGetProgramInfoLog(prog, 512, nullptr, log);
+        printf("ERROR TO CREATE SHADER PROGRAM:\n %s", log);
+        return false;
+    }
+
+    return true;
+}
+
+uint mkgl::genShader(const char* src, GLenum type){
+    uint sh = glCreateShader(type);
+    glShaderSource(sh, 1, &src, nullptr);
+    return sh;
+}
+
+bool mkgl::compileShader(uint& shader){
+    glCompileShader(shader);
+    return getShaderError(shader);
+}
+
+uint mkgl::genShaderProg(uint& vs, uint& fs){
+    uint prog = glCreateProgram();
+    glAttachShader(prog, vs);
+    glAttachShader(prog, fs);
+    glLinkProgram(prog);
+    getShaderProgError(prog);
+    return prog;
+}
+
+void mkgl::Delete(uint& obj, types t){
+    if (obj != 0){
+        if (t == types::arr) glDeleteVertexArrays(1, &obj);
+        if (t == types::buff || t == types::element) glDeleteBuffers(1, &obj);
+        if (t == types::prog) glDeleteProgram(obj);
+    }
+}

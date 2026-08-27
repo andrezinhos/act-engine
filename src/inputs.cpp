@@ -7,7 +7,7 @@ void ios::InputUpdate(){
 	for (int key = 0; key <= GLFW_KEY_LAST; key++){
 		prev[key] = curr[key];
 
-		curr[key] = glfwGetKey(core::state.win, key) == GLFW_PRESS;
+		curr[key] = glfwGetKey(core::state.window.main, key) == GLFW_PRESS;
 	}
 }
 
