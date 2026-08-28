@@ -1,5 +1,4 @@
 #include "core.hpp"
-#include "mkr.hpp"
 #include "ios.hpp"
 
 int main(){
@@ -16,45 +15,39 @@ int main(){
 	    core::TargetFPS(60);
 	    core::MainWindow(800, 600, "Window");
 
-	    Sprite sprite;
+	    Texture texture = mkr::LoadTexture("assets/sprites/smile.png");
+	    Texture tex2 = mkr::LoadTexture("assets/sprites/neutral.png");
 
-	    Image image = mkr::LoadImage("assets/sprites/smile.png");
-	    sprite.texture = mkr::LoadTexture(image, LINEAR);
+	    texture.width = 100;
+	    texture.height = 100;
 
-	    Image image2 = mkr::LoadImage("assets/sprites/neutral.png");
-	    Texture tex2 = mkr::LoadTexture(image2, LINEAR);
+	    float posX = (core::GetWindowWidth()/2) - (texture.width/2);
+	    float posY = (core::GetWindowHeight()/2) - (texture.height/2);
 
-	    sprite.texture.width = 100;
-	    sprite.texture.height = 100;
-
-	    float posX = (core::GetWindowWidth()/2) - (sprite.texture.width/2);
-	    float posY = (core::GetWindowHeight()/2) - (sprite.texture.height/2);
-
-	    sprite.position = {posX, posY};
+	    Vec2 pos = {posX, posY};
 
 	    Camera2D cam = {Vec2::Zero(), 0.0f, 1.0f};
 	    while (core::Loop()) {
 	        core::ScreenClear(Black);
 
 			float speed = 500.0f;
-	        if (ios::KeyDown(Keys::W)) sprite.position.y -= speed * core::GetDelta();
-	        if (ios::KeyDown(Keys::S)) sprite.position.y += speed * core::GetDelta();
-	        if (ios::KeyDown(Keys::A)) sprite.position.x -= speed * core::GetDelta();
-	        if (ios::KeyDown(Keys::D)) sprite.position.x += speed * core::GetDelta();
+	        if (ios::KeyDown(Keys::W)) pos.y -= speed * core::GetDelta();
+	        if (ios::KeyDown(Keys::S)) pos.y += speed * core::GetDelta();
+	        if (ios::KeyDown(Keys::A)) pos.x -= speed * core::GetDelta();
+	        if (ios::KeyDown(Keys::D)) pos.x += speed * core::GetDelta();
 
-			core::Follow(cam, sprite);
+			// core::Follow(cam, sprite);
 
-	        core::DrawBegin();
-	        core::CamBegin(cam);
+	        mkr::RenderBegin();
+	        mkr::CameraBegin(cam);
 
-	        // mkr::DrawTexture(&tex2, Vec2::Zero(), {500, 500}, White);
-	        mkr::DrawSprite(sprite, 1.0f, White);
+	        mkr::RenderTexture(&tex2, Vec2::Zero(), {500, 500}, White);
 
-	        core::CamEnd();
-	        core::DrawEnd();
+	        mkr::CameraEnd();
+	        mkr::RenderEnd();
 	    }
 
-	    mkr::UnloadTexture(sprite.texture);
+	    mkr::UnloadTexture(texture);
 	    mkr::UnloadTexture(tex2);
 
 	    core::Finish();

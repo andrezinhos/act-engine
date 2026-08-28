@@ -1,7 +1,5 @@
-#include "mkr.hpp"
 #include "ios.hpp"
 #include "core.hpp"
-#include "utils.hpp"
 #include <string>
 #define SOL_ALL_SAFETIES_ON 1
 #include "sol.hpp"
@@ -44,17 +42,6 @@ void ios::start_types(){
         "height", &Texture::height
     );
 
-    script.new_usertype<Sprite>("sprite",
-        "position", &Sprite::position,
-        "texture", &Sprite::texture
-    );
-
-    script.new_usertype<Color>("Color",
-        "r", &Color::r,
-        "g", &Color::g,
-        "b", &Color::b
-    );
-
 	script.new_enum("key",
 		"w", Keys::W,
 		"a", Keys::A,
@@ -93,10 +80,6 @@ void ios::start_funcs(){
 
     core_table["loop"] = core::Loop;
     core_table["stop"] = core::Finish;
-    core_table["begin_draw"] = core::DrawBegin;
-    core_table["end_draw"] = core::DrawEnd;
-    core_table["cam_begin"] = [](Camera2D& cam){ core::CamBegin(cam); };
-    core_table["cam_end"] = core::CamEnd;
 
     script["eng"] = core_table;
 
@@ -114,8 +97,7 @@ void ios::start_funcs(){
     };
 
     ios_table["load_tex"] = [](const std::string& path) -> Texture {
-        Image image = mkr::LoadImage(path.c_str());
-        return mkr::LoadTexture(image, LINEAR);
+        return mkr::LoadTexture(path.c_str());
     };
 
     ios_table["key_down"] = [](Keys key){
@@ -132,9 +114,14 @@ void ios::start_funcs(){
 
     sol::table mkr_table = script.create_table();
 
-    mkr_table["draw_sprite"] = [](Sprite& sprite, float size, Color color){
-        mkr::DrawSprite(sprite, size, color);
-    };
+    mkr_table["begin_draw"] = mkr::RenderBegin;
+    mkr_table["end_draw"] = mkr::RenderEnd;
+    mkr_table["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
+    mkr_table["cam_end"] = mkr::CameraEnd;
+
+    // mkr_table["draw_tex"] = [](float size, Color color){
+    //     mkr::DrawTexture(sprite, size, color);
+    // };
 
     script["render"] = mkr_table;
 }
