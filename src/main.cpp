@@ -1,56 +1,62 @@
 #include "core.hpp"
+#include "esys.hpp"
 #include "ios.hpp"
+#include "stack.hpp"
 
 int main(){
 
 	bool debug_mode = true;
 
-	if (!debug_mode){
-    	ios::init_script();
-    	ios::LoadScriptFuncs();
-	}
+    if (!debug_mode){
+       	ios::init_script();
+       	ios::LoadScriptFuncs();
+    }
     // test code
-	else {
-		core::WindowFlag(RESIZABLE);
-	    core::TargetFPS(60);
-	    core::MainWindow(800, 600, "Window");
+    else {
+    	core::WindowFlag(RESIZABLE);
+        core::TargetFPS(60);
+        core::MainWindow(800, 600, "Window");
 
-	    Texture texture = mkr::LoadTexture("assets/sprites/smile.png");
-	    Texture tex2 = mkr::LoadTexture("assets/sprites/neutral.png");
+        Texture tex2 = ios::LoadTexture("assets/sprites/neutral.png");
+        Sprite neutral;
 
-	    texture.width = 100;
-	    texture.height = 100;
+        neutral.load("assets/sprites/neutral.png");
+        neutral.pos(0, 0);
+        neutral.size(500, 500);
 
-	    float posX = (core::GetWindowWidth()/2) - (texture.width/2);
-	    float posY = (core::GetWindowHeight()/2) - (texture.height/2);
+        Sprite smile;
+        smile.load("assets/sprites/smile.png");
 
-	    Vec2 pos = {posX, posY};
+        smile.size(100, 100);
 
-	    Camera2D cam = {Vec2::Zero(), 0.0f, 1.0f};
-	    while (core::Loop()) {
-	        core::ScreenClear(Black);
+        float posX = ((float)core::GetWindowWidth()/2) - ((float)smile.tex.width/2);
+        float posY = ((float)core::GetWindowHeight()/2) - ((float)smile.tex.height/2);
+        
+        smile.pos(posX, posY);
 
-			float speed = 500.0f;
-	        if (ios::KeyDown(Keys::W)) pos.y -= speed * core::GetDelta();
-	        if (ios::KeyDown(Keys::S)) pos.y += speed * core::GetDelta();
-	        if (ios::KeyDown(Keys::A)) pos.x -= speed * core::GetDelta();
-	        if (ios::KeyDown(Keys::D)) pos.x += speed * core::GetDelta();
+        Camera2D cam = {Vec2::Zero(), 0.0f, 1.0f};
+        while (core::Loop()) {
+            mkr::ScreenClear(Black);
 
-			// core::Follow(cam, sprite);
+    		float speed = 500.0f;
+            if (ios::KeyDown(Keys::W)) smile.position.y -= speed * core::GetDelta();
+            if (ios::KeyDown(Keys::S)) smile.position.y += speed * core::GetDelta();
+            if (ios::KeyDown(Keys::A)) smile.position.x -= speed * core::GetDelta();
+            if (ios::KeyDown(Keys::D)) smile.position.x += speed * core::GetDelta();
 
-	        mkr::RenderBegin();
-	        mkr::CameraBegin(cam);
+    		// core::Follow(cam, sprite);
 
-	        mkr::RenderTexture(&tex2, Vec2::Zero(), {500, 500}, White);
+            mkr::RenderBegin();
+            mkr::CameraBegin(cam);
 
-	        mkr::CameraEnd();
-	        mkr::RenderEnd();
-	    }
+            esys::RenderSprite(neutral.id, neutral);
+            esys::RenderSprite(smile.id, smile);
 
-	    mkr::UnloadTexture(texture);
-	    mkr::UnloadTexture(tex2);
+            mkr::CameraEnd();
+            mkr::RenderEnd();
+        }
 
-	    core::Finish();
+        core::Finish();
     }
     return 0;
 }

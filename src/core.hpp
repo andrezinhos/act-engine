@@ -35,7 +35,7 @@ public:
 
     // static void Follow(Camera2D& cam, Sprite& sprite);
 
-    static void ScreenClear(Color color);
+
     static bool Loop();
     static void Finish();
 };

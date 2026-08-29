@@ -27,8 +27,11 @@ public:
     static void UnloadDefaultTexture();
     static void UnloadDefaultBatch();
 
-    static Texture LoadTexture(const char* path);
-    static void UnloadTexture(Texture& tex);
+    static Texture LoadTextureSrc(const char* path);
+    static void UnloadTexture(const Texture& tex);
+
+    static void ScreenClear(Color color);
+
     static void RenderTexture(Texture *tex, Vec2 position, Vec2 size, Color color);
     static void RenderBegin();
     static void RenderEnd();

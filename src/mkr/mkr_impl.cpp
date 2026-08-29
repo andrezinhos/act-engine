@@ -166,9 +166,8 @@ void mkr::UnloadDefaultBatch(){
     mkgl::state.dbatch.vertices.clear();
 }
 
-Texture mkr::LoadTexture(const char* path){
+Texture mkr::LoadTextureSrc(const char* path){
     Image image = mkgl::loadImage(path);
-
     Texture tex;
     tex.id = mkgl::genTex(GL_TEXTURE_2D);
 
@@ -183,9 +182,13 @@ Texture mkr::LoadTexture(const char* path){
     return tex;
 }
 
-void mkr::UnloadTexture(Texture& tex){
+void mkr::UnloadTexture(const Texture& tex){
     if (tex.id != 0) glDeleteTextures(1, &tex.id);
     printf("Texture Unloaded\n");
+}
+
+void mkr::ScreenClear(Color color){
+    mkgl::clearScreen(color);
 }
 
 void mkr::RenderTexture(Texture *tex, Vec2 position, Vec2 size, Color color){

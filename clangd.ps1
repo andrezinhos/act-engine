@@ -18,7 +18,7 @@ if (-Not (Test-Path -Path $build_mkr)){
 
 Set-Location $build_mkr
 Write-Host "MONKEY RENDER BUILD"
-cmake ..
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){
@@ -30,11 +30,11 @@ if ($LASTEXITCODE -ne 0){
 Write-Host "MONKEY RENDER BUILDED"
 Set-Location $source
 
-# return to root
+# return to root dir
 # ------------------------------------------
 
 Set-Location $build
-cmake ..
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){

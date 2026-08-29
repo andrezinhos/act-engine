@@ -1,11 +1,18 @@
 Clear-Host
 Write-Host "CLEANING RESOURCES"
 
+$build_mkr = "src/mkr/build"
 $build = "build"
+
+if (Test-Path -Path $build_mkr){
+	Remove-Item -Path $build_mkr -Recurse -Force
+	Write-Host "CLEANED MONKEY RENDER BUILD FOLDER"
+} else {
+	Write-Host "FOLDER ALREADY CLEAN"
+}
 
 if (Test-Path -Path $build){
 	Remove-Item -Path $build -Recurse -Force
-
 	Write-Host "CLEANED BUILD FOLDER"
 	Read-Host "PRESS ENTER TO EXIT"
 	Clear-Host
@@ -14,4 +21,3 @@ if (Test-Path -Path $build){
 	Read-Host "PRESS ENTER TO EXIT"
 	Clear-Host
 }
-

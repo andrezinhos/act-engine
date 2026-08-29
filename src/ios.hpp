@@ -1,5 +1,6 @@
 #pragma once
 #include "core.hpp"
+#include <string>
 
 enum class Keys {
     W = 87,
@@ -13,8 +14,8 @@ private:
     static void start_funcs();
     static void start_types();
 
-    static int curr[GLFW_KEY_LAST + 1];
-    static int prev[GLFW_KEY_LAST + 1];
+    static int curr[348 + 1];
+    static int prev[348 + 1];
 public:
     static void init_script();
     static void LoadScriptFuncs();
@@ -22,4 +23,6 @@ public:
 	static void InputUpdate();
     static bool KeyDown(Keys key);
     static bool KeyPressed(Keys key);
+
+    static Texture LoadTexture(const std::string& path);
 };

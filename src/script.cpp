@@ -9,7 +9,9 @@ sol::state script;
 void ios::start_types(){
     script.new_enum("flags",
         "vsync", Flags::VSYNC,
-        "resizable", Flags::RESIZABLE
+        "resizable", Flags::RESIZABLE,
+        "max", Flags::MAXIMIZED,
+        "full", Flags::FULLSCREEN
     );
 
     script.new_usertype<Vec2>("vec2",
@@ -35,9 +37,6 @@ void ios::start_types(){
     );
 
     script.new_usertype<Texture>("tex_2d",
-        sol::meta_function::garbage_collect, sol::destructor([](Texture& tex){
-            mkr::UnloadTexture(tex);
-        }),
         "width", &Texture::width,
         "height", &Texture::height
     );
@@ -76,7 +75,7 @@ void ios::start_funcs(){
         core::MainWindow(width, height, title.c_str());
     };
 
-    core_table["clear"] = [](Color color){ core::ScreenClear(color); };
+    core_table["clear"] = [](Color color){ mkr::ScreenClear(color); };
 
     core_table["loop"] = core::Loop;
     core_table["stop"] = core::Finish;
@@ -96,9 +95,9 @@ void ios::start_funcs(){
         std::abort();
     };
 
-    ios_table["load_tex"] = [](const std::string& path) -> Texture {
-        return mkr::LoadTexture(path.c_str());
-    };
+    // ios_table["load_tex"] = [](const std::string& path) -> Texture {
+    //     return ios::LoadTexture(path.c_str());
+    // };
 
     ios_table["key_down"] = [](Keys key){
     	return ios::KeyDown(key);
@@ -119,14 +118,14 @@ void ios::start_funcs(){
     mkr_table["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
     mkr_table["cam_end"] = mkr::CameraEnd;
 
-    // mkr_table["draw_tex"] = [](float size, Color color){
-    //     mkr::DrawTexture(sprite, size, color);
-    // };
+    mkr_table["draw_tex"] = [](Texture* tex, Vec2 position, Vec2 size, Color color){
+        mkr::RenderTexture(tex, position, size, color);
+    };
 
     script["render"] = mkr_table;
 }
 
 void ios::LoadScriptFuncs(){
     start_funcs();
-    script.script_file("init.lua");
+    script.script_file("assets/scripts/init.lua");
 }

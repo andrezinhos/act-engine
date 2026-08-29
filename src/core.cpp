@@ -1,18 +1,11 @@
 #include "core.hpp"
 #include "ios.hpp"
+#include "stack.hpp"
 #include <cstdio>
 
 constexpr const char* VERSION = "0.10.0";
 
 Time core::time = {};
-
-// void frameCallback(GLFWwindow* window, int w, int h){
-// 	if (w == 0 || h == 0) return;
-
-//     glViewport(0, 0, w, h);
-//     core::state.window.win_width = w;
-//     core::state.window.win_height = h;
-// }
 
 void core::WindowFlag(Flags flag){
     switch(flag){
@@ -63,15 +56,11 @@ void core::MainWindow(int width, int height, const char *title){
     } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");
 }
 
-void core::ScreenClear(Color color){
-    mkgl::clearScreen(color);
-}
-
 // void core::Follow(Camera2D& cam, Sprite& sprite){
-// 	cam.position = {
-// 		sprite.position.x - ((float)GetWindowWidth()/2) + ((float)sprite.texture.width/2),
-// 		sprite.position.y - ((float)GetWindowHeight()/2) + ((float)sprite.texture.height/2),
-// 	};
+//     cam.position = {
+//         sprite.position.x - ((float)GetWindowWidth()/2) + ((float)sprite.texture.width/2),
+//         sprite.position.y - ((float)GetWindowHeight()/2) + ((float)sprite.texture.height/2),
+//     };
 // }
 
 double LockCPU(){
@@ -108,5 +97,6 @@ bool core::Loop(){
 }
 
 void core::Finish(){
+    stack::UnloadAll();
     mkr::Shutdown();
 }

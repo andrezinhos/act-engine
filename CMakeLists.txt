@@ -20,6 +20,8 @@ add_executable(app
   src/main.cpp
   src/core.cpp
   src/inputs.cpp
+  src/stack.cpp
+  src/esys.cpp
   src/script.cpp
 )
 
