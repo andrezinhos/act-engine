@@ -1,6 +1,5 @@
 #include "ios.hpp"
-#include "stack.hpp"
-
+#include "mkr.hpp"
 
 int ios::curr[348 + 1];
 int ios::prev[348 + 1];
@@ -19,10 +18,4 @@ bool ios::KeyDown(Keys key){
 
 bool ios::KeyPressed(Keys key){
 	return curr[static_cast<int>(key)] && !prev[static_cast<int>(key)];
-}
-
-Texture ios::LoadTexture(const std::string &path){
-    Texture tex = mkr::LoadTextureSrc(path.c_str());
-    // stack::PushSprite(tex);
-    return tex;
 }

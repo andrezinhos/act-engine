@@ -2,7 +2,15 @@
 #include "mkgl.hpp"
 #include "glfw/glfw3.h"
 
+enum Cursor{
+    NORMAL,
+    HIDDEN,
+    DISABLED
+};
+
 struct Window{
+    Cursor cursor;
+    GLFWimage icon;
 	GLFWmonitor* moni = nullptr;
 	const GLFWvidmode* mode = nullptr;
     GLFWwindow* main = nullptr;
@@ -10,9 +18,14 @@ struct Window{
 };
 
 class mkr{
+private:
+    static bool createWindowContext();
+    static void setWindowPosition(int width, int height);
 public:
     static int flags_active[4];
     static Window wmain;
+    static void setWindowIcon(const char* path);
+    static void setCursorMode(Cursor cur);
     static bool startWindow(int width, int height, const char* title);
 
     static void Initialize();

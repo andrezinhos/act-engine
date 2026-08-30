@@ -1,11 +1,10 @@
 #include "core.hpp"
 #include "esys.hpp"
 #include "ios.hpp"
-#include "stack.hpp"
 
 int main(){
 
-	bool debug_mode = true;
+	bool debug_mode = false;
 
     if (!debug_mode){
        	ios::init_script();
@@ -17,16 +16,13 @@ int main(){
         core::TargetFPS(60);
         core::MainWindow(800, 600, "Window");
 
-        Texture tex2 = ios::LoadTexture("assets/sprites/neutral.png");
         Sprite neutral;
-
         neutral.load("assets/sprites/neutral.png");
         neutral.pos(0, 0);
         neutral.size(500, 500);
 
         Sprite smile;
         smile.load("assets/sprites/smile.png");
-
         smile.size(100, 100);
 
         float posX = ((float)core::GetWindowWidth()/2) - ((float)smile.tex.width/2);

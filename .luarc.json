@@ -2,15 +2,14 @@
     "diagnostics.globals": [
         "eng",
         "flags",
-        "color",
-        "vec2",
-        "cam_2d",
+        "Vec2",
+        "Cam2D",
         "render",
         "key",
         "ios",
-        "cam_3d",
-        "vec3",
+        "Vec3",
         "black",
-        "white"
+        "white",
+        "Sprite"
     ]
 }

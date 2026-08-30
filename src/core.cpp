@@ -3,7 +3,7 @@
 #include "stack.hpp"
 #include <cstdio>
 
-constexpr const char* VERSION = "0.10.0";
+constexpr const char* VERSION = "0.10.5";
 
 Time core::time = {};
 
@@ -18,7 +18,7 @@ void core::WindowFlag(Flags flag){
 
 void core::init(){
     bool has_init = glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -52,16 +52,10 @@ void core::MainWindow(int width, int height, const char *title){
     if (win_started){
         mkr::Initialize();
         time.lastTime = glfwGetTime();
+        mkr::setWindowIcon("assets/sprites/w_icon.png");
         printf("[INFO] ENGINE INITIALIZED\n");
     } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");
 }
-
-// void core::Follow(Camera2D& cam, Sprite& sprite){
-//     cam.position = {
-//         sprite.position.x - ((float)GetWindowWidth()/2) + ((float)sprite.texture.width/2),
-//         sprite.position.y - ((float)GetWindowHeight()/2) + ((float)sprite.texture.height/2),
-//     };
-// }
 
 double LockCPU(){
     double currTime = glfwGetTime();

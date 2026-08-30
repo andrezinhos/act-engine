@@ -1,4 +1,5 @@
 #include "mkr.hpp"
+#include "stb_image.h"
 
 Window mkr::wmain;
 
@@ -10,6 +11,18 @@ void frameCallback(GLFWwindow* window, int w, int h){
     glViewport(0, 0, w, h);
     mkr::wmain.win_width = w;
     mkr::wmain.win_height = h;
+}
+
+void mkr::setWindowIcon(const char* path){
+    wmain.icon.pixels = stbi_load(path, &wmain.icon.width, &wmain.icon.height, 0, 4);
+    glfwSetWindowIcon(wmain.main, 1, &wmain.icon);
+    stbi_image_free(wmain.icon.pixels);
+}
+
+void mkr::setCursorMode(Cursor cur){
+    if (cur == NORMAL) glfwSetInputMode(wmain.main, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    if (cur == HIDDEN) glfwSetInputMode(wmain.main, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    if (cur == DISABLED) glfwSetInputMode(wmain.main, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 bool mkr::startWindow(int width, int height, const char* title){
@@ -27,23 +40,17 @@ bool mkr::startWindow(int width, int height, const char* title){
     if (flags_active[1] == 1) glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     wmain.main = glfwCreateWindow(width, height, title, wmain.moni, nullptr);
     if (flags_active[2] == 1) glfwMaximizeWindow(wmain.main);
-
     if (!wmain.main){
         printf("Error to Create Window");
         glfwTerminate();
         return false;
     }
+
+    setWindowPosition(width, height);
+    
     glfwSetFramebufferSizeCallback(wmain.main, frameCallback);
 
-    glfwMakeContextCurrent(wmain.main);
-    if (flags_active[0] == 1) glfwSwapInterval(1);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-        printf("Error to Load OpenGL Context");
-        glfwDestroyWindow(wmain.main);
-        glfwTerminate();
-        return false;
-    }
+    createWindowContext();
 
 	// this is for in case of wrong viewport
 	// on start of the window, specially in the maximized flag

@@ -1,5 +1,6 @@
 #include "ios.hpp"
 #include "core.hpp"
+#include "esys.hpp"
 #include <string>
 #define SOL_ALL_SAFETIES_ON 1
 #include "sol.hpp"
@@ -7,21 +8,14 @@
 sol::state script;
 
 void ios::start_types(){
-    script.new_enum("flags",
-        "vsync", Flags::VSYNC,
-        "resizable", Flags::RESIZABLE,
-        "max", Flags::MAXIMIZED,
-        "full", Flags::FULLSCREEN
-    );
-
-    script.new_usertype<Vec2>("vec2",
+    script.new_usertype<Vec2>("Vec2",
         sol::constructors<Vec2(float, float)>(),
         "x", &Vec2::x,
         "y", &Vec2::y,
         "zero", &Vec2::Zero
     );
 
-    script.new_usertype<Vec3>("vec3",
+    script.new_usertype<Vec3>("Vec3",
         sol::constructors<Vec3(float, float, float)>(),
         "x", &Vec3::x,
         "y", &Vec3::y,
@@ -29,14 +23,14 @@ void ios::start_types(){
         "zero", &Vec3::Zero
     );
 
-    script.new_usertype<Camera2D>("cam_2d",
+    script.new_usertype<Camera2D>("Cam2D",
         sol::constructors<Camera2D(Vec2, float, float)>(),
         "position", &Camera2D::position,
         "rotation", &Camera2D::rotation,
         "zoom", &Camera2D::zoom
     );
 
-    script.new_usertype<Texture>("tex_2d",
+    script.new_usertype<Texture>("Tex2D",
         "width", &Texture::width,
         "height", &Texture::height
     );
@@ -48,6 +42,15 @@ void ios::start_types(){
 		"d", Keys::D
 	);
 
+    script["vsync"] = Flags::VSYNC;
+    script["resizable"] = Flags::RESIZABLE;
+    script["max"] = Flags::MAXIMIZED;
+    script["full"] = Flags::FULLSCREEN;
+
+    script["normal"] = Cursor::NORMAL;
+    script["hidden"] = Cursor::HIDDEN;
+    script["disabled"] = Cursor::DISABLED;
+
     script["red"] = Red;
     script["green"] = Green;
     script["blue"] = Blue;
@@ -55,9 +58,22 @@ void ios::start_types(){
     script["black"] = Black;
 }
 
+void ios::load_conteiners(){
+    script.new_usertype<Sprite>("Sprite",
+        "texture", &Sprite::tex,
+        "position", &Sprite::position,
+        "id", &Sprite::id,
+        
+        "load", &Sprite::load,
+        "pos", &Sprite::pos,
+        "size", &Sprite::size
+    );
+}
+
 void ios::init_script(){
     script.open_libraries(sol::lib::base, sol::lib::package);
     start_types();
+    load_conteiners();
 }
 
 void ios::start_funcs(){
@@ -95,10 +111,6 @@ void ios::start_funcs(){
         std::abort();
     };
 
-    // ios_table["load_tex"] = [](const std::string& path) -> Texture {
-    //     return ios::LoadTexture(path.c_str());
-    // };
-
     ios_table["key_down"] = [](Keys key){
     	return ios::KeyDown(key);
     };
@@ -118,8 +130,10 @@ void ios::start_funcs(){
     mkr_table["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
     mkr_table["cam_end"] = mkr::CameraEnd;
 
-    mkr_table["draw_tex"] = [](Texture* tex, Vec2 position, Vec2 size, Color color){
-        mkr::RenderTexture(tex, position, size, color);
+    mkr_table["cursor"] = [](Cursor cur) { mkr::setCursorMode(cur); };
+
+    mkr_table["sprite"] = [](int id, Sprite& sprite){
+        esys::RenderSprite(id, sprite);
     };
 
     script["render"] = mkr_table;

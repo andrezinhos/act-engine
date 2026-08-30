@@ -2,9 +2,7 @@
 #include "gmath.hpp"
 #include <cstdbool>
 #include <cstdint>
-#include "mkr/mkr.hpp"
-#include "glfw/glfw3.h"
-#include "utils.hpp"
+#include "mkr.hpp"
 
 enum Flags{
     VSYNC,

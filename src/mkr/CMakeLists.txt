@@ -7,12 +7,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
 set(GLFW_HEADERS ${CMAKE_SOURCE_DIR}/external/glfw)
-set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3dll.a)
+set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3.a)
 
 # executable files
 add_library(mkr STATIC
   glad.cpp
   mkgl.cpp
+  mkr_helpers.cpp
   mkr_impl.cpp
 )
 

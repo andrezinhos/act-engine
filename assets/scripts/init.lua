@@ -1,44 +1,50 @@
-eng.win_flag(flags.full)
-eng.win_flag(flags.resizable)
+-- eng.win_flag(max)
+eng.win_flag(resizable)
 eng.fps(60)
 eng.start(800, 600, "Window")
 
-local tex = ios.load_tex("assets/sprites/smile.png")
-local tex2 = ios.load_tex("assets/sprites/neutral.png")
+render.cursor(hidden);
 
-tex.width = 100
-tex.height = 100
+local smile = Sprite.new()
+local neutral = Sprite.new()
 
-local posX = (eng.win_width() / 2) - (tex.width / 2)
-local posY = (eng.win_height() / 2) - (tex.height / 2)
+smile:load("assets/sprites/smile.png")
+neutral:load("assets/sprites/neutral.png")
 
-local pos = vec2.new(posX, posY);
-local cam = cam_2d.new(pos, 0, 1)
+smile:size(100, 100)
+neutral:size(500, 500)
 
+local posX = (eng.win_width() / 2) - (smile.texture.width / 2)
+local posY = (eng.win_height() / 2) - (smile.texture.height / 2)
+
+smile:pos(posX, posY);
+neutral:pos(0, 0)
+
+local cam = Cam2D.new(smile.position, 0, 1)
 while eng.loop() do
 	eng.clear(black)
 
 	if ios.key_down(key.w) then
-		pos.y = pos.y - 500 * eng.delta()
+		smile.position.y = smile.position.y - 500 * eng.delta()
 	end
 	if ios.key_down(key.s) then
-		pos.y = pos.y + 500 * eng.delta()
+		smile.position.y = smile.position.y + 500 * eng.delta()
 	end
 	if ios.key_down(key.a) then
-		pos.x = pos.x - 500 * eng.delta()
+		smile.position.x = smile.position.x - 500 * eng.delta()
 	end
 	if ios.key_down(key.d) then
-		pos.x = pos.x + 500 * eng.delta()
+		smile.position.x = smile.position.x + 500 * eng.delta()
 	end
 
-	cam.position.x = pos.x - (eng.win_width()/2) + (tex.width /2)
-	cam.position.y = pos.y - (eng.win_height()/2) + (tex.height /2)
+	cam.position.x = smile.position.x - (eng.win_width()/2) + (smile.texture.width /2)
+	cam.position.y = smile.position.y - (eng.win_height()/2) + (smile.texture.height /2)
 
     render.begin_draw()
     render.cam_begin(cam)
 
-    render.draw_tex(tex2, vec2.zero(), vec2.new(600, 600), white)
-    render.draw_tex(tex, pos, vec2.new(100, 100), white)
+    render.sprite(neutral.id, neutral)
+    render.sprite(smile.id, smile)
 
     render.cam_end()
     render.end_draw();
