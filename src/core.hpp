@@ -24,15 +24,13 @@ private:
 public:
     static Time time;
     static float GetDelta();
-    static int GetWindowWidth();
-    static int GetWindowHeight();
 
     static void WindowFlag(Flags flag);
     static void TargetFPS(double fps);
     static void MainWindow(int width, int height, const char* title);
 
+    // not implemented
     // static void Follow(Camera2D& cam, Sprite& sprite);
-
 
     static bool Loop();
     static void Finish();

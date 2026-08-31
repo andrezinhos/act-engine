@@ -28,6 +28,9 @@ public:
     static void setCursorMode(Cursor cur);
     static bool startWindow(int width, int height, const char* title);
 
+    static int GetWindowWidth();
+    static int GetWindowHeight();
+
     static void Initialize();
     static void Shutdown();
     static Shader DefaultShader();

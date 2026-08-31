@@ -1,9 +1,10 @@
 #include "core.hpp"
+#include "amk.hpp"
 #include "ios.hpp"
 #include "stack.hpp"
 #include <cstdio>
 
-constexpr const char* VERSION = "0.10.5";
+constexpr const char* VERSION = "0.11.2";
 
 Time core::time = {};
 
@@ -35,14 +36,6 @@ float core::GetDelta(){
     return time.delta;
 }
 
-int core::GetWindowWidth(){
-	return mkr::wmain.win_width;
-}
-
-int core::GetWindowHeight(){
-	return mkr::wmain.win_height;
-}
-
 void core::MainWindow(int width, int height, const char *title){
     core::init();
     mkr::wmain.win_width = width;
@@ -53,6 +46,7 @@ void core::MainWindow(int width, int height, const char *title){
         mkr::Initialize();
         time.lastTime = glfwGetTime();
         mkr::setWindowIcon("assets/sprites/w_icon.png");
+        amk::initAudioDevice();
         printf("[INFO] ENGINE INITIALIZED\n");
     } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");
 }
@@ -92,5 +86,6 @@ bool core::Loop(){
 
 void core::Finish(){
     stack::UnloadAll();
+    amk::endAudioDevice();
     mkr::Shutdown();
 }

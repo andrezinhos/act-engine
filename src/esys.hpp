@@ -1,5 +1,26 @@
 #pragma once
 #include "mkr.hpp"
+#include "amk.hpp"
+
+struct Sound{
+    Decoder decoder;
+    NodeSource source;
+    int id;
+
+    void load(const char* path);
+    void play(int id);
+};
+
+struct Music{
+    Decoder decoder;
+    NodeSource source;
+    int id;
+
+    void load(const char* path);
+    void play(int id);
+    void stop(int id);
+    void pause(int id);
+};
 
 struct Sprite{
     Texture tex;

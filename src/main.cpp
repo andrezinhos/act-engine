@@ -4,7 +4,7 @@
 
 int main(){
 
-	bool debug_mode = false;
+	bool debug_mode = true;
 
     if (!debug_mode){
        	ios::init_script();
@@ -25,9 +25,13 @@ int main(){
         smile.load("assets/sprites/smile.png");
         smile.size(100, 100);
 
-        float posX = ((float)core::GetWindowWidth()/2) - ((float)smile.tex.width/2);
-        float posY = ((float)core::GetWindowHeight()/2) - ((float)smile.tex.height/2);
-        
+        float posX = ((float)mkr::GetWindowWidth()/2) - ((float)smile.tex.width/2);
+        float posY = ((float)mkr::GetWindowHeight()/2) - ((float)smile.tex.height/2);
+
+        Sound sound;
+
+        sound.load("assets/Jump.wav");
+
         smile.pos(posX, posY);
 
         Camera2D cam = {Vec2::Zero(), 0.0f, 1.0f};
@@ -40,6 +44,7 @@ int main(){
             if (ios::KeyDown(Keys::A)) smile.position.x -= speed * core::GetDelta();
             if (ios::KeyDown(Keys::D)) smile.position.x += speed * core::GetDelta();
 
+            if (ios::KeyPressed(Keys::E)) sound.play(sound.id);
     		// core::Follow(cam, sprite);
 
             mkr::RenderBegin();

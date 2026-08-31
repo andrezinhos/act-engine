@@ -14,8 +14,8 @@ neutral:load("assets/sprites/neutral.png")
 smile:size(100, 100)
 neutral:size(500, 500)
 
-local posX = (eng.win_width() / 2) - (smile.texture.width / 2)
-local posY = (eng.win_height() / 2) - (smile.texture.height / 2)
+local posX = (render.win_width() / 2) - (smile.texture.width / 2)
+local posY = (render.win_height() / 2) - (smile.texture.height / 2)
 
 smile:pos(posX, posY);
 neutral:pos(0, 0)
@@ -37,8 +37,8 @@ while eng.loop() do
 		smile.position.x = smile.position.x + 500 * eng.delta()
 	end
 
-	cam.position.x = smile.position.x - (eng.win_width()/2) + (smile.texture.width /2)
-	cam.position.y = smile.position.y - (eng.win_height()/2) + (smile.texture.height /2)
+	cam.position.x = smile.position.x - (render.win_width()/2) + (smile.texture.width /2)
+	cam.position.y = smile.position.y - (render.win_height()/2) + (smile.texture.height /2)
 
     render.begin_draw()
     render.cam_begin(cam)

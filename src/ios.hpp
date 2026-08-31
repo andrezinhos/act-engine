@@ -5,6 +5,9 @@ enum class Keys {
     A = 65,
     S = 83,
     D = 68,
+
+    Q = 81,
+    E = 69,
 };
 
 class ios{

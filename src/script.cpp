@@ -63,7 +63,7 @@ void ios::load_conteiners(){
         "texture", &Sprite::tex,
         "position", &Sprite::position,
         "id", &Sprite::id,
-        
+
         "load", &Sprite::load,
         "pos", &Sprite::pos,
         "size", &Sprite::size
@@ -83,9 +83,6 @@ void ios::start_funcs(){
     core_table["win_flag"] = [](Flags flag){ core::WindowFlag(flag); };
     core_table["fps"] = [](double fps){ core::TargetFPS(fps); };
     core_table["delta"] = core::GetDelta;
-
-    core_table["win_width"] = core::GetWindowWidth;
-    core_table["win_height"] = core::GetWindowHeight;
 
     core_table["start"] = [](int width, int height, const std::string& title){
         core::MainWindow(width, height, title.c_str());
@@ -124,6 +121,9 @@ void ios::start_funcs(){
     /* RENDER FUNCS */
 
     sol::table mkr_table = script.create_table();
+
+    mkr_table["win_width"] = mkr::GetWindowWidth;
+    mkr_table["win_height"] = mkr::GetWindowHeight;
 
     mkr_table["begin_draw"] = mkr::RenderBegin;
     mkr_table["end_draw"] = mkr::RenderEnd;

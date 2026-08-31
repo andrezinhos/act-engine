@@ -16,6 +16,36 @@ void Sprite::size(int x, int y){
     tex.height = y;
 }
 
+void Sound::load(const char* path){
+    id = stack::PushSoundAudio(path);
+}
+
+void Sound::play(int id){
+    auto it = stack::soundmap.find(id);
+    if (it != stack::soundmap.end()){
+        amk::PlayAudioFile(it->second.decoder, it->second.source);
+    }
+}
+
+void Music::load(const char* path){
+    id = stack::PushMusicAudio(path);
+}
+
+void Music::play(int id){
+    auto it = stack::soundmap.find(id);
+    if (it != stack::soundmap.end()){
+        amk::PlayAudioFile(it->second.decoder, it->second.source);
+    }
+}
+
+void Music::stop(int id){
+    //not implemented
+}
+
+void Music::pause(int id){
+    //not implemented
+}
+
 void esys::RenderSprite(int id, Sprite& sprite){
     auto it = stack::texmap.find(id);
     if (it != stack::texmap.end()){

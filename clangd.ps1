@@ -3,10 +3,19 @@ Write-Host "BUILDING..."
 
 $source = Get-Location
 $build = "build"
+
 $build_mkr = "src/mkr/build"
+$lib_mkr = "src/mkr/lib"
+
+$build_amk = "src/amk/build"
+$lib_amk = "src/amk/lib"
 
 if (-Not (Test-Path -Path "bin")){
 	New-Item -Path "bin" -ItemType Directory | Out-Null
+}
+
+if (-Not (Test-Path -Path $build)){
+	New-Item -Path $build -ItemType Directory | Out-Null
 }
 
 # ------------------------------------------
@@ -14,6 +23,10 @@ if (-Not (Test-Path -Path "bin")){
 
 if (-Not (Test-Path -Path $build_mkr)){
 	New-Item -Path $build_mkr -ItemType Directory | Out-Null
+}
+
+if (-Not (Test-Path -Path $lib_mkr)){
+	New-Item -Path $lib_mkr -ItemType Directory | Out-Null
 }
 
 Set-Location $build_mkr
@@ -31,6 +44,34 @@ Write-Host "MONKEY RENDER BUILDED"
 Set-Location $source
 
 # return to root dir
+# ------------------------------------------
+
+# ------------------------------------------
+# enter the audio make dir to build
+
+if (-Not (Test-Path -Path $build_amk)){
+	New-Item -Path $build_amk -ItemType Directory | Out-Null
+}
+
+if (-Not (Test-Path -Path $lib_amk)){
+	New-Item -Path $lib_amk -ItemType Directory | Out-Null
+}
+
+Set-Location $build_amk
+Write-Host "AUDIO MAKE BUILD"
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build .
+
+if ($LASTEXITCODE -ne 0){
+	Write-Host "AUDIO MAKE BUILD ERROR"
+	Set-Location $source
+	exit 1
+}
+
+Write-Host "AUDIO MAKE BUILDED"
+Set-Location $source
+
+# return to root
 # ------------------------------------------
 
 Set-Location $build

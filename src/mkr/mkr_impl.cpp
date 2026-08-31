@@ -47,7 +47,7 @@ bool mkr::startWindow(int width, int height, const char* title){
     }
 
     setWindowPosition(width, height);
-    
+
     glfwSetFramebufferSizeCallback(wmain.main, frameCallback);
 
     createWindowContext();
@@ -61,6 +61,14 @@ bool mkr::startWindow(int width, int height, const char* title){
     wmain.win_height = fb_h;
 
     return true;
+}
+
+int mkr::GetWindowWidth(){
+	return mkr::wmain.win_width;
+}
+
+int mkr::GetWindowHeight(){
+	return mkr::wmain.win_height;
 }
 
 void mkr::Initialize(){
@@ -191,7 +199,7 @@ Texture mkr::LoadTextureSrc(const char* path){
 
 void mkr::UnloadTexture(const Texture& tex){
     if (tex.id != 0) glDeleteTextures(1, &tex.id);
-    printf("Texture Unloaded\n");
+    printf("[INFO] TEXTURE UNLOADED\n");
 }
 
 void mkr::ScreenClear(Color color){
