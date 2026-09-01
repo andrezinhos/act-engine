@@ -6,6 +6,7 @@
 #undef R
 #undef C
 #define MA_NO_MP3
+#define MA_NO_FLAC
 #define MINIAUDIO_IMPLEMENTATION
 #define MA_SUPPORT_VORBIS
 #include "miniaudio.h"
