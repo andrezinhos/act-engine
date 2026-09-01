@@ -4,7 +4,7 @@
 
 int main(){
 
-	bool debug_mode = true;
+	bool debug_mode = false;
 
     if (!debug_mode){
        	ios::init_script();
@@ -29,8 +29,10 @@ int main(){
         float posY = ((float)mkr::GetWindowHeight()/2) - ((float)smile.tex.height/2);
 
         Sound sound;
+        Music music;
 
         sound.load("assets/Jump.wav");
+        music.load("assets/awe.mp3");
 
         smile.pos(posX, posY);
 
@@ -44,7 +46,8 @@ int main(){
             if (ios::KeyDown(Keys::A)) smile.position.x -= speed * core::GetDelta();
             if (ios::KeyDown(Keys::D)) smile.position.x += speed * core::GetDelta();
 
-            if (ios::KeyPressed(Keys::E)) sound.play(sound.id);
+            if (ios::KeyPressed(Keys::E)) sound.play();
+            if (ios::KeyPressed(Keys::Q)) music.play();
     		// core::Follow(cam, sprite);
 
             mkr::RenderBegin();

@@ -1,14 +1,16 @@
 #pragma once
 #include "mkr.hpp"
 #include "amk.hpp"
+#include <vector>
 
 struct Sound{
+    std::vector<unsigned char> data;
     Decoder decoder;
     NodeSource source;
     int id;
 
     void load(const char* path);
-    void play(int id);
+    void play();
 };
 
 struct Music{
@@ -17,7 +19,7 @@ struct Music{
     int id;
 
     void load(const char* path);
-    void play(int id);
+    void play();
     void stop(int id);
     void pause(int id);
 };

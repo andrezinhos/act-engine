@@ -40,7 +40,7 @@ if ($LASTEXITCODE -ne 0){
 	exit 1
 }
 
-Write-Host "MONKEY RENDER BUILDED"
+Clear-Host
 Set-Location $source
 
 # return to root dir
@@ -68,7 +68,7 @@ if ($LASTEXITCODE -ne 0){
 	exit 1
 }
 
-Write-Host "AUDIO MAKE BUILDED"
+Clear-Host
 Set-Location $source
 
 # return to root

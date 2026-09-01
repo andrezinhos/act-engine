@@ -39,7 +39,9 @@ void ios::start_types(){
 		"w", Keys::W,
 		"a", Keys::A,
 		"s", Keys::S,
-		"d", Keys::D
+		"d", Keys::D,
+		"q", Keys::Q,
+		"e", Keys::E
 	);
 
     script["vsync"] = Flags::VSYNC;
@@ -68,6 +70,22 @@ void ios::load_conteiners(){
         "pos", &Sprite::pos,
         "size", &Sprite::size
     );
+
+    script.new_usertype<Sound>("Sound",
+        "id", &Sound::id,
+
+        "load", &Sound::load,
+        "play", &Sound::play
+    );
+
+    script.new_usertype<Music>("Music",
+        "id", &Music::id,
+
+        "load", &Music::load,
+        "play", &Music::play,
+        "stop", &Music::stop,
+        "pause", &Music::pause
+    );
 }
 
 void ios::init_script(){
@@ -92,6 +110,8 @@ void ios::start_funcs(){
 
     core_table["loop"] = core::Loop;
     core_table["stop"] = core::Finish;
+
+    core_table["master_vol"] = [](double vol){ amk::MasterVolume(vol); };
 
     script["eng"] = core_table;
 

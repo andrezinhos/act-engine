@@ -4,7 +4,7 @@
 #include "stack.hpp"
 #include <cstdio>
 
-constexpr const char* VERSION = "0.11.2";
+constexpr const char* VERSION = "0.11.3";
 
 Time core::time = {};
 

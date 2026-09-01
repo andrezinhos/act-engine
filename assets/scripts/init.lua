@@ -8,6 +8,9 @@ render.cursor(hidden);
 local smile = Sprite.new()
 local neutral = Sprite.new()
 
+local jump = Sound.new()
+local theme = Music.new()
+
 smile:load("assets/sprites/smile.png")
 neutral:load("assets/sprites/neutral.png")
 
@@ -19,6 +22,11 @@ local posY = (render.win_height() / 2) - (smile.texture.height / 2)
 
 smile:pos(posX, posY);
 neutral:pos(0, 0)
+
+jump:load("assets/Jump.wav")
+theme:load("assets/t1.ogg")
+
+theme:play()
 
 local cam = Cam2D.new(smile.position, 0, 1)
 while eng.loop() do
@@ -33,9 +41,13 @@ while eng.loop() do
 	if ios.key_down(key.a) then
 		smile.position.x = smile.position.x - 500 * eng.delta()
 	end
-	if ios.key_down(key.d) then
-		smile.position.x = smile.position.x + 500 * eng.delta()
-	end
+    if ios.key_down(key.d) then
+        smile.position.x = smile.position.x + 500 * eng.delta()
+    end
+
+    if ios.key_pressed(key.e) then
+        jump:play()
+    end
 
 	cam.position.x = smile.position.x - (render.win_width()/2) + (smile.texture.width /2)
 	cam.position.y = smile.position.y - (render.win_height()/2) + (smile.texture.height /2)

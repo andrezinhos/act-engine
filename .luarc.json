@@ -1,7 +1,10 @@
 {
     "diagnostics.globals": [
         "eng",
-        "flags",
+        "vsync",
+        "resizable",
+        "max",
+        "full",
         "Vec2",
         "Cam2D",
         "render",
@@ -10,6 +13,11 @@
         "Vec3",
         "black",
         "white",
-        "Sprite"
+        "Sprite",
+        "Sound",
+        "normal",
+        "hidden",
+        "disabled",
+        "Music"
     ]
 }

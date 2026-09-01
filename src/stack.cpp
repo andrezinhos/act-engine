@@ -19,13 +19,23 @@ int stack::PushSprite(Texture& sprite){
 
 int stack::PushSoundAudio(const char* path){
     int id = sound_count++;
-    amk::LoadAudioFile(path, soundmap[id].decoder, soundmap[id].source);
+    soundmap[id].data = amk::loadBytes(path);
+    amk::LoadSoundAudioFile(
+        soundmap[id].data.data(),
+        soundmap[id].data.size(),
+        soundmap[id].decoder,
+        soundmap[id].source
+    );
     return id;
 }
 
 int stack::PushMusicAudio(const char* path){
-    int id = sound_count++;
-    amk::LoadAudioFile(path, musicmap[id].decoder, musicmap[id].source);
+    int id = music_count++;
+    amk::LoadMusicAudioFile(
+        path,
+        musicmap[id].decoder,
+        musicmap[id].source
+    );
     return id;
 }
 

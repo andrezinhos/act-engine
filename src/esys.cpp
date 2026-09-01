@@ -20,8 +20,8 @@ void Sound::load(const char* path){
     id = stack::PushSoundAudio(path);
 }
 
-void Sound::play(int id){
-    auto it = stack::soundmap.find(id);
+void Sound::play(){
+    auto it = stack::soundmap.find(stack::soundmap[id].id);
     if (it != stack::soundmap.end()){
         amk::PlayAudioFile(it->second.decoder, it->second.source);
     }
@@ -31,9 +31,9 @@ void Music::load(const char* path){
     id = stack::PushMusicAudio(path);
 }
 
-void Music::play(int id){
-    auto it = stack::soundmap.find(id);
-    if (it != stack::soundmap.end()){
+void Music::play(){
+    auto it = stack::musicmap.find(stack::musicmap[id].id);
+    if (it != stack::musicmap.end()){
         amk::PlayAudioFile(it->second.decoder, it->second.source);
     }
 }
