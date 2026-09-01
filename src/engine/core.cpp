@@ -1,12 +1,16 @@
 #include "core.hpp"
 #include "amk.hpp"
 #include "ios.hpp"
+#include "scene.hpp"
 #include "stack.hpp"
 #include <cstdio>
+#include <memory>
 
-constexpr const char* VERSION = "0.11.3";
+constexpr const char* VERSION = "0.12.0";
 
 Time core::time = {};
+std::unique_ptr<Scene> core::currScene = nullptr;
+std::unique_ptr<Scene> core::nextScene = nullptr;
 
 void core::WindowFlag(Flags flag){
     switch(flag){
@@ -34,6 +38,34 @@ void core::TargetFPS(double fps){
 
 float core::GetDelta(){
     return time.delta;
+}
+
+void core::setScene(std::unique_ptr<Scene> scene){
+    nextScene = std::move(scene);
+}
+
+void core::InitialScene(std::unique_ptr<Scene> initial){
+    currScene = std::move(initial);
+    currScene->Init();
+
+    while(Loop()) {
+        if (nextScene){
+            if (currScene) currScene->Exit();
+            currScene = std::move(nextScene);
+            currScene->Init();
+        }
+
+        float dt = GetDelta();
+
+        mkr::ScreenClear(Black);
+        currScene->Update(dt);
+
+        mkr::RenderBegin();
+        currScene->Draw();
+        mkr::RenderEnd();
+    }
+
+    Finish();
 }
 
 void core::MainWindow(int width, int height, const char *title){

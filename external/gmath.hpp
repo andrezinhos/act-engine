@@ -6,9 +6,8 @@ constexpr float PI = 3.14159265358979323846f;
 struct Vec2{
     float x, y;
 
-
 	Vec2() : x(0.0f), y(0.0f) {}
-	
+
     Vec2(float x, float y) : x(x), y(y) {}
 
     static Vec2 Zero(){
@@ -99,6 +98,8 @@ struct Camera2D{
     Vec2 position;
     float rotation;
     float zoom;
+    Camera2D() {};
+
     Camera2D(Vec2 position, float rotation, float zoom)
         : position(position), rotation(rotation), zoom(zoom) {}
 };

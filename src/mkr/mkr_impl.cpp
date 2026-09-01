@@ -2,7 +2,6 @@
 #include "stb_image.h"
 
 Window mkr::wmain;
-
 int mkr::flags_active[4];
 
 void frameCallback(GLFWwindow* window, int w, int h){

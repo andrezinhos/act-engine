@@ -14,6 +14,10 @@ if (-Not (Test-Path -Path "bin")){
 	New-Item -Path "bin" -ItemType Directory | Out-Null
 }
 
+if (-Not (Test-Path -Path $build)){
+    New-Item -Path $build -ItemType Directory | Out-Null
+}
+
 # ------------------------------------------
 # enter the monkey render dir to build
 
@@ -27,7 +31,7 @@ if (-Not (Test-Path -Path $lib_mkr)){
 
 Set-Location $build_mkr
 Write-Host "MONKEY RENDER BUILD"
-cmake ..
+cmake .. | Out-Null
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){
@@ -56,7 +60,7 @@ if (-Not (Test-Path -Path $lib_amk)){
 
 Set-Location $build_amk
 Write-Host "AUDIO MAKE BUILD"
-cmake ..
+cmake .. | Out-Null
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){

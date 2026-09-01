@@ -20,18 +20,18 @@ set(AMK_LIB ${CMAKE_SOURCE_DIR}/src/amk/lib/libamk.a)
 
 # executable files
 add_executable(app
-  src/main.cpp
-  src/core.cpp
-  src/inputs.cpp
-  src/stack.cpp
-  src/esys.cpp
-  src/script.cpp
+  src/engine/main.cpp
+  src/engine/core.cpp
+  src/engine/inputs.cpp
+  src/engine/stack.cpp
+  src/engine/esys.cpp
+  src/engine/script.cpp
 )
 
 # general headers
 target_include_directories(app PRIVATE
   ${CMAKE_SOURCE_DIR}/external
-  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/src/engine
   ${GLFW_HEADERS}
   ${LUA_HEADERS}
   ${MKR_HEADERS}

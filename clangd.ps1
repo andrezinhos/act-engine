@@ -31,7 +31,7 @@ if (-Not (Test-Path -Path $lib_mkr)){
 
 Set-Location $build_mkr
 Write-Host "MONKEY RENDER BUILD"
-cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON | Out-Null
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){
@@ -59,7 +59,7 @@ if (-Not (Test-Path -Path $lib_amk)){
 
 Set-Location $build_amk
 Write-Host "AUDIO MAKE BUILD"
-cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON | Out-Null
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){

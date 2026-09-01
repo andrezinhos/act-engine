@@ -3,7 +3,7 @@ eng.win_flag(resizable)
 eng.fps(60)
 eng.start(800, 600, "Window")
 
-render.cursor(hidden);
+-- render.cursor(hidden);
 
 local smile = Sprite.new()
 local neutral = Sprite.new()
@@ -23,8 +23,8 @@ local posY = (render.win_height() / 2) - (smile.texture.height / 2)
 smile:pos(posX, posY);
 neutral:pos(0, 0)
 
-jump:load("assets/Jump.wav")
-theme:load("assets/t1.ogg")
+jump:load("assets/audio/Jump.wav")
+theme:load("assets/audio/t1.ogg")
 
 theme:play()
 

@@ -5,9 +5,11 @@
 #undef L
 #undef R
 #undef C
+#define MINIAUDIO_IMPLEMENTATION
 #define MA_NO_MP3
 #define MA_NO_FLAC
-#define MINIAUDIO_IMPLEMENTATION
+#define MA_NO_ENGINE
+#define MA_NO_RESOURCE_MANAGER
 #define MA_SUPPORT_VORBIS
 #include "miniaudio.h"
 

@@ -1,21 +1,15 @@
-#include "ios.hpp"
-#include "core.hpp"
-#include "esys.hpp"
-#include <string>
 #define SOL_ALL_SAFETIES_ON 1
-#include "sol.hpp"
+#include "script.hpp"
 
-sol::state script;
-
-void ios::start_types(){
-    script.new_usertype<Vec2>("Vec2",
+void script::start_types(){
+    state.new_usertype<Vec2>("Vec2",
         sol::constructors<Vec2(float, float)>(),
         "x", &Vec2::x,
         "y", &Vec2::y,
         "zero", &Vec2::Zero
     );
 
-    script.new_usertype<Vec3>("Vec3",
+    state.new_usertype<Vec3>("Vec3",
         sol::constructors<Vec3(float, float, float)>(),
         "x", &Vec3::x,
         "y", &Vec3::y,
@@ -23,19 +17,19 @@ void ios::start_types(){
         "zero", &Vec3::Zero
     );
 
-    script.new_usertype<Camera2D>("Cam2D",
+    state.new_usertype<Camera2D>("Cam2D",
         sol::constructors<Camera2D(Vec2, float, float)>(),
         "position", &Camera2D::position,
         "rotation", &Camera2D::rotation,
         "zoom", &Camera2D::zoom
     );
 
-    script.new_usertype<Texture>("Tex2D",
+    state.new_usertype<Texture>("Tex2D",
         "width", &Texture::width,
         "height", &Texture::height
     );
 
-	script.new_enum("key",
+	state.new_enum("key",
 		"w", Keys::W,
 		"a", Keys::A,
 		"s", Keys::S,
@@ -44,24 +38,24 @@ void ios::start_types(){
 		"e", Keys::E
 	);
 
-    script["vsync"] = Flags::VSYNC;
-    script["resizable"] = Flags::RESIZABLE;
-    script["max"] = Flags::MAXIMIZED;
-    script["full"] = Flags::FULLSCREEN;
+	state["vsync"] = Flags::VSYNC;
+	state["resizable"] = Flags::RESIZABLE;
+	state["max"] = Flags::MAXIMIZED;
+	state["full"] = Flags::FULLSCREEN;
 
-    script["normal"] = Cursor::NORMAL;
-    script["hidden"] = Cursor::HIDDEN;
-    script["disabled"] = Cursor::DISABLED;
+	state["normal"] = Cursor::NORMAL;
+	state["hidden"] = Cursor::HIDDEN;
+	state["disabled"] = Cursor::DISABLED;
 
-    script["red"] = Red;
-    script["green"] = Green;
-    script["blue"] = Blue;
-    script["white"] = White;
-    script["black"] = Black;
+	state["red"] = Red;
+	state["green"] = Green;
+	state["blue"] = Blue;
+	state["white"] = White;
+	state["black"] = Black;
 }
 
-void ios::load_conteiners(){
-    script.new_usertype<Sprite>("Sprite",
+void script::load_conteiners(){
+    state.new_usertype<Sprite>("Sprite",
         "texture", &Sprite::tex,
         "position", &Sprite::position,
         "id", &Sprite::id,
@@ -71,14 +65,14 @@ void ios::load_conteiners(){
         "size", &Sprite::size
     );
 
-    script.new_usertype<Sound>("Sound",
+    state.new_usertype<Sound>("Sound",
         "id", &Sound::id,
 
         "load", &Sound::load,
         "play", &Sound::play
     );
 
-    script.new_usertype<Music>("Music",
+    state.new_usertype<Music>("Music",
         "id", &Music::id,
 
         "load", &Music::load,
@@ -88,19 +82,25 @@ void ios::load_conteiners(){
     );
 }
 
-void ios::init_script(){
-    script.open_libraries(sol::lib::base, sol::lib::package);
+void script::init_script(){
+    state.open_libraries(sol::lib::base, sol::lib::package);
     start_types();
     load_conteiners();
 }
 
-void ios::start_funcs(){
+void script::start_funcs(){
     /* CORE FUNCS */
-    sol::table core_table = script.create_table();
+    sol::table core_table = state.create_table();
 
     core_table["win_flag"] = [](Flags flag){ core::WindowFlag(flag); };
     core_table["fps"] = [](double fps){ core::TargetFPS(fps); };
     core_table["delta"] = core::GetDelta;
+
+    // core_table["setScene"] = [](std::string& path){
+    //     core::setScene(std::unique_ptr<Scene> scene)
+    // };
+
+
 
     core_table["start"] = [](int width, int height, const std::string& title){
         core::MainWindow(width, height, title.c_str());
@@ -113,11 +113,11 @@ void ios::start_funcs(){
 
     core_table["master_vol"] = [](double vol){ amk::MasterVolume(vol); };
 
-    script["eng"] = core_table;
+    state["eng"] = core_table;
 
     /* IO FUNCS */
 
-    sol::table ios_table = script.create_table();
+    sol::table ios_table = state.create_table();
 
     ios_table["debug"] = [](const std::string& msg){
         printf("[DEBUG] %s\n", msg.c_str());
@@ -136,11 +136,11 @@ void ios::start_funcs(){
     	return ios::KeyPressed(key);
     };
 
-    script["ios"] = ios_table;
+    state["ios"] = ios_table;
 
     /* RENDER FUNCS */
 
-    sol::table mkr_table = script.create_table();
+    sol::table mkr_table = state.create_table();
 
     mkr_table["win_width"] = mkr::GetWindowWidth;
     mkr_table["win_height"] = mkr::GetWindowHeight;
@@ -156,10 +156,10 @@ void ios::start_funcs(){
         esys::RenderSprite(id, sprite);
     };
 
-    script["render"] = mkr_table;
+    state["render"] = mkr_table;
 }
 
-void ios::LoadScriptFuncs(){
+void script::load_script_file(){
     start_funcs();
-    script.script_file("assets/scripts/init.lua");
+    state.script_file("assets/scripts/init.lua");
 }
