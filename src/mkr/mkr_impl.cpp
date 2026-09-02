@@ -1,3 +1,4 @@
+#include "mkgl.hpp"
 #include "mkr.hpp"
 #include "stb_image.h"
 
@@ -73,14 +74,16 @@ int mkr::GetWindowHeight(){
 void mkr::Initialize(){
     mkgl::state.dshader = DefaultShader();
     mkgl::state.dmesh = DefaultQuad();
+    mkgl::state.dtex = DefaultTexture();
     DefaultBatch();
     printf("[INFO] DEFAULT STATE LOADED\n");
 }
 
 void mkr::Shutdown(){
-    mkr::UnloadDefaultShader();
-    mkr::UnloadDefaultQuad();
     mkr::UnloadDefaultBatch();
+    mkr::UnloadDefaultTexture();
+    mkr::UnloadDefaultQuad();
+    mkr::UnloadDefaultShader();
     printf("[INFO] DEFAULT STATE UNLOADED\n");
     glfwDestroyWindow(mkr::wmain.main);
     glfwTerminate();
@@ -137,6 +140,23 @@ Mesh mkr::DefaultQuad(){
     return mesh;
 }
 
+Texture mkr::DefaultTexture(){
+    Texture tex;
+    tex.id = mkgl::genTex(GL_TEXTURE_2D);
+
+    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    uint color = 0xFFFFFFFF;
+    mkgl::setTexImage2D(GL_RGBA, 1, 1, &color);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return tex;
+}
+
 void mkr::DefaultBatch(){
     mkgl::state.dbatch.vao = mkgl::genBuff(types::arr);
     mkgl::state.dbatch.vbo = mkgl::genBuff(types::buff);
@@ -168,6 +188,10 @@ void mkr::UnloadDefaultQuad(){
     mkgl::Delete(mkgl::state.dmesh.vao, types::arr);
     mkgl::Delete(mkgl::state.dmesh.vbo, types::buff);
     mkgl::Delete(mkgl::state.dmesh.ebo, types::element);
+}
+
+void mkr::UnloadDefaultTexture(){
+    if (mkgl::state.dtex.id != 0) glDeleteTextures(1, &mkgl::state.dtex.id);
 }
 
 void mkr::UnloadDefaultBatch(){
@@ -205,23 +229,41 @@ void mkr::ScreenClear(Color color){
     mkgl::clearScreen(color);
 }
 
-void mkr::RenderTexture(Texture *tex, Vec2 position, Vec2 size, Color color){
-    if (mkgl::state.dbatch.vertices.size() + 4  > VMAX || mkgl::state.dbatch.indices.size() + 6  > IMAX) mkgl::flush();
+void mkr::RenderRectangle(Vec2 position, Vec2 size, Color color){
+    mkgl::limitFlush();
     uint32_t base = mkgl::state.dbatch.vertices.size();
     uint32_t indexStart = mkgl::state.dbatch.indices.size();
 
-    mkgl::state.dbatch.vertices.push_back({{ position.x,          position.y, 0.0f },{ color.r, color.g, color.b }, { 0.0f, 0.0f }});
-    mkgl::state.dbatch.vertices.push_back({{ position.x + size.x, position.y, 0.0f},{ color.r, color.g, color.b }, { 1.0f, 0.0f }});
-    mkgl::state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { 1.0f, 1.0f }});
-    mkgl::state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { 0.0f, 1.0f }});
+    mkgl::sendVertex(position, size, color, {0.0f, 1.0f});
+    mkgl::sendIndices(base);
+    
+    if (mkgl::state.dbatch.calls.empty() || mkgl::state.dbatch.calls.back().texref != &mkgl::state.dtex){
+        mkgl::state.dbatch.calls.push_back({indexStart, 6, &mkgl::state.dtex});
+    }
+    else mkgl::state.dbatch.calls.back().count += 6;
+}
 
-    mkgl::state.dbatch.indices.push_back(base + 0);
-    mkgl::state.dbatch.indices.push_back(base + 1);
-    mkgl::state.dbatch.indices.push_back(base + 3);
+/*
 
-    mkgl::state.dbatch.indices.push_back(base + 1);
-    mkgl::state.dbatch.indices.push_back(base + 2);
-    mkgl::state.dbatch.indices.push_back(base + 3);
+UV Calc
+
+UV 0 = rect_x / tex_width
+
+UV 1 = (rect_x + rect_width) / tex_width
+
+*/
+
+void mkr::RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec2 size, Color color){
+    //not implemented
+}
+
+void mkr::RenderTexture(Texture *tex, Vec2 position, Vec2 size, Color color){
+    mkgl::limitFlush();
+    uint32_t base = mkgl::state.dbatch.vertices.size();
+    uint32_t indexStart = mkgl::state.dbatch.indices.size();
+
+    mkgl::sendVertex(position, size, color, {0.0f, 1.0f});
+    mkgl::sendIndices(base);
 
     if (mkgl::state.dbatch.calls.empty() || mkgl::state.dbatch.calls.back().texref != tex){
         mkgl::state.dbatch.calls.push_back({indexStart, 6, tex});

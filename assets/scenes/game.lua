@@ -1,10 +1,9 @@
 -- game
-
 local Game = {}
 
 local smile = Sprite.new()
 local theme = Music.new()
-local cam = Cam2D.new(smile.position, 0, 1)
+local cam = Cam2D.new(Vec2.zero(), 0, 1)
 
 function Game.Init()
     smile:load("assets/sprites/smile.png")
@@ -31,12 +30,24 @@ function Game.Update(dt)
     if ios.key_down(key.d) then
         smile.position.x = smile.position.x + 500 * dt
     end
+
+    if ios.key_pressed(key.q) then
+        theme:pause()
+    end
+
+    if ios.key_pressed(key.e) then
+        theme:resume()
+    end
 end
 
 function Game.Draw()
     render.cam_begin(cam)
-    render.sprite(smile.id, smile)
+    smile:draw()
     render.cam_end()
+end
+
+function Game.Exit()
+    theme:stop()
 end
 
 return Game

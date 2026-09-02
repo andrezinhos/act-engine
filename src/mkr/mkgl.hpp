@@ -108,7 +108,10 @@ public:
 
     static std::vector<vertex> SetNDC();
 
+    static void sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv);
+    static void sendIndices(unsigned int base);
     static void drawElements(size_t count, void* offset);
+    static void limitFlush();
     static void flush();
 
     static uint genShader(const char* src, GLenum type);

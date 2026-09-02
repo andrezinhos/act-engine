@@ -80,9 +80,14 @@ void amk::PlayAudioFile(Decoder& dec, NodeSource &node){
     ma_node_set_state(&node, ma_node_state_started);
 }
 
-void amk::PauseAudioFile(Decoder& dec, NodeSource &node){
+void amk::PauseAudioFile(NodeSource &node){
     ma_node_set_state(&node, ma_node_state_stopped);
 }
+
+void amk::ResumeAudioFile(NodeSource& node){
+    ma_node_set_state(&node, ma_node_state_started);
+}
+
 void amk::StopAudioFile(Decoder& dec, NodeSource &node){
     ma_node_set_state(&node, ma_node_state_stopped);
     ma_data_source_seek_to_pcm_frame(&dec, 0);

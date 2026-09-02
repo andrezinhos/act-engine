@@ -35,7 +35,8 @@ public:
     static void UnloadAudio(Decoder& decoder, NodeSource& node);
 
     static void PlayAudioFile(Decoder& dec, NodeSource& node);
-    static void PauseAudioFile(Decoder& dec, NodeSource& node);
+    static void PauseAudioFile(NodeSource& node);
+    static void ResumeAudioFile(NodeSource& node);
     static void StopAudioFile(Decoder& dec, NodeSource& node);
 
     static void MasterVolume(double vol);

@@ -1,6 +1,24 @@
 #include "esys.hpp"
 #include "stack.hpp"
 
+void Rect::pos(float x, float y){
+    position.x = x;
+    position.y = y;
+}
+
+void Rect::size(int x, int y){
+    width = x;
+    height = y;
+}
+
+void Rect::draw(Color color){
+    mkr::RenderRectangle(
+        position, 
+        {(float)width, (float)height}, 
+        color
+    );
+}
+
 void Sprite::load(const char* path){
     tex = mkr::LoadTextureSrc(path);
     id = stack::PushSprite(tex);
@@ -48,14 +66,21 @@ void Music::stop(){
 void Music::pause(){
     auto it = stack::musicmap.find(stack::musicmap[id].id);
     if (it != stack::musicmap.end()){
-        amk::PauseAudioFile(it->second.decoder, it->second.source);
+        amk::PauseAudioFile(it->second.source);
     }
 }
 
-void esys::RenderSprite(int id, Sprite& sprite){
+void Music::resume(){
+    auto it = stack::musicmap.find(stack::musicmap[id].id);
+    if (it != stack::musicmap.end()){
+        amk::ResumeAudioFile(it->second.source);
+    }
+}
+
+void Sprite::draw(){
     auto it = stack::texmap.find(id);
     if (it != stack::texmap.end()){
-        Vec2 size = {(float)sprite.tex.width, (float)sprite.tex.height};
-        mkr::RenderTexture(&it->second, sprite.position, size, White);
+        Vec2 size = {(float)it->second.width, (float)it->second.height};
+        mkr::RenderTexture(&it->second, position, size, White);
     }
 }

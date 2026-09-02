@@ -22,6 +22,17 @@ struct Music{
     void play();
     void stop();
     void pause();
+    void resume();
+};
+
+struct Rect{
+    int width;
+    int height;
+    Vec2 position;
+
+    void pos(float x, float y);
+    void size(int x, int y);
+    void draw(Color color);
 };
 
 struct Sprite{
@@ -32,6 +43,7 @@ struct Sprite{
     void load(const char* path);
     void pos(float x, float y);
     void size(int x, int y);
+    void draw();
 };
 
 class esys{

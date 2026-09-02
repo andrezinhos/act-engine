@@ -56,6 +56,16 @@ void script::start_types(){
 }
 
 void script::load_conteiners(){
+    state.new_usertype<Rect>("Rect",
+        "width", &Rect::width,
+        "height", &Rect::height,
+        "position", &Rect::position,
+
+        "pos", &Rect::pos,
+        "size", &Rect::size,
+        "draw", &Rect::draw
+    );
+
     state.new_usertype<Sprite>("Sprite",
         "texture", &Sprite::tex,
         "position", &Sprite::position,
@@ -63,7 +73,8 @@ void script::load_conteiners(){
 
         "load", &Sprite::load,
         "pos", &Sprite::pos,
-        "size", &Sprite::size
+        "size", &Sprite::size,
+        "draw", &Sprite::draw
     );
 
     state.new_usertype<Sound>("Sound",
@@ -79,7 +90,8 @@ void script::load_conteiners(){
         "load", &Music::load,
         "play", &Music::play,
         "stop", &Music::stop,
-        "pause", &Music::pause
+        "pause", &Music::pause,
+        "resume", &Music::resume
     );
 }
 
@@ -111,7 +123,6 @@ void script::start_funcs(){
         core::MainWindow(width, height, title.c_str());
     };
 
-    // core_table["clear"] = [](Color color){ mkr::ScreenClear(color); };
     core_table["master_vol"] = [](double vol){ amk::MasterVolume(vol); };
     state["eng"] = core_table;
 
@@ -149,10 +160,6 @@ void script::start_funcs(){
     mkr_table["cam_end"] = mkr::CameraEnd;
 
     mkr_table["cursor"] = [](Cursor cur) { mkr::setCursorMode(cur); };
-
-    mkr_table["sprite"] = [](int id, Sprite& sprite){
-        esys::RenderSprite(id, sprite);
-    };
 
     state["render"] = mkr_table;
 }

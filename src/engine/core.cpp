@@ -7,7 +7,7 @@
 #include <cstdio>
 #include <memory>
 
-constexpr const char* VERSION = "0.12.0";
+constexpr const char* VERSION = "0.13.0";
 
 Time core::time = {};
 std::unique_ptr<Scene> core::currScene = nullptr;

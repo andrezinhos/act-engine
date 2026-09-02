@@ -22,7 +22,7 @@ set(AMK_LIB ${CMAKE_SOURCE_DIR}/src/amk/lib/libamk.a)
 add_executable(app
   src/engine/main.cpp
   src/engine/core.cpp
-  src/engine/inputs.cpp
+  src/engine/ios.cpp
   src/engine/stack.cpp
   src/engine/esys.cpp
   src/engine/script.cpp

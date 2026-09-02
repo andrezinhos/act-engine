@@ -48,7 +48,9 @@ public:
 
     static void ScreenClear(Color color);
 
-    static void RenderTexture(Texture *tex, Vec2 position, Vec2 size, Color color);
+    static void RenderRectangle(Vec2 position, Vec2 size, Color color);
+    static void RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec2 size, Color color);
+    static void RenderTexture(Texture* tex, Vec2 position, Vec2 size, Color color);
     static void RenderBegin();
     static void RenderEnd();
     static void CameraBegin(Camera2D& cam);

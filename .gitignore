@@ -1,8 +1,6 @@
 compile_commands.json
-
+audio/
 bin/
 build/
 lib/
-audio/
-
 .cache/
