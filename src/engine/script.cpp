@@ -155,10 +155,8 @@ void script::start_funcs(){
 
     mkr_table["win_width"] = mkr::GetWindowWidth;
     mkr_table["win_height"] = mkr::GetWindowHeight;
-
     mkr_table["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
     mkr_table["cam_end"] = mkr::CameraEnd;
-
     mkr_table["cursor"] = [](Cursor cur) { mkr::setCursorMode(cur); };
 
     state["render"] = mkr_table;

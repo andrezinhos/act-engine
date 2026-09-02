@@ -13,7 +13,7 @@ static int music_count = 0;
 
 int stack::PushSprite(Texture& sprite){
     int id = sprite_count++;
-    texmap.emplace(id, sprite);
+    texmap[id] = sprite;
     return id;
 }
 

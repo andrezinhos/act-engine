@@ -45,8 +45,3 @@ struct Sprite{
     void size(int x, int y);
     void draw();
 };
-
-class esys{
-public:
-    static void RenderSprite(int id, Sprite& sprite);
-};

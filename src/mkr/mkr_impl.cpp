@@ -208,6 +208,8 @@ Texture mkr::LoadTextureSrc(const char* path){
     Image image = mkgl::loadImage(path);
     Texture tex;
     tex.id = mkgl::genTex(GL_TEXTURE_2D);
+    tex.width = image.width;
+    tex.height = image.height;
 
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

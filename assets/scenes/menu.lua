@@ -2,7 +2,6 @@
 local Menu = {}
 
 local neutral = Sprite.new()
-local rec = Rect.new()
 local jump = Sound.new()
 local cam = Cam2D.new(Vec2.zero(), 0, 1)
 
@@ -11,10 +10,6 @@ function Menu.Init()
     neutral:pos(0, 0)
     neutral:size(500, 500)
     
-    rec:pos(300, 500)
-    rec:size(100, 200)
-
-
     jump:load("assets/audio/Jump.wav")
 end
 
@@ -28,7 +23,6 @@ end
 function Menu.Draw()
     render.cam_begin(cam)
     neutral:draw()
-    rec:draw(blue)
     render.cam_end()
 end
 

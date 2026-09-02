@@ -30,8 +30,11 @@ void Sprite::pos(float x, float y){
 }
 
 void Sprite::size(int x, int y){
-    tex.width = x;
-    tex.height = y;
+    auto it = stack::texmap.find(id);
+    if (it != stack::texmap.end()){
+        it->second.width = x;
+        it->second.height = y;
+    }
 }
 
 void Sound::load(const char* path){
@@ -80,7 +83,10 @@ void Music::resume(){
 void Sprite::draw(){
     auto it = stack::texmap.find(id);
     if (it != stack::texmap.end()){
-        Vec2 size = {(float)it->second.width, (float)it->second.height};
+        Vec2 size = {
+            static_cast<float>(it->second.width), 
+            static_cast<float>(it->second.height)
+        };
         mkr::RenderTexture(&it->second, position, size, White);
     }
 }
