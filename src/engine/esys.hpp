@@ -1,4 +1,5 @@
 #pragma once
+#include "mkgl.hpp"
 #include "mkr.hpp"
 #include "amk.hpp"
 #include <vector>
@@ -26,9 +27,7 @@ struct Music{
 };
 
 struct Rect{
-    int width;
-    int height;
-    Vec2 position;
+    Rectangle source;
 
     void pos(float x, float y);
     void size(int x, int y);
@@ -44,4 +43,5 @@ struct Sprite{
     void pos(float x, float y);
     void size(int x, int y);
     void draw();
+    void draw_area(Rect& rect);
 };

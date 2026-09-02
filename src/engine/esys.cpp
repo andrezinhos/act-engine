@@ -2,19 +2,19 @@
 #include "stack.hpp"
 
 void Rect::pos(float x, float y){
-    position.x = x;
-    position.y = y;
+    source.x = x;
+    source.y = y;
 }
 
 void Rect::size(int x, int y){
-    width = x;
-    height = y;
+    source.width = x;
+    source.height = y;
 }
 
 void Rect::draw(Color color){
     mkr::RenderRectangle(
-        position, 
-        {(float)width, (float)height}, 
+        {(float)source.x, (float)source.y}, 
+        {(float)source.width, (float)source.height}, 
         color
     );
 }
@@ -88,5 +88,16 @@ void Sprite::draw(){
             static_cast<float>(it->second.height)
         };
         mkr::RenderTexture(&it->second, position, size, White);
+    }
+}
+
+void Sprite::draw_area(Rect& rec){
+    auto it = stack::texmap.find(id);
+    if (it != stack::texmap.end()){
+        Vec2 size = {
+            static_cast<float>(it->second.width), 
+            static_cast<float>(it->second.height)
+        };
+        mkr::RenderTextureRec(&it->second, rec.source, position, size, White);
     }
 }

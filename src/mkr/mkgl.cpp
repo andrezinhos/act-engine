@@ -96,6 +96,13 @@ void mkgl::sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv){
     state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.x, uv.y }});
 }
 
+void mkgl::sendVertex(Vec2 position, Vec2 size, Color color, float u0, float v0, float u1, float v1){
+    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { u0, v0 }});
+    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { u1, v0 }});
+    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u1, v1 }});
+    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u0, v1 }});
+}
+
 void mkgl::sendIndices(unsigned int base){
     state.dbatch.indices.push_back(base + 0);
     state.dbatch.indices.push_back(base + 1);

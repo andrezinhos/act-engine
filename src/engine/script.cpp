@@ -57,9 +57,7 @@ void script::start_types(){
 
 void script::load_conteiners(){
     state.new_usertype<Rect>("Rect",
-        "width", &Rect::width,
-        "height", &Rect::height,
-        "position", &Rect::position,
+        "source", &Rect::source,
 
         "pos", &Rect::pos,
         "size", &Rect::size,
@@ -74,7 +72,8 @@ void script::load_conteiners(){
         "load", &Sprite::load,
         "pos", &Sprite::pos,
         "size", &Sprite::size,
-        "draw", &Sprite::draw
+        "draw", &Sprite::draw,
+        "draw_area", &Sprite::draw_area
     );
 
     state.new_usertype<Sound>("Sound",
