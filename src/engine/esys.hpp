@@ -20,8 +20,8 @@ struct Music{
 
     void load(const char* path);
     void play();
-    void stop(int id);
-    void pause(int id);
+    void stop();
+    void pause();
 };
 
 struct Sprite{

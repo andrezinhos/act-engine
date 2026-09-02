@@ -43,6 +43,7 @@ bool amk::initAudioDevice(){
 }
 
 void amk::endAudioDevice(){
+    ma_device_stop(&master.device);
     ma_device_uninit(&master.device);
     ma_node_graph_uninit(&master.ngraph, nullptr);
     printf("[INFO] AUDIO DEVICE CLOSED\n");
@@ -77,6 +78,14 @@ void amk::LoadMusicAudioFile(const char* path, Decoder& dec, NodeSource& node){
 void amk::PlayAudioFile(Decoder& dec, NodeSource &node){
     ma_data_source_seek_to_pcm_frame(&dec, 0);
     ma_node_set_state(&node, ma_node_state_started);
+}
+
+void amk::PauseAudioFile(Decoder& dec, NodeSource &node){
+    ma_node_set_state(&node, ma_node_state_stopped);
+}
+void amk::StopAudioFile(Decoder& dec, NodeSource &node){
+    ma_node_set_state(&node, ma_node_state_stopped);
+    ma_data_source_seek_to_pcm_frame(&dec, 0);
 }
 
 void amk::UnloadAudio(Decoder &dec, NodeSource& node){

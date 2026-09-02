@@ -38,12 +38,18 @@ void Music::play(){
     }
 }
 
-void Music::stop(int id){
-    //not implemented
+void Music::stop(){
+    auto it = stack::musicmap.find(stack::musicmap[id].id);
+    if (it != stack::musicmap.end()){
+        amk::StopAudioFile(it->second.decoder, it->second.source);
+    }
 }
 
-void Music::pause(int id){
-    //not implemented
+void Music::pause(){
+    auto it = stack::musicmap.find(stack::musicmap[id].id);
+    if (it != stack::musicmap.end()){
+        amk::PauseAudioFile(it->second.decoder, it->second.source);
+    }
 }
 
 void esys::RenderSprite(int id, Sprite& sprite){

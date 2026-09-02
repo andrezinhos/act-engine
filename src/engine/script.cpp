@@ -1,5 +1,6 @@
 #define SOL_ALL_SAFETIES_ON 1
 #include "script.hpp"
+#include <memory>
 
 void script::start_types(){
     state.new_usertype<Vec2>("Vec2",
@@ -96,23 +97,22 @@ void script::start_funcs(){
     core_table["fps"] = [](double fps){ core::TargetFPS(fps); };
     core_table["delta"] = core::GetDelta;
 
-    // core_table["setScene"] = [](std::string& path){
-    //     core::setScene(std::unique_ptr<Scene> scene)
-    // };
+    core_table["initial_scene"] = [](const std::string& file){
+        std::string path = "assets/scenes/"+file;
+        core::InitialScene(std::make_unique<LuaScene>(path));
+    };
 
-
+    core_table["change_scene"] = [](const std::string& file){
+        std::string path = "assets/scenes/"+file;
+        core::setScene(std::make_unique<LuaScene>(path));
+    };
 
     core_table["start"] = [](int width, int height, const std::string& title){
         core::MainWindow(width, height, title.c_str());
     };
 
-    core_table["clear"] = [](Color color){ mkr::ScreenClear(color); };
-
-    core_table["loop"] = core::Loop;
-    core_table["stop"] = core::Finish;
-
+    // core_table["clear"] = [](Color color){ mkr::ScreenClear(color); };
     core_table["master_vol"] = [](double vol){ amk::MasterVolume(vol); };
-
     state["eng"] = core_table;
 
     /* IO FUNCS */
@@ -145,8 +145,6 @@ void script::start_funcs(){
     mkr_table["win_width"] = mkr::GetWindowWidth;
     mkr_table["win_height"] = mkr::GetWindowHeight;
 
-    mkr_table["begin_draw"] = mkr::RenderBegin;
-    mkr_table["end_draw"] = mkr::RenderEnd;
     mkr_table["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
     mkr_table["cam_end"] = mkr::CameraEnd;
 

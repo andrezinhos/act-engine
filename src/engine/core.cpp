@@ -3,6 +3,7 @@
 #include "ios.hpp"
 #include "scene.hpp"
 #include "stack.hpp"
+#include "script.hpp"
 #include <cstdio>
 #include <memory>
 
@@ -117,7 +118,10 @@ bool core::Loop(){
 }
 
 void core::Finish(){
+    script::state.collect_garbage();
     stack::UnloadAll();
+    currScene.reset();
+    nextScene.reset();
     amk::endAudioDevice();
     mkr::Shutdown();
 }
