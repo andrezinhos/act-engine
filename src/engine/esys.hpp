@@ -35,7 +35,7 @@ struct Rect{
 };
 
 struct Sprite{
-    Texture tex;
+    Texture source;
     Vec2 position;
     int id;
 

@@ -1,3 +1,4 @@
+#include "mkgl.hpp"
 #include "mkr.hpp"
 
 bool mkr::createWindowContext(){
@@ -40,13 +41,10 @@ Shader mkr::DefaultShader() {
     std::string vert_file = mkgl::loadShaderFile("assets/shaders/simple.vert");
     std::string frag_file = mkgl::loadShaderFile("assets/shaders/simple.frag");
 
-    const char *conv_vert = vert_file.c_str();
-    const char *conv_frag = frag_file.c_str();
-
-    uint vs = mkgl::genShader(conv_vert, GL_VERTEX_SHADER);
+    uint vs = mkgl::genShader(vert_file.c_str(), GL_VERTEX_SHADER);
     mkgl::compileShader(vs);
 
-    uint fs = mkgl::genShader(conv_frag, GL_FRAGMENT_SHADER);
+    uint fs = mkgl::genShader(frag_file.c_str(), GL_FRAGMENT_SHADER);
     mkgl::compileShader(fs);
 
     shader.id = mkgl::genShaderProg(vs, fs);
@@ -77,9 +75,9 @@ Mesh mkr::DefaultQuad(){
     mkgl::bindBuff(mesh.ebo, types::element);
     mkgl::bindDataStatic(types::element, mesh.indices.data(), mesh.indices.size() * sizeof(uint));
 
-    mkgl::sendAttribPtr(0, 3, 8, 0);
-    mkgl::sendAttribPtr(1, 3, 8, 3);
-    mkgl::sendAttribPtr(2, 2, 8, 6);
+    mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, 8, 0);
+    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT, 3, 8, 3);
+    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT, 2, 8, 6);
 
     mkgl::unbind();
 

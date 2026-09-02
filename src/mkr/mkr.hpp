@@ -33,6 +33,7 @@ public:
 
     static void Initialize();
     static void Shutdown();
+
     static Shader DefaultShader();
     static Mesh DefaultQuad();
     static Texture DefaultTexture();
@@ -43,6 +44,7 @@ public:
     static void UnloadDefaultTexture();
     static void UnloadDefaultBatch();
 
+    static Shader LoadShader(const char* vs, const char* fs);
     static Texture LoadTextureSrc(const char* path);
     static void UnloadTexture(const Texture& tex);
 

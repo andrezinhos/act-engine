@@ -89,6 +89,24 @@ void mkr::Shutdown(){
     glfwTerminate();
 }
 
+Shader mkr::LoadShader(const char* vsPath, const char* fsPath) {
+    Shader shader = {};
+    std::string vert_file = mkgl::loadShaderFile(vsPath);
+    std::string frag_file = mkgl::loadShaderFile(fsPath);
+
+    uint vs = mkgl::genShader(vert_file.c_str(), GL_VERTEX_SHADER);
+    mkgl::compileShader(vs);
+
+    uint fs = mkgl::genShader(frag_file.c_str(), GL_FRAGMENT_SHADER);
+    mkgl::compileShader(fs);
+
+    shader.id = mkgl::genShaderProg(vs, fs);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    return shader;
+}
+
 Texture mkr::LoadTextureSrc(const char* path){
     Image image = mkgl::loadImage(path);
     Texture tex;
@@ -98,8 +116,8 @@ Texture mkr::LoadTextureSrc(const char* path){
 
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     mkgl::setTexImage2D(GL_RGBA, image.width, image.height, image.data);
     mkgl::unloadImage(image);

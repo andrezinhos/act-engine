@@ -25,6 +25,7 @@ void script::start_types(){
         "zoom", &Camera2D::zoom
     );
 
+    //this is needed in case of accessing texture parameters
     state.new_usertype<Texture>("Tex2D",
         "width", &Texture::width,
         "height", &Texture::height
@@ -65,9 +66,8 @@ void script::load_conteiners(){
     );
 
     state.new_usertype<Sprite>("Sprite",
-        "texture", &Sprite::tex,
+        "source", &Sprite::source,
         "position", &Sprite::position,
-        "id", &Sprite::id,
 
         "load", &Sprite::load,
         "pos", &Sprite::pos,
@@ -77,15 +77,11 @@ void script::load_conteiners(){
     );
 
     state.new_usertype<Sound>("Sound",
-        "id", &Sound::id,
-
         "load", &Sound::load,
         "play", &Sound::play
     );
 
     state.new_usertype<Music>("Music",
-        "id", &Music::id,
-
         "load", &Music::load,
         "play", &Music::play,
         "stop", &Music::stop,

@@ -3,11 +3,9 @@
 #include "ios.hpp"
 #include "scene.hpp"
 #include "stack.hpp"
-#include "script.hpp"
-#include <cstdio>
 #include <memory>
 
-constexpr const char* VERSION = "0.13.0";
+constexpr const char* VERSION = "0.14.1";
 
 Time core::time = {};
 std::unique_ptr<Scene> core::currScene = nullptr;
@@ -118,7 +116,6 @@ bool core::Loop(){
 }
 
 void core::Finish(){
-    script::state.collect_garbage();
     stack::UnloadAll();
     currScene.reset();
     nextScene.reset();

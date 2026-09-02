@@ -6,6 +6,10 @@
 typedef unsigned int uint;
 typedef unsigned char byte;
 
+constexpr int MKR_POSITION_LAYOUT = 0;
+constexpr int MKR_COLOR_LAYOUT = 1;
+constexpr int MKR_TEXTURE_LAYOUT = 2;
+
 struct Color {
     float r, g, b;
 };

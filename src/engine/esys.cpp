@@ -20,8 +20,8 @@ void Rect::draw(Color color){
 }
 
 void Sprite::load(const char* path){
-    tex = mkr::LoadTextureSrc(path);
-    id = stack::PushSprite(tex);
+    source = mkr::LoadTextureSrc(path);
+    id = stack::PushSprite(source);
 }
 
 void Sprite::pos(float x, float y){
@@ -34,6 +34,28 @@ void Sprite::size(int x, int y){
     if (it != stack::texmap.end()){
         it->second.width = x;
         it->second.height = y;
+    }
+}
+
+void Sprite::draw(){
+    auto it = stack::texmap.find(id);
+    if (it != stack::texmap.end()){
+        Vec2 size = {
+            static_cast<float>(it->second.width), 
+            static_cast<float>(it->second.height)
+        };
+        mkr::RenderTexture(&it->second, position, size, White);
+    }
+}
+
+void Sprite::draw_area(Rect& rec){
+    auto it = stack::texmap.find(id);
+    if (it != stack::texmap.end()){
+        Vec2 size = {
+            static_cast<float>(it->second.width), 
+            static_cast<float>(it->second.height)
+        };
+        mkr::RenderTextureRec(&it->second, rec.source, position, size, White);
     }
 }
 
@@ -77,27 +99,5 @@ void Music::resume(){
     auto it = stack::musicmap.find(stack::musicmap[id].id);
     if (it != stack::musicmap.end()){
         amk::ResumeAudioFile(it->second.source);
-    }
-}
-
-void Sprite::draw(){
-    auto it = stack::texmap.find(id);
-    if (it != stack::texmap.end()){
-        Vec2 size = {
-            static_cast<float>(it->second.width), 
-            static_cast<float>(it->second.height)
-        };
-        mkr::RenderTexture(&it->second, position, size, White);
-    }
-}
-
-void Sprite::draw_area(Rect& rec){
-    auto it = stack::texmap.find(id);
-    if (it != stack::texmap.end()){
-        Vec2 size = {
-            static_cast<float>(it->second.width), 
-            static_cast<float>(it->second.height)
-        };
-        mkr::RenderTextureRec(&it->second, rec.source, position, size, White);
     }
 }
