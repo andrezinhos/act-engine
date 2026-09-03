@@ -52,6 +52,9 @@ bool mkr::startWindow(int width, int height, const char* title){
 
     createWindowContext();
 
+    glEnable(GL_BLEND); 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	// this is for in case of wrong viewport
 	// on start of the window, specially in the maximized flag
     int fb_w, fb_h;
@@ -75,6 +78,7 @@ void mkr::Initialize(){
     mkgl::state.dshader = DefaultShader();
     mkgl::state.dmesh = DefaultQuad();
     mkgl::state.dtex = DefaultTexture();
+    mkgl::state.dfont = DefaultFont();
     DefaultBatch();
     printf("[INFO] DEFAULT STATE LOADED\n");
 }
@@ -119,7 +123,7 @@ Texture mkr::LoadTextureSrc(const char* path){
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    mkgl::setTexImage2D(GL_RGBA, image.width, image.height, image.data);
+    mkgl::setTexImage2D(GL_RGBA, GL_RGBA, image.width, image.height, image.data);
     mkgl::unloadImage(image);
 
     return tex;

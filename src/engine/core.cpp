@@ -1,6 +1,7 @@
 #include "core.hpp"
 #include "amk.hpp"
 #include "ios.hpp"
+#include "mkgl.hpp"
 #include "scene.hpp"
 #include "stack.hpp"
 #include <memory>
@@ -26,6 +27,7 @@ void core::init(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
 
     if (has_init) printf("ACT ENGINE v%s\n", VERSION);
 }

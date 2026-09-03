@@ -15,6 +15,7 @@ add_library(mkr STATIC
   mkgl.cpp
   mkr_helpers.cpp
   mkr_impl.cpp
+  mkr_text.cpp
 )
 
 # general headers

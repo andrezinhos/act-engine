@@ -23,6 +23,7 @@ private:
     static void init();
     static std::unique_ptr<Scene> currScene;
     static std::unique_ptr<Scene> nextScene;
+    static Font dfont;
 public:
     static Time time;
     static float GetDelta();
@@ -33,9 +34,6 @@ public:
     static void WindowFlag(Flags flag);
     static void TargetFPS(double fps);
     static void MainWindow(int width, int height, const char* title);
-
-    // not implemented
-    // static void Follow(Camera2D& cam, Sprite& sprite);
 
     static bool Loop();
     static void Finish();

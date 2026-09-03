@@ -245,8 +245,8 @@ void mkgl::setTexParams(GLenum type, GLenum wrap, GLenum format){
     glTexParameteri(type, wrap, format);
 }
 
-void mkgl::setTexImage2D(GLenum format, int width, int height, const void* data){
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+void mkgl::setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data){
+    glTexImage2D(GL_TEXTURE_2D, 0, internal, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 }
 

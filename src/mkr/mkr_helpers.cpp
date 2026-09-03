@@ -49,6 +49,8 @@ Shader mkr::DefaultShader() {
 
     shader.id = mkgl::genShaderProg(vs, fs);
 
+    glGetUniformLocation(mkgl::state.dshader.id, "uMvp");
+    
     glDeleteShader(vs);
     glDeleteShader(fs);
     return shader;
@@ -94,7 +96,7 @@ Texture mkr::DefaultTexture(){
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     uint color = 0xFFFFFFFF;
-    mkgl::setTexImage2D(GL_RGBA, 1, 1, &color);
+    mkgl::setTexImage2D(GL_RGBA, GL_RGBA, 1, 1, &color);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -146,4 +148,16 @@ void mkr::UnloadDefaultBatch(){
     mkgl::state.dbatch.calls.clear();
     mkgl::state.dbatch.indices.clear();
     mkgl::state.dbatch.vertices.clear();
+}
+
+void mkr::GenTexture(Texture& tex, const void* data, int width, int height, GLenum format){
+    tex.id = mkgl::genTex(GL_TEXTURE_2D);
+    tex.width = width;
+    tex.height = height;
+
+    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+
+    mkgl::setTexImage2D(GL_RGBA, format, width, height, data);
 }

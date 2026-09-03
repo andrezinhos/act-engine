@@ -2,6 +2,7 @@
 #include "glad.h"
 #include "gmath.hpp"
 #include <vector>
+#include "stb_truetype.h"
 
 typedef unsigned int uint;
 typedef unsigned char byte;
@@ -9,6 +10,16 @@ typedef unsigned char byte;
 constexpr int MKR_POSITION_LAYOUT = 0;
 constexpr int MKR_COLOR_LAYOUT = 1;
 constexpr int MKR_TEXTURE_LAYOUT = 2;
+
+typedef stbtt_fontinfo FontInfo;
+typedef stbtt_pack_context FontPack;
+typedef stbtt_packedchar CharPack ;
+
+constexpr uint FONT_SIZE_DEFAULT = 32;
+constexpr uint FONT_TOTAL_CHARS = 96;
+
+constexpr uint FONT_ATLAS_WIDTH = 512;
+constexpr uint FONT_ATLAS_HEIGHT = 512;
 
 struct Color {
     float r, g, b;
@@ -38,11 +49,6 @@ struct vertex{
     float uv[2];
 };
 
-struct Rectangle{
-    float x, y;
-    int width, height;
-};
-
 struct Mesh{
     uint vao, vbo, ebo;
     std::vector<vertex> vertices;
@@ -50,7 +56,7 @@ struct Mesh{
 };
 
 struct Image {
-    unsigned char* data;
+    byte* data;
     int width, height, channels;
 };
 
@@ -59,12 +65,25 @@ struct Texture{
     int width, height;
 };
 
+struct Font{
+    std::vector<byte> buff;
+    FontInfo info;
+    CharPack cpack[96];
+    Texture fontTex;
+};
+
 struct Shader{
     uint id;
 
     GLint uview;
     GLint umodel;
     GLint utex;
+};
+
+struct Glyph{
+    int offsetX, offsetY;
+    int advance;
+    Image image;
 };
 
 constexpr size_t VMAX = 1000;
@@ -88,14 +107,15 @@ struct DState{
     Texture dtex;
     Mesh dmesh;
     Shader dshader;
+    Font dfont;
 };
 
 class mkgl{
 private:
     static bool getShaderError(uint& shader);
     static bool getShaderProgError(uint& prog);
-    static std::vector<byte> loadBytes(const char* path);
 public:
+    static std::vector<byte> loadBytes(const char* path);
     static uint genBuff(types b);
     static void bindBuff(uint& vo, types b);
     static void unbind();
@@ -108,7 +128,7 @@ public:
     static void unloadImage(Image& image);
     static uint genTex(GLenum type);
     static void setTexParams(GLenum type, GLenum wrap, GLenum format);
-    static void setTexImage2D(GLenum format, int width, int height, const void* data);
+    static void setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data);
     static std::string loadShaderFile(const std::string& path);
 
     static std::vector<vertex> SetNDC();

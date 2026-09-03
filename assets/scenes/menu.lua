@@ -17,7 +17,7 @@ function Menu.Init()
     jump:load("assets/audio/Jump.wav")
 end
 
-function Menu.Update()
+function Menu.Update(dt)
     if (ios.key_pressed(key.e)) then
         jump:play()
         eng.change_scene("game.lua")
