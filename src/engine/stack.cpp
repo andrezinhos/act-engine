@@ -1,6 +1,7 @@
 #include "stack.hpp"
 #include "esys.hpp"
 #include "mkr.hpp"
+#include "amk.hpp"
 
 std::unordered_map<int, Texture> stack::texmap;
 static int sprite_count = 0;
@@ -10,6 +11,9 @@ static int sound_count = 0;
 
 std::unordered_map<int, Music> stack::musicmap;
 static int music_count = 0;
+
+std::unordered_map<int, Font> stack::fontmap;
+static int font_count = 0;
 
 int stack::PushSprite(Texture& sprite){
     int id = sprite_count++;
@@ -49,9 +53,13 @@ void stack::UnloadAll(){
     for(auto& [id, music] : musicmap){
         amk::UnloadAudio(music.decoder, music.source);
     }
+    for(auto& [id, font] : fontmap){
+        mkt::UnloadFont(font);
+    }
 
     texmap.clear();
     soundmap.clear();
     musicmap.clear();
+    fontmap.clear();
     // printf("[INFO] STACK CLEAR\n");
 }

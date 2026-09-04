@@ -1,3 +1,4 @@
+#include "esys.hpp"
 #define SOL_ALL_SAFETIES_ON 1
 #include "script.hpp"
 #include <memory>
@@ -87,6 +88,12 @@ void script::load_conteiners(){
         "stop", &Music::stop,
         "pause", &Music::pause,
         "resume", &Music::resume
+    );
+
+    state.new_usertype<Text>("Text",
+        "position", &Text::position,
+        
+        "draw", &Text::draw
     );
 }
 

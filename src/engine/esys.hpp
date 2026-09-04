@@ -45,3 +45,11 @@ struct Sprite{
     void draw();
     void draw_area(Rect& rect);
 };
+
+struct Text{
+    Font font;
+    Vec2 position;
+
+    void load(const char* path);
+    void draw(const std::string& text, Color color);
+};

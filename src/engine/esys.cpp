@@ -101,3 +101,11 @@ void Music::resume(){
         amk::ResumeAudioFile(it->second.source);
     }
 }
+
+void Text::load(const char* path){
+    //not implemented
+}
+
+void Text::draw(const std::string& text, Color color){
+    // mkr::RenderText(text, position, color);
+}

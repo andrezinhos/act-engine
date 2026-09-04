@@ -28,7 +28,7 @@ void Menu::Update(float dt){
 
 void Menu::Draw(){
     mkr::CameraBegin(cam);
-    mkr::RenderText("Hello World", {100, 100}, {10, 10}, White);
+    mkr::RenderText("Hello World", {100, 100}, 100, White);
     mkr::CameraEnd();
 }
 

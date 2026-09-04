@@ -10,8 +10,6 @@
 #define STBI_NO_HDR
 #include "stb_image.h"
 
-DState mkgl::state = {};
-
 std::vector<byte> mkgl::loadBytes(const char* path){
     std::ifstream file(path, std::ios::binary);
 
@@ -87,73 +85,6 @@ std::vector<vertex> mkgl::SetNDC(){
         {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
         {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
-}
-
-void mkgl::sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv){
-    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { uv.x, uv.x }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { uv.y, uv.x }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.y, uv.y }});
-    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.x, uv.y }});
-}
-
-void mkgl::sendVertex(Vec2 position, Vec2 size, Color color, float u0, float v0, float u1, float v1){
-    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { u0, v0 }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { u1, v0 }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u1, v1 }});
-    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u0, v1 }});
-}
-
-void mkgl::sendIndices(unsigned int base){
-    state.dbatch.indices.push_back(base + 0);
-    state.dbatch.indices.push_back(base + 1);
-    state.dbatch.indices.push_back(base + 3);
-
-    state.dbatch.indices.push_back(base + 1);
-    state.dbatch.indices.push_back(base + 2);
-    state.dbatch.indices.push_back(base + 3);
-}
-
-void mkgl::drawElements(size_t count, void* offset){
-    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, offset);
-}
-
-void mkgl::limitFlush(){
-    size_t max_v = mkgl::state.dbatch.vertices.size() + 4;
-    size_t max_i = mkgl::state.dbatch.indices.size() + 6;
-    if (max_v < VMAX || max_i < IMAX) return;
-    else mkgl::flush();
-}
-
-void mkgl::flush(){
-    if (mkgl::state.dbatch.vertices.empty()) return;
-
-    bindBuff(mkgl::state.dbatch.vao, types::arr);
-
-    bindBuff(mkgl::state.dbatch.vbo, types::buff);
-    bindSubData(
-        types::buff, state.dbatch.vertices.data(),
-        state.dbatch.vertices.size() * sizeof(vertex)
-    );
-
-    bindBuff(mkgl::state.dbatch.ebo, types::element);
-    bindSubData(
-        types::element, state.dbatch.indices.data(),
-        state.dbatch.indices.size() * sizeof(uint32_t)
-    );
-
-    for (const auto& d : state.dbatch.calls){
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, d.texref->id);
-
-        drawElements(
-            d.count,
-            (void*)(d.start * sizeof(uint))
-        );
-    }
-
-    state.dbatch.calls.clear();
-    state.dbatch.indices.clear();
-    state.dbatch.vertices.clear();
 }
 
 bool mkgl::getShaderError(uint& shader){

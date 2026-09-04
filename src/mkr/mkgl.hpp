@@ -2,7 +2,6 @@
 #include "glad.h"
 #include "gmath.hpp"
 #include <vector>
-#include "stb_truetype.h"
 
 typedef unsigned int uint;
 typedef unsigned char byte;
@@ -10,16 +9,6 @@ typedef unsigned char byte;
 constexpr int MKR_POSITION_LAYOUT = 0;
 constexpr int MKR_COLOR_LAYOUT = 1;
 constexpr int MKR_TEXTURE_LAYOUT = 2;
-
-typedef stbtt_fontinfo FontInfo;
-typedef stbtt_pack_context FontPack;
-typedef stbtt_packedchar CharPack ;
-
-constexpr uint FONT_SIZE_DEFAULT = 32;
-constexpr uint FONT_TOTAL_CHARS = 96;
-
-constexpr uint FONT_ATLAS_WIDTH = 512;
-constexpr uint FONT_ATLAS_HEIGHT = 512;
 
 struct Color {
     float r, g, b;
@@ -65,25 +54,12 @@ struct Texture{
     int width, height;
 };
 
-struct Font{
-    std::vector<byte> buff;
-    FontInfo info;
-    CharPack cpack[96];
-    Texture fontTex;
-};
-
 struct Shader{
     uint id;
 
     GLint uview;
     GLint umodel;
     GLint utex;
-};
-
-struct Glyph{
-    int offsetX, offsetY;
-    int advance;
-    Image image;
 };
 
 constexpr size_t VMAX = 1000;
@@ -100,14 +76,6 @@ struct Batch{
     std::vector<uint> indices;
     std::vector<DCall> calls;
     uint vao, vbo, ebo;
-};
-
-struct DState{
-    Batch dbatch;
-    Texture dtex;
-    Mesh dmesh;
-    Shader dshader;
-    Font dfont;
 };
 
 class mkgl{
@@ -133,13 +101,6 @@ public:
 
     static std::vector<vertex> SetNDC();
 
-    static void sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv);
-    static void sendVertex(Vec2 position, Vec2 size, Color color, float u0, float u1, float v0, float v1);
-    static void sendIndices(unsigned int base);
-    static void drawElements(size_t count, void* offset);
-    static void limitFlush();
-    static void flush();
-
     static uint genShader(const char* src, GLenum type);
     static bool compileShader(uint& shader);
     static uint genShaderProg(uint& vs, uint& fs);
@@ -147,5 +108,4 @@ public:
     static void clearScreen(Color color);
 
     static void Delete(uint& obj, types t);
-    static DState state;
 };

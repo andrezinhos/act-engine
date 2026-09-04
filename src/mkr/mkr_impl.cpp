@@ -1,8 +1,10 @@
 #include "mkgl.hpp"
+#include "mkr_txt.hpp"
 #include "mkr.hpp"
 #include "stb_image.h"
 
 Window mkr::wmain;
+DState mkr::state = {};
 int mkr::flags_active[4];
 
 void frameCallback(GLFWwindow* window, int w, int h){
@@ -75,16 +77,17 @@ int mkr::GetWindowHeight(){
 }
 
 void mkr::Initialize(){
-    mkgl::state.dshader = DefaultShader();
-    mkgl::state.dmesh = DefaultQuad();
-    mkgl::state.dtex = DefaultTexture();
-    mkgl::state.dfont = DefaultFont();
+    state.dshader = DefaultShader();
+    state.dmesh = DefaultQuad();
+    state.dtex = DefaultTexture();
+    state.dfont = DefaultFont();
     DefaultBatch();
     printf("[INFO] DEFAULT STATE LOADED\n");
 }
 
 void mkr::Shutdown(){
     mkr::UnloadDefaultBatch();
+    mkr::UnloadDefaultFont();
     mkr::UnloadDefaultTexture();
     mkr::UnloadDefaultQuad();
     mkr::UnloadDefaultShader();
@@ -139,17 +142,17 @@ void mkr::ScreenClear(Color color){
 }
 
 void mkr::RenderRectangle(Vec2 position, Vec2 size, Color color){
-    mkgl::limitFlush();
-    uint32_t base = mkgl::state.dbatch.vertices.size();
-    uint32_t indexStart = mkgl::state.dbatch.indices.size();
+    limitFlush();
+    uint32_t base = state.dbatch.vertices.size();
+    uint32_t indexStart = state.dbatch.indices.size();
 
-    mkgl::sendVertex(position, size, color, {0.0f, 1.0f});
-    mkgl::sendIndices(base);
+    sendVertex(position, size, color, {0.0f, 1.0f});
+    sendIndices(base);
     
-    if (mkgl::state.dbatch.calls.empty() || mkgl::state.dbatch.calls.back().texref != &mkgl::state.dtex){
-        mkgl::state.dbatch.calls.push_back({indexStart, 6, &mkgl::state.dtex});
+    if (state.dbatch.calls.empty() || state.dbatch.calls.back().texref != &state.dtex){
+        state.dbatch.calls.push_back({indexStart, 6, &state.dtex});
     }
-    else mkgl::state.dbatch.calls.back().count += 6;
+    else state.dbatch.calls.back().count += 6;
 }
 
 /*
@@ -161,9 +164,9 @@ UV 1 = (rect_x + rect_width) / tex_width
 */
 
 void mkr::RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec2 size, Color color){
-    mkgl::limitFlush();
-    uint base = mkgl::state.dbatch.vertices.size();
-    uint indexStart = mkgl::state.dbatch.indices.size();
+    limitFlush();
+    uint base = state.dbatch.vertices.size();
+    uint indexStart = state.dbatch.indices.size();
 
     float u0 = rectangle.x / (float)tex->width;
     float v0 = rectangle.y / (float)tex->height;
@@ -171,36 +174,36 @@ void mkr::RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec
     float u1 = (rectangle.x + (float)rectangle.width) / (float)tex->width;
     float v1 = (rectangle.y + (float)rectangle.height) / (float)tex->height;
 
-    mkgl::sendVertex(position, size, color, u0, v0, u1, v1);
-    mkgl::sendIndices(base);
+    sendVertex(position, size, color, u0, v0, u1, v1);
+    sendIndices(base);
 
-    if (mkgl::state.dbatch.calls.empty() || mkgl::state.dbatch.calls.back().texref != tex){
-        mkgl::state.dbatch.calls.push_back({indexStart, 6, tex});
+    if (state.dbatch.calls.empty() || state.dbatch.calls.back().texref != tex){
+        state.dbatch.calls.push_back({indexStart, 6, tex});
     }
-    else mkgl::state.dbatch.calls.back().count += 6;
+    else state.dbatch.calls.back().count += 6;
 }
 
 void mkr::RenderTexture(Texture *tex, Vec2 position, Vec2 size, Color color){
-    mkgl::limitFlush();
-    uint base = mkgl::state.dbatch.vertices.size();
-    uint indexStart = mkgl::state.dbatch.indices.size();
+    limitFlush();
+    uint base = state.dbatch.vertices.size();
+    uint indexStart = state.dbatch.indices.size();
 
-    mkgl::sendVertex(position, size, color, {0.0f, 1.0f});
-    mkgl::sendIndices(base);
+    sendVertex(position, size, color, {0.0f, 1.0f});
+    sendIndices(base);
 
-    if (mkgl::state.dbatch.calls.empty() || mkgl::state.dbatch.calls.back().texref != tex){
-        mkgl::state.dbatch.calls.push_back({indexStart, 6, tex});
+    if (state.dbatch.calls.empty() || state.dbatch.calls.back().texref != tex){
+        state.dbatch.calls.push_back({indexStart, 6, tex});
     }
-    else mkgl::state.dbatch.calls.back().count += 6;
+    else state.dbatch.calls.back().count += 6;
 }
 
 void mkr::RenderBegin(){
-    glUseProgram(mkgl::state.dshader.id);
-    glUniform1i(mkgl::state.dshader.utex, 0);
+    glUseProgram(state.dshader.id);
+    glUniform1i(state.dshader.utex, 0);
 }
 
 void mkr::RenderEnd(){
-    mkgl::flush();
+    flush();
     glfwSwapBuffers(wmain.main);
 }
 
@@ -210,11 +213,11 @@ void mkr::CameraBegin(Camera2D& camera){
     Matrix model = Matrix::Identity();
 
     Matrix mvp = gmath::MultiplyMatrix(gmath::MultiplyMatrix(proj, view), model);
-    mkgl::setUniformMat(mkgl::state.dshader.umodel, mvp);
+    mkgl::setUniformMat(state.dshader.umodel, mvp);
 }
 
 void mkr::CameraEnd(){
-    mkgl::flush();
+    flush();
     Matrix view = Matrix::Identity();
-    mkgl::setUniformMat(mkgl::state.dshader.uview, view);
+    mkgl::setUniformMat(state.dshader.uview, view);
 }
