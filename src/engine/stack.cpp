@@ -43,6 +43,12 @@ int stack::PushMusicAudio(const char* path){
     return id;
 }
 
+int stack::PushFont(const char *path){
+    int id = font_count++;
+    fontmap.emplace(id, mktxt::LoadFont(path));
+    return id;
+}
+
 void stack::UnloadAll(){
     for (auto const& [id, tex] : texmap){
         mkr::UnloadTexture(tex);
@@ -54,7 +60,7 @@ void stack::UnloadAll(){
         amk::UnloadAudio(music.decoder, music.source);
     }
     for(auto& [id, font] : fontmap){
-        mkt::UnloadFont(font);
+        mktxt::UnloadFont(font);
     }
 
     texmap.clear();

@@ -57,9 +57,9 @@ struct Texture{
 struct Shader{
     uint id;
 
-    GLint uview;
-    GLint umodel;
-    GLint utex;
+    int uview;
+    int umodel;
+    int utex;
 };
 
 constexpr size_t VMAX = 1000;

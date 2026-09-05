@@ -103,9 +103,28 @@ void Music::resume(){
 }
 
 void Text::load(const char* path){
-    //not implemented
+    id = stack::PushFont(path);
 }
 
-void Text::draw(const std::string& text, Color color){
-    // mkr::RenderText(text, position, color);
+void Text::pos(int x, int y){      
+    position.x = x;
+    position.y = y;
+}
+
+void Text::spacing(double space){
+    auto it = stack::fontmap.find(id);
+    if (it != stack::fontmap.end())
+        it->second.spacing = static_cast<float>(space);
+    else 
+        mkr::state.dfont.spacing = static_cast<float>(space);
+}
+
+void Text::draw(const std::string& text, float size, Color color){
+    auto it = stack::fontmap.find(id);
+    if (it != stack::fontmap.end()){
+        mktxt::RenderTextEx(it->second, text, position, size, color);
+    }
+    else {
+        mktxt::RenderText(text, position, size, color);
+    }
 }

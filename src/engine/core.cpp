@@ -6,7 +6,7 @@
 #include "stack.hpp"
 #include <memory>
 
-constexpr const char* VERSION = "0.14.1";
+constexpr const char* VERSION = "0.14.3";
 
 Time core::time = {};
 std::unique_ptr<Scene> core::currScene = nullptr;

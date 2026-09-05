@@ -86,23 +86,6 @@ Mesh mkr::DefaultQuad(){
     return mesh;
 }
 
-Texture mkr::DefaultTexture(){
-    Texture tex;
-    tex.id = mkgl::genTex(GL_TEXTURE_2D);
-
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    uint color = 0xFFFFFFFF;
-    mkgl::setTexImage2D(GL_RGBA, GL_RGBA, 1, 1, &color);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    return tex;
-}
-
 void mkr::DefaultBatch(){
     state.dbatch.vao = mkgl::genBuff(types::arr);
     state.dbatch.vbo = mkgl::genBuff(types::buff);
@@ -134,14 +117,6 @@ void mkr::UnloadDefaultQuad(){
     mkgl::Delete(state.dmesh.vao, types::arr);
     mkgl::Delete(state.dmesh.vbo, types::buff);
     mkgl::Delete(state.dmesh.ebo, types::element);
-}
-
-void mkr::UnloadDefaultTexture(){
-    if (state.dtex.id != 0) glDeleteTextures(1, &state.dtex.id);
-}
-
-void mkr::UnloadDefaultFont(){
-    if(state.dfont.fontTex.id != 0) glDeleteTextures(1, &state.dfont.fontTex.id);
 }
 
 void mkr::UnloadDefaultBatch(){
@@ -220,4 +195,3 @@ void mkr::flush(){
     state.dbatch.indices.clear();
     state.dbatch.vertices.clear();
 }
-

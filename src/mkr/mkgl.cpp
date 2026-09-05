@@ -158,6 +158,7 @@ Image mkgl::loadImage(const char* path){
         4
     );
 
+    imgbuf.clear();
     return image;
 }
 

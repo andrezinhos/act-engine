@@ -13,9 +13,10 @@ set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3.a)
 add_library(mkr STATIC
   glad.cpp
   mkgl.cpp
+  mktxt.cpp
+  mktex.cpp
   mkr_helpers.cpp
-  mkr_impl.cpp
-  mkr_text.cpp
+  mkr.cpp
 )
 
 # general headers

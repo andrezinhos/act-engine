@@ -49,7 +49,10 @@ struct Sprite{
 struct Text{
     Font font;
     Vec2 position;
+    int id;
 
     void load(const char* path);
-    void draw(const std::string& text, Color color);
+    void pos(int x, int y);
+    void spacing(double space);
+    void draw(const std::string& text, float size, Color color);
 };

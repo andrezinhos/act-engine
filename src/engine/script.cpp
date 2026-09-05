@@ -84,6 +84,7 @@ void script::load_conteiners(){
 
     state.new_usertype<Music>("Music",
         "load", &Music::load,
+        
         "play", &Music::play,
         "stop", &Music::stop,
         "pause", &Music::pause,
@@ -93,6 +94,9 @@ void script::load_conteiners(){
     state.new_usertype<Text>("Text",
         "position", &Text::position,
         
+        "load", &Text::load,
+        "pos", &Text::pos,
+        "spacing", &Text::spacing,
         "draw", &Text::draw
     );
 }

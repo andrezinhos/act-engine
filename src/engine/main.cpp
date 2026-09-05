@@ -28,12 +28,12 @@ void Menu::Update(float dt){
 
 void Menu::Draw(){
     mkr::CameraBegin(cam);
-    mkr::RenderText("Hello World", {100, 100}, 100, White);
+    mktxt::RenderText("Hello World", {100, 100}, 100, White);
     mkr::CameraEnd();
 }
 
 int main(){
-	bool debug_mode = true;
+	bool debug_mode = false;
 
     if (!debug_mode){
        	script::init_script();
