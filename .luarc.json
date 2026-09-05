@@ -18,6 +18,8 @@
         "normal",
         "hidden",
         "disabled",
-        "Music"
+        "Music",
+        "Text",
+        "Rect"
     ]
 }

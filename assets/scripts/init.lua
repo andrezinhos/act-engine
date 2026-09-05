@@ -1,6 +1,5 @@
--- eng.win_flag(max)
 eng.win_flag(resizable)
-eng.fps(60)
+eng.win_flag(vsync)
 eng.start(800, 600, "Window")
 eng.initial_scene("menu.lua")
 

@@ -125,6 +125,7 @@ void mkr::RenderBegin(){
 
 void mkr::RenderEnd(){
     flush();
+    glfwPollEvents();
     glfwSwapBuffers(wmain.main);
 }
 

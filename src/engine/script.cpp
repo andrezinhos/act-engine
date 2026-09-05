@@ -84,7 +84,7 @@ void script::load_conteiners(){
 
     state.new_usertype<Music>("Music",
         "load", &Music::load,
-        
+
         "play", &Music::play,
         "stop", &Music::stop,
         "pause", &Music::pause,
@@ -93,7 +93,7 @@ void script::load_conteiners(){
 
     state.new_usertype<Text>("Text",
         "position", &Text::position,
-        
+
         "load", &Text::load,
         "pos", &Text::pos,
         "spacing", &Text::spacing,
@@ -112,7 +112,10 @@ void script::start_funcs(){
     sol::table core_table = state.create_table();
 
     core_table["win_flag"] = [](Flags flag){ core::WindowFlag(flag); };
-    core_table["fps"] = [](double fps){ core::TargetFPS(fps); };
+    core_table["get_fps"] = [](){
+        std::string fps_string = "FPS: " + std::to_string(core::GetFPS());
+        mktxt::RenderText(fps_string, {10, 50}, 30, White);
+    };
     core_table["delta"] = core::GetDelta;
 
     core_table["initial_scene"] = [](const std::string& file){

@@ -12,27 +12,31 @@ enum Flags{
 };
 
 struct Time{
-    double lastTime = 0.0f;
+    double lastTime;
     float delta;
-    double targetfps;
     double duration;
+
+    int fps;
+    int frameCount;
+    double fpsTimer;
+    
+    double Clock(); 
 };
 
 class core {
 private:
     static void init();
     static std::unique_ptr<Scene> currScene;
-    static std::unique_ptr<Scene> nextScene;
-    static Font dfont;
+    static std::unique_ptr<Scene> nextScene;    
 public:
     static Time time;
     static float GetDelta();
+    static int GetFPS();
 
     static void setScene(std::unique_ptr<Scene> scene);
     static void InitialScene(std::unique_ptr<Scene> initial);
 
     static void WindowFlag(Flags flag);
-    static void TargetFPS(double fps);
     static void MainWindow(int width, int height, const char* title);
 
     static bool Loop();

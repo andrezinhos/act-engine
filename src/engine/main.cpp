@@ -4,11 +4,13 @@
 #include "ios.hpp"
 #include "script.hpp"
 #include <memory>
+#include <string>
 
 class Menu : public Scene{
 public:
     Sprite neutral;
     Camera2D cam;
+    std::string fps_string;
     void Init() override;
     void Update(float dt) override;
     void Draw() override;
@@ -24,11 +26,15 @@ void Menu::Init(){
 
 void Menu::Update(float dt){
 
+    // printf("DELTA: %.3f\n", dt);
+    // printf("FPS: %d\n", core::GetFPS());
+    fps_string = "FPS: " + std::to_string(core::GetFPS());
 }
 
 void Menu::Draw(){
     mkr::CameraBegin(cam);
-    mktxt::RenderText("Hello World", {100, 100}, 100, White);
+    neutral.draw();
+    mktxt::RenderText(fps_string, {10, 50}, 50, White);
     mkr::CameraEnd();
 }
 
@@ -42,7 +48,7 @@ int main(){
     // test code
     else {
     	core::WindowFlag(RESIZABLE);
-        core::TargetFPS(60);
+        // core::WindowFlag(VSYNC);
         core::MainWindow(800, 600, "Window");
         core::InitialScene(std::make_unique<Menu>());
     }

@@ -1,14 +1,12 @@
 #include "core.hpp"
-#include "amk.hpp"
 #include "ios.hpp"
+#include "amk.hpp"
 #include "mkgl.hpp"
 #include "scene.hpp"
 #include "stack.hpp"
 #include <memory>
 
-constexpr const char* VERSION = "0.14.3";
-
-Time core::time = {};
+constexpr const char* VERSION = "0.14.4";
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
 
@@ -28,17 +26,7 @@ void core::init(){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-
     if (has_init) printf("ACT ENGINE v%s\n", VERSION);
-}
-
-void core::TargetFPS(double fps){
-    time.targetfps = fps;
-    time.duration = 1.0f / fps;
-}
-
-float core::GetDelta(){
-    return time.delta;
 }
 
 void core::setScene(std::unique_ptr<Scene> scene){
@@ -84,37 +72,15 @@ void core::MainWindow(int width, int height, const char *title){
     } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");
 }
 
-double LockCPU(){
-    double currTime = glfwGetTime();
-    double elapsed = currTime - core::time.lastTime;
-
-    if (elapsed <= core::time.duration){
-#ifdef _WIN32
-        // we do this in Windows to avoid
-        // cut by half the real fps target
-        glfwWaitEventsTimeout((core::time.duration - elapsed) / 15.6f);
-#else
-        glfwWaitEventsTimeout(core::time.duration - elapsed);
-#endif
-    }
-
-    double newTime = glfwGetTime();
-    core::time.delta = newTime - core::time.lastTime;
-    core::time.lastTime = newTime;
-
-    return newTime;
-}
-
 bool special_esc(){
 	return glfwGetKey(mkr::wmain.main, GLFW_KEY_ESCAPE) == GLFW_PRESS;
 }
 
 bool core::Loop(){
-    LockCPU();
+    time.Clock();
     ios::InputUpdate();
-    glfwPollEvents();
     if (glfwWindowShouldClose(mkr::wmain.main) || special_esc()) return false;
-    else return true;
+    return true;
 }
 
 void core::Finish(){

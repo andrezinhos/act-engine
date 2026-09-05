@@ -7,6 +7,7 @@ local jump = Sound.new()
 local cam = Cam2D.new(Vec2.zero(), 0, 1)
 
 local txt = Text.new()
+local d = eng.delta()
 
 function Menu.Init()
     neutral:load("assets/sprites/w_icon.png")
@@ -15,11 +16,10 @@ function Menu.Init()
 
     rec:pos(0, 64)
     rec:size(64, 64)
-    
-    -- txt:load("assets/fonts/Jersey10.ttf")
-    txt:spacing(0.7)
+
+    txt:spacing(1.0)
     txt:pos(100, 100)
-    
+
     jump:load("assets/audio/Jump.wav")
 end
 
@@ -33,7 +33,7 @@ end
 function Menu.Draw()
     render.cam_begin(cam)
     neutral:draw()
-    txt:draw("Hello\nWorld", 50, white)
+    eng.get_fps()
     render.cam_end()
 end
 
