@@ -4,6 +4,8 @@
 #include "scene.hpp"
 #include <memory>
 
+constexpr double FPS_TARGET = 1.0 / 72.0;
+
 enum Flags{
     VSYNC,
     RESIZABLE,
@@ -14,20 +16,19 @@ enum Flags{
 struct Time{
     double lastTime;
     float delta;
-    double duration;
 
     int fps;
     int frameCount;
     double fpsTimer;
-    
-    double Clock(); 
+    bool Clock();
+    void CountFps();
 };
 
 class core {
 private:
     static void init();
     static std::unique_ptr<Scene> currScene;
-    static std::unique_ptr<Scene> nextScene;    
+    static std::unique_ptr<Scene> nextScene;
 public:
     static Time time;
     static float GetDelta();

@@ -1,7 +1,9 @@
 #include "esys.hpp"
+#include "core.hpp"
+#include "ios.hpp"
+#include <memory>
 #define SOL_ALL_SAFETIES_ON 1
 #include "script.hpp"
-#include <memory>
 
 void script::start_types(){
     state.new_usertype<Vec2>("Vec2",

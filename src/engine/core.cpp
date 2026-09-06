@@ -5,8 +5,11 @@
 #include "scene.hpp"
 #include "stack.hpp"
 #include <memory>
+#include <thread>
+#include <chrono>
 
 constexpr const char* VERSION = "0.14.4";
+Time core::time = {};
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
 
@@ -38,6 +41,9 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
     currScene->Init();
 
     while(Loop()) {
+        if (!time.Clock()) continue;
+        time.CountFps();
+    
         if (nextScene){
             if (currScene) currScene->Exit();
             currScene = std::move(nextScene);
@@ -45,7 +51,6 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
         }
 
         float dt = GetDelta();
-
         mkr::ScreenClear(Black);
         currScene->Update(dt);
 
@@ -77,7 +82,6 @@ bool special_esc(){
 }
 
 bool core::Loop(){
-    time.Clock();
     ios::InputUpdate();
     if (glfwWindowShouldClose(mkr::wmain.main) || special_esc()) return false;
     return true;
@@ -89,4 +93,50 @@ void core::Finish(){
     nextScene.reset();
     amk::endAudioDevice();
     mkr::Shutdown();
+}
+
+float core::GetDelta(){
+    return time.delta;
+}
+
+int core::GetFPS() {
+    return time.fps;
+}
+
+void WaitTime(){
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(1)
+    );
+}
+
+void WaitFor(double value){
+    std::this_thread::sleep_for(
+        std::chrono::duration<double>(value)
+    );
+}
+
+bool Time::Clock(){
+    double newTime = glfwGetTime();
+    double elapsed = newTime - lastTime;
+    if (elapsed < 0.001) {
+        // WaitTime();
+        WaitFor(FPS_TARGET - elapsed - 0.001);
+        return false;
+    }
+
+    delta = static_cast<float>(elapsed);
+    lastTime = newTime;
+    if (delta > 0.1) delta = 0.1;
+    return true;
+}
+
+void Time::CountFps(){
+    frameCount++;
+    fpsTimer += delta;
+
+    if (fpsTimer >= 1.0){
+        fps = frameCount;
+        frameCount = 0;
+        fpsTimer -= 1.0;
+    }
 }

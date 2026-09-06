@@ -1,7 +1,7 @@
 eng.win_flag(resizable)
-eng.win_flag(vsync)
+-- eng.win_flag(vsync)
 eng.start(800, 600, "Window")
-eng.initial_scene("menu.lua")
+eng.initial_scene("game.lua")
 
 -- render.cursor(hidden);
 

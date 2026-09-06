@@ -37,7 +37,7 @@ private:
     static void setWindowPosition(int width, int height);
     static void sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv);
     static void sendVertex(Vec2 position, Vec2 size, Color color, float u0, float u1, float v0, float v1);
-    static void sendIndices(unsigned int base);
+    static void sendIndices(uint base);
     static void drawElements(size_t count, void* offset);
     static void limitFlush();
     static void flush();
@@ -70,7 +70,7 @@ public:
     static Shader LoadShader(const char* vs, const char* fs);
     static Texture LoadTextureSrc(const char* path);
     static Font LoadFontSrc(const char* path);
-    
+
     static void UnloadTexture(const Texture& tex);
     static void UnloadShader(const Shader& shader);
     static void UnloadFont(const Font& font);

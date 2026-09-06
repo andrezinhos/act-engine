@@ -56,3 +56,9 @@ struct Text{
     void spacing(double space);
     void draw(const std::string& text, float size, Color color);
 };
+
+struct Anim2D{
+    std::vector<Rectangle> frames;
+    int currFrame;
+    double duration;
+};

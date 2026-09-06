@@ -1,7 +1,4 @@
 #pragma once
-#include "ios.hpp"
-#include "core.hpp"
-#include "esys.hpp"
 #include "scene.hpp"
 #include "sol.hpp"
 #include <string>

@@ -29,7 +29,7 @@ void mkr::setWindowPosition(int width, int height){
         int monitorX = wmain.mode->width;
         int monitorY = wmain.mode->height;
         printf("[INFO] MONITOR SIZE: %d | %d \n", monitorX, monitorY);
-        
+
         int centerX = (monitorX/2) - (width/2);
         int centerY = (monitorY/2) - (height/2);
         glfwSetWindowPos(wmain.main, centerX, centerY);
@@ -50,7 +50,7 @@ Shader mkr::DefaultShader() {
     shader.id = mkgl::genShaderProg(vs, fs);
 
     glGetUniformLocation(state.dshader.id, "uMvp");
-    
+
     glDeleteShader(vs);
     glDeleteShader(fs);
     return shader;
@@ -143,7 +143,7 @@ void mkr::sendVertex(Vec2 position, Vec2 size, Color color, float u0, float v0, 
     state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u0, v1 }});
 }
 
-void mkr::sendIndices(unsigned int base){
+void mkr::sendIndices(uint base){
     state.dbatch.indices.push_back(base + 0);
     state.dbatch.indices.push_back(base + 1);
     state.dbatch.indices.push_back(base + 3);
@@ -187,7 +187,7 @@ void mkr::flush(){
 
         drawElements(
             d.count,
-            (void*)(d.start * sizeof(uint))
+            reinterpret_cast<void*>(d.start * sizeof(uint))
         );
     }
 
