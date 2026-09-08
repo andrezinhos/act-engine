@@ -8,17 +8,16 @@
 #include <thread>
 #include <chrono>
 
-constexpr const char* VERSION = "0.14.4";
+constexpr const char* VERSION = "0.14.7";
 Time core::time = {};
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
 
 void core::WindowFlag(Flags flag){
     switch(flag){
-        case VSYNC: mkr::flags_active[0] = 1; break;
-        case RESIZABLE: mkr::flags_active[1] = 1; break;
-        case MAXIMIZED: mkr::flags_active[2] = 1; break;
-        case FULLSCREEN: mkr::flags_active[3] = 1; break;
+        case RESIZABLE: mkr::flags_active[0] = 1; break;
+        case MAXIMIZED: mkr::flags_active[1] = 1; break;
+        case FULLSCREEN: mkr::flags_active[2] = 1; break;
     }
 }
 
@@ -50,9 +49,8 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
             currScene->Init();
         }
 
-        float dt = GetDelta();
         mkr::ScreenClear(Black);
-        currScene->Update(dt);
+        currScene->Update(time.delta);
 
         mkr::RenderBegin();
         currScene->Draw();
@@ -71,7 +69,7 @@ void core::MainWindow(int width, int height, const char *title){
     if (win_started){
         mkr::Initialize();
         time.lastTime = glfwGetTime();
-        mkr::setWindowIcon("assets/sprites/w_icon.png");
+        mkr::setWindowIcon("eng/w_icon.png");
         amk::initAudioDevice();
         printf("[INFO] ENGINE INITIALIZED\n");
     } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");

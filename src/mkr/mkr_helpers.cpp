@@ -3,7 +3,6 @@
 
 bool mkr::createWindowContext(){
     glfwMakeContextCurrent(wmain.main);
-    if (flags_active[0] == 1) glfwSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         printf("Error to Load OpenGL Context");
@@ -22,7 +21,7 @@ bool mkr::createWindowContext(){
 }
 
 void mkr::setWindowPosition(int width, int height){
-    if (flags_active[3] == 0){
+    if (flags_active[2] == 0){
         mkr::wmain.moni = glfwGetPrimaryMonitor();
         mkr::wmain.mode = glfwGetVideoMode(mkr::wmain.moni);
 
@@ -38,8 +37,8 @@ void mkr::setWindowPosition(int width, int height){
 
 Shader mkr::DefaultShader() {
     Shader shader = {};
-    std::string vert_file = mkgl::loadShaderFile("assets/shaders/simple.vert");
-    std::string frag_file = mkgl::loadShaderFile("assets/shaders/simple.frag");
+    std::string vert_file = mkgl::loadShaderFile("eng/simple.vert");
+    std::string frag_file = mkgl::loadShaderFile("eng/simple.frag");
 
     uint vs = mkgl::genShader(vert_file.c_str(), GL_VERTEX_SHADER);
     mkgl::compileShader(vs);
@@ -47,12 +46,10 @@ Shader mkr::DefaultShader() {
     uint fs = mkgl::genShader(frag_file.c_str(), GL_FRAGMENT_SHADER);
     mkgl::compileShader(fs);
 
-    shader.id = mkgl::genShaderProg(vs, fs);
-
+    mkgl::genShaderProg(&shader.id, vs, fs);
     glGetUniformLocation(state.dshader.id, "uMvp");
-
-    glDeleteShader(vs);
-    glDeleteShader(fs);
+    mkgl::deleteShaders(vs, fs);
+    
     return shader;
 }
 
@@ -65,17 +62,17 @@ Mesh mkr::DefaultQuad(){
         1, 2, 3
     };
 
-    mesh.vao = mkgl::genBuff(types::arr);
-    mesh.vbo = mkgl::genBuff(types::buff);
-    mesh.ebo = mkgl::genBuff(types::element);
+    mkgl::genArrayBuffer(&mesh.vao);
+    mkgl::genBuffer(&mesh.vbo);
+    mkgl::genBuffer(&mesh.ebo);
 
-    mkgl::bindBuff(mesh.vao, types::arr);
+    mkgl::bindArrBuff(&mesh.vao);
 
-    mkgl::bindBuff(mesh.vbo, types::buff);
-    mkgl::bindDataStatic(types::buff, mesh.vertices.data(), mesh.vertices.size() * sizeof(vertex));
+    mkgl::bindBuff(&mesh.vbo, GL_ARRAY_BUFFER);
+    mkgl::bindDataStatic(GL_ARRAY_BUFFER, mesh.vertices.data(), mesh.vertices.size() * sizeof(vertex));
 
-    mkgl::bindBuff(mesh.ebo, types::element);
-    mkgl::bindDataStatic(types::element, mesh.indices.data(), mesh.indices.size() * sizeof(uint));
+    mkgl::bindBuff(&mesh.ebo, GL_ELEMENT_ARRAY_BUFFER);
+    mkgl::bindDataStatic(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.data(), mesh.indices.size() * sizeof(uint));
 
     mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, 8, 0);
     mkgl::sendAttribPtr(MKR_COLOR_LAYOUT, 3, 8, 3);
@@ -87,22 +84,21 @@ Mesh mkr::DefaultQuad(){
 }
 
 void mkr::DefaultBatch(){
-    state.dbatch.vao = mkgl::genBuff(types::arr);
-    state.dbatch.vbo = mkgl::genBuff(types::buff);
-    state.dbatch.ebo = mkgl::genBuff(types::element);
+    mkgl::genArrayBuffer(&state.dbatch.vao);
+    mkgl::genBuffer(&state.dbatch.vbo);
+    mkgl::genBuffer(&state.dbatch.ebo);
 
-    mkgl::bindBuff(state.dbatch.vao, types::arr);
+    mkgl::bindArrBuff(&state.dbatch.vao);
 
-    mkgl::bindBuff(state.dbatch.vbo, types::buff);
-    mkgl::bindDataDynamic(types::buff, nullptr, VMAX * sizeof(vertex));
+    mkgl::bindBuff(&state.dbatch.vbo, GL_ARRAY_BUFFER);
+    mkgl::bindDataDynamic(GL_ARRAY_BUFFER, nullptr, VMAX * sizeof(vertex));
 
-    mkgl::bindBuff(state.dbatch.ebo, types::element);
-    mkgl::bindDataDynamic(types::element, nullptr, IMAX * sizeof(uint));
+    mkgl::bindBuff(&state.dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
+    mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
 
-    mkgl::sendAttribPtr(0, 3, 8, 0);
-    mkgl::sendAttribPtr(1, 3, 8, 3);
-    mkgl::sendAttribPtr(2, 2, 8, 6);
-
+    mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, 8, 0);
+    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT, 3, 8, 3);
+    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT, 2, 8, 6);
     mkgl::unbind();
 
     state.dbatch.vertices.reserve(VMAX);
@@ -167,15 +163,15 @@ void mkr::limitFlush(){
 void mkr::flush(){
     if (state.dbatch.vertices.empty()) return;
 
-    mkgl::bindBuff(state.dbatch.vao, types::arr);
+    mkgl::bindArrBuff(&state.dbatch.vao);
 
-    mkgl::bindBuff(state.dbatch.vbo, types::buff);
+    mkgl::bindBuff(&state.dbatch.vbo, GL_ARRAY_BUFFER);
     mkgl::bindSubData(
         types::buff, state.dbatch.vertices.data(),
         state.dbatch.vertices.size() * sizeof(vertex)
     );
 
-    mkgl::bindBuff(state.dbatch.ebo, types::element);
+    mkgl::bindBuff(&state.dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
     mkgl::bindSubData(
         types::element, state.dbatch.indices.data(),
         state.dbatch.indices.size() * sizeof(uint32_t)

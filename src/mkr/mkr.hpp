@@ -14,6 +14,12 @@ struct Rectangle{
     float width, height;
 };
 
+struct Mesh{
+    uint vao, vbo, ebo;
+    std::vector<vertex> vertices;
+    std::vector<uint> indices;
+};
+
 struct Window{
     Cursor cursor;
     GLFWimage icon;
@@ -42,7 +48,7 @@ private:
     static void limitFlush();
     static void flush();
 public:
-    static int flags_active[4];
+    static int flags_active[3];
     static Window wmain;
     static DState state;
     static void setWindowIcon(const char* path);
@@ -58,7 +64,6 @@ public:
     static Shader DefaultShader();
     static Mesh DefaultQuad();
     static Texture DefaultTexture();
-    static Font DefaultFont();
     static void DefaultBatch();
 
     static void UnloadDefaultShader();
@@ -73,7 +78,6 @@ public:
 
     static void UnloadTexture(const Texture& tex);
     static void UnloadShader(const Shader& shader);
-    static void UnloadFont(const Font& font);
     static void ScreenClear(Color color);
 
     static void RenderRectangle(Vec2 position, Vec2 size, Color color);

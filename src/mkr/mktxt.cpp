@@ -38,7 +38,7 @@ bool mktxt::GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack){
 Font mktxt::DefaultFont(){
     Font font = {};
 
-    font.data = mkgl::loadBytes("assets/fonts/Tiny5.ttf");
+    font.data = mkgl::loadBytes("eng/Tiny5.ttf");
 
     std::vector<byte> atlas(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT, 0);
     
@@ -85,7 +85,7 @@ void mktxt::UnloadDefaultFont(){
     if(mkr::state.dfont.fontTex.id != 0) glDeleteTextures(1, &mkr::state.dfont.fontTex.id);
 }
 
-void mktxt::UnloadFont(Font& font){
+void mktxt::UnloadFont(const Font& font){
     if (font.fontTex.id != 0) glDeleteTextures(1, &font.fontTex.id);
     printf("[INFO] FONT UNLOADED\n");
 }

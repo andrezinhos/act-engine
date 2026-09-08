@@ -1,5 +1,4 @@
 eng.win_flag(resizable)
--- eng.win_flag(vsync)
 eng.start(800, 600, "Window")
 eng.initial_scene("game.lua")
 

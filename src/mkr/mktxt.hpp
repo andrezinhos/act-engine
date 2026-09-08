@@ -26,7 +26,7 @@ public:
     static bool GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack);
 
     static Font LoadFont(const char* path);
-    static void UnloadFont(Font& font);
+    static void UnloadFont(const Font& font);
 
     static void RenderTextEx(Font& font, const std::string& text, Vec2 position, float size, Color color);
 

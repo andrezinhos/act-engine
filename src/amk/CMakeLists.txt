@@ -9,7 +9,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 # executable files
 add_library(amk STATIC
   amk_helpers.cpp
-  amk_impl.cpp
+  amk.cpp
 )
 
 # general headers

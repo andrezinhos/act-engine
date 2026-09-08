@@ -7,7 +7,6 @@
 constexpr double FPS_TARGET = 1.0 / 72.0;
 
 enum Flags{
-    VSYNC,
     RESIZABLE,
     MAXIMIZED,
     FULLSCREEN,

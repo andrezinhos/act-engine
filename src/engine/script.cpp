@@ -40,10 +40,20 @@ void script::start_types(){
 		"s", Keys::S,
 		"d", Keys::D,
 		"q", Keys::Q,
-		"e", Keys::E
+		"e", Keys::E,
+
+        "left", Keys::LEFT,
+        "right", Keys::RIGHT,
+        "up", Keys::UP,
+        "down", Keys::DOWN,
+
+        "f1", Keys::F1,
+        "f2", Keys::F2,
+        "f3", Keys::F3,
+        "f4", Keys::F4,
+        "f5", Keys::F5
 	);
 
-	state["vsync"] = Flags::VSYNC;
 	state["resizable"] = Flags::RESIZABLE;
 	state["max"] = Flags::MAXIMIZED;
 	state["full"] = Flags::FULLSCREEN;

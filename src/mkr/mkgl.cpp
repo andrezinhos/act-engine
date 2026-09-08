@@ -40,32 +40,59 @@ std::string mkgl::loadShaderFile(const std::string& path){
     return types;
 }
 
-uint mkgl::genBuff(types b){
-    uint obj;
-    if (b == types::arr) glGenVertexArrays(1, &obj);
-    if (b == types::buff || b == types::element) glGenBuffers(1, &obj);
-
-    return obj;
+void mkgl::getShaderLogInfo(uint* shader, char* log){
+    glGetShaderInfoLog(*shader, 512, nullptr, log);
+    printf("ERROR ON COMPILING SHADER:\n %s", log);
 }
 
-void mkgl::bindBuff(uint& vo, types b){
-    if (b == types::arr) glBindVertexArray(vo);
-    if (b == types::buff) glBindBuffer(GL_ARRAY_BUFFER, vo);
-    if (b == types::element) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vo);
+void mkgl::getProgramLogInfo(uint* prog, char* log){
+    glGetProgramInfoLog(*prog, 512, nullptr, log);
+    printf("ERROR ON LINKING PROGRAM:\n %s", log);
+}
+
+void mkgl::linkProgram(uint* prog, uint vs, uint fs){
+    glAttachShader(*prog, vs);
+    glAttachShader(*prog, fs);
+    glLinkProgram(*prog);
+}
+
+void mkgl::enableBlend(bool flag){
+    if (flag){
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+}
+
+void mkgl::genArrayBuffer(uint* obj){
+    glGenVertexArrays(1, obj);
+}
+
+void mkgl::genBuffer(uint* obj){
+    glGenBuffers(1, obj);
+}
+
+void mkgl::bindArrBuff(uint* vo){
+    glBindVertexArray(*vo);
+}
+
+//GL_ARRAY_BUFFER
+//GL_ELEMENT_ARRAY_BUFFER
+void mkgl::bindBuff(uint* vo, GLenum type){
+    glBindBuffer(type, *vo);
 }
 
 void mkgl::unbind(){
     glBindVertexArray(0);
 }
 
-void mkgl::bindDataStatic(types b, const void* data, size_t size){
-    if (b == types::buff) glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-    if (b == types::element) glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+//GL_ARRAY_BUFFER
+//GL_ELEMENT_ARRAY_BUFFER
+void mkgl::bindDataStatic(GLenum type, const void* data, size_t size){
+    glBufferData(type, size, data, GL_STATIC_DRAW);
 }
 
-void mkgl::bindDataDynamic(types b, const void* data, size_t size){
-    if (b == types::buff) glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
-    if (b == types::element) glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+void mkgl::bindDataDynamic(GLenum type, const void* data, size_t size){
+    glBufferData(type, size, data, GL_DYNAMIC_DRAW);
 }
 
 void mkgl::bindSubData(types b, const void *data, size_t size){
@@ -87,28 +114,25 @@ std::vector<vertex> mkgl::SetNDC(){
     };
 }
 
-bool mkgl::getShaderError(uint& shader){
+bool mkgl::getShaderError(uint* shader){
     int pass;
     char log[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &pass);
+    glGetShaderiv(*shader, GL_COMPILE_STATUS, &pass);
 
     if (!pass){
-        glGetShaderInfoLog(shader, 512, nullptr, log);
-        printf("ERROR ON COMPILING SHADER:\n %s", log);
-        return false;
+        getShaderLogInfo(shader, log);
     }
 
     return true;
 }
 
-bool mkgl::getShaderProgError(uint& prog){
+bool mkgl::getShaderProgError(uint* prog){
     int pass;
     char log[512];
-    glGetProgramiv(prog, GL_LINK_STATUS, &pass);
+    glGetProgramiv(*prog, GL_LINK_STATUS, &pass);
 
     if (!pass){
-        glGetProgramInfoLog(prog, 512, nullptr, log);
-        printf("ERROR TO CREATE SHADER PROGRAM:\n %s", log);
+        getProgramLogInfo(prog, log);
         return false;
     }
 
@@ -121,18 +145,20 @@ uint mkgl::genShader(const char* src, GLenum type){
     return sh;
 }
 
-bool mkgl::compileShader(uint& shader){
+bool mkgl::compileShader(uint shader){
     glCompileShader(shader);
-    return getShaderError(shader);
+    return getShaderError(&shader);
 }
 
-uint mkgl::genShaderProg(uint& vs, uint& fs){
-    uint prog = glCreateProgram();
-    glAttachShader(prog, vs);
-    glAttachShader(prog, fs);
-    glLinkProgram(prog);
+void mkgl::genShaderProg(uint* prog, uint vs, uint fs){
+    *prog = glCreateProgram();
+    linkProgram(prog, vs, fs);
     getShaderProgError(prog);
-    return prog;
+}
+
+void mkgl::deleteShaders(uint vs, uint fs){
+    glDeleteShader(vs);
+    glDeleteShader(fs);
 }
 
 void mkgl::setUniformMat(GLint loc, Matrix& mat){

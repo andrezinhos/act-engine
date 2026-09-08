@@ -5,7 +5,7 @@
 
 Window mkr::wmain;
 DState mkr::state = {};
-int mkr::flags_active[4];
+int mkr::flags_active[3];
 
 void frameCallback(GLFWwindow* window, int w, int h){
 	if (w == 0 || h == 0) return;
@@ -29,7 +29,7 @@ void mkr::setCursorMode(Cursor cur){
 
 bool mkr::startWindow(int width, int height, const char* title){
 
-	if (flags_active[3] == 1) {
+	if (flags_active[2] == 1) {
 		mkr::wmain.moni = glfwGetPrimaryMonitor();
 		mkr::wmain.mode = glfwGetVideoMode(mkr::wmain.moni);
 
@@ -39,9 +39,9 @@ bool mkr::startWindow(int width, int height, const char* title){
 		glfwWindowHint(GLFW_REFRESH_RATE, wmain.mode->refreshRate);
 	}
 
-    if (flags_active[1] == 1) glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+    if (flags_active[0] == 1) glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     wmain.main = glfwCreateWindow(width, height, title, wmain.moni, nullptr);
-    if (flags_active[2] == 1) glfwMaximizeWindow(wmain.main);
+    if (flags_active[1] == 1) glfwMaximizeWindow(wmain.main);
     if (!wmain.main){
         printf("Error to Create Window");
         glfwTerminate();
@@ -49,13 +49,10 @@ bool mkr::startWindow(int width, int height, const char* title){
     }
 
     setWindowPosition(width, height);
-
     glfwSetFramebufferSizeCallback(wmain.main, frameCallback);
-
     createWindowContext();
 
-    glEnable(GL_BLEND); 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    mkgl::enableBlend(true);
 
 	// this is for in case of wrong viewport
 	// on start of the window, specially in the maximized flag
@@ -107,7 +104,7 @@ Shader mkr::LoadShader(const char* vsPath, const char* fsPath) {
     uint fs = mkgl::genShader(frag_file.c_str(), GL_FRAGMENT_SHADER);
     mkgl::compileShader(fs);
 
-    shader.id = mkgl::genShaderProg(vs, fs);
+    mkgl::genShaderProg(&shader.id, vs, fs);
 
     glDeleteShader(vs);
     glDeleteShader(fs);

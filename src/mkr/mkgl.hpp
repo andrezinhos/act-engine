@@ -38,12 +38,6 @@ struct vertex{
     float uv[2];
 };
 
-struct Mesh{
-    uint vao, vbo, ebo;
-    std::vector<vertex> vertices;
-    std::vector<uint> indices;
-};
-
 struct Image {
     byte* data;
     int width, height, channels;
@@ -80,15 +74,22 @@ struct Batch{
 
 class mkgl{
 private:
-    static bool getShaderError(uint& shader);
-    static bool getShaderProgError(uint& prog);
+    static bool getShaderError(uint* shader);
+    static bool getShaderProgError(uint* prog);
+    static void getShaderLogInfo(uint* shader, char* log);
+    static void getProgramLogInfo(uint* prog, char* log);
+
+    static void linkProgram(uint* prog, uint vs, uint fs);
 public:
     static std::vector<byte> loadBytes(const char* path);
-    static uint genBuff(types b);
-    static void bindBuff(uint& vo, types b);
+    static void enableBlend(bool flag);
+    static void genBuffer(uint* obj);
+    static void genArrayBuffer(uint* obj);
+    static void bindArrBuff(uint* vo);
+    static void bindBuff(uint* vo, GLenum type);
     static void unbind();
-    static void bindDataStatic(types b, const void* data, size_t size);
-    static void bindDataDynamic(types b, const void* data, size_t size);
+    static void bindDataStatic(GLenum type, const void* data, size_t size);
+    static void bindDataDynamic(GLenum type, const void* data, size_t size);
     static void bindSubData(types b, const void* data, size_t size);
     static void sendAttribPtr(int layout, int locSize, int stride, int ptr);
 
@@ -102,8 +103,9 @@ public:
     static std::vector<vertex> SetNDC();
 
     static uint genShader(const char* src, GLenum type);
-    static bool compileShader(uint& shader);
-    static uint genShaderProg(uint& vs, uint& fs);
+    static bool compileShader(uint shader);
+    static void genShaderProg(uint* prog, uint vs, uint fs);
+    static void deleteShaders(uint vs, uint fs);
     static void setUniformMat(GLint loc, Matrix& mat);
     static void clearScreen(Color color);
 
