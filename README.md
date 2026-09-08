@@ -12,4 +12,4 @@ it has support for scripting, basic 2D rendering, audio stream
 
 **FONT SUPPORT**
 ---
-NOT IMPLEMENTED
+*TTF*

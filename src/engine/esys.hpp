@@ -1,4 +1,5 @@
 #pragma once
+#include "animation.hpp"
 #include "mkgl.hpp"
 #include "mkr.hpp"
 #include "amk.hpp"
@@ -58,7 +59,5 @@ struct Text{
 };
 
 struct Anim2D{
-    std::vector<Rectangle> frames;
-    int currFrame;
-    double duration;
+    Sheet source;
 };

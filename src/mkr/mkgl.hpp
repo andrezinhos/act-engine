@@ -109,5 +109,7 @@ public:
     static void setUniformMat(GLint loc, Matrix& mat);
     static void clearScreen(Color color);
 
-    static void Delete(uint& obj, types t);
+    static void deleteVertexArr(uint* obj);
+    static void deleteBuffer(uint* obj);
+    static void deleteProg(uint* obj);
 };

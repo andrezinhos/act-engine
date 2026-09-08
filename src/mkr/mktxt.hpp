@@ -20,15 +20,14 @@ struct Font{
 
 class mktxt{
     static void GenTexture(Texture& tex, const void* data, int width, int height, GLenum format);
+    static bool GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack);
 public:
     static Font DefaultFont();
     static void UnloadDefaultFont();
-    static bool GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack);
 
     static Font LoadFont(const char* path);
     static void UnloadFont(const Font& font);
 
     static void RenderTextEx(Font& font, const std::string& text, Vec2 position, float size, Color color);
-
     static void RenderText(const std::string& text, Vec2 position, float size, Color color);
 };

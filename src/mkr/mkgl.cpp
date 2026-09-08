@@ -208,10 +208,14 @@ void mkgl::setTexImage2D(GLenum format, GLenum internal, int width, int height, 
     glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-void mkgl::Delete(uint& obj, types t){
-    if (obj != 0){
-        if (t == types::arr) glDeleteVertexArrays(1, &obj);
-        if (t == types::buff || t == types::element) glDeleteBuffers(1, &obj);
-        if (t == types::prog) glDeleteProgram(obj);
-    }
+void mkgl::deleteProg(uint* obj){
+    if (obj != 0) glDeleteProgram(*obj);
+}
+
+void mkgl::deleteVertexArr(uint* obj){
+    if (obj != 0) glDeleteVertexArrays(1, obj);
+}
+
+void mkgl::deleteBuffer(uint* obj){
+    if (obj != 0) glDeleteBuffers(1, obj);
 }

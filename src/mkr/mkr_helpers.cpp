@@ -49,7 +49,7 @@ Shader mkr::DefaultShader() {
     mkgl::genShaderProg(&shader.id, vs, fs);
     glGetUniformLocation(state.dshader.id, "uMvp");
     mkgl::deleteShaders(vs, fs);
-    
+
     return shader;
 }
 
@@ -106,19 +106,19 @@ void mkr::DefaultBatch(){
 }
 
 void mkr::UnloadDefaultShader(){
-    mkgl::Delete(state.dshader.id, types::prog);
+    mkgl::deleteProg(&state.dshader.id);
 }
 
 void mkr::UnloadDefaultQuad(){
-    mkgl::Delete(state.dmesh.vao, types::arr);
-    mkgl::Delete(state.dmesh.vbo, types::buff);
-    mkgl::Delete(state.dmesh.ebo, types::element);
+    mkgl::deleteVertexArr(&state.dmesh.vao);
+    mkgl::deleteBuffer(&state.dmesh.vbo);
+    mkgl::deleteBuffer(&state.dmesh.ebo);
 }
 
 void mkr::UnloadDefaultBatch(){
-    mkgl::Delete(state.dbatch.vao, types::arr);
-    mkgl::Delete(state.dbatch.vbo, types::buff);
-    mkgl::Delete(state.dbatch.ebo, types::element);
+    mkgl::deleteVertexArr(&state.dbatch.vao);
+    mkgl::deleteBuffer(&state.dbatch.vbo);
+    mkgl::deleteBuffer(&state.dbatch.ebo);
 
     state.dbatch.calls.clear();
     state.dbatch.indices.clear();

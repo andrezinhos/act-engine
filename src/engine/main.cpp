@@ -48,7 +48,6 @@ int main(){
     // test code
     else {
     	core::WindowFlag(RESIZABLE);
-        // core::WindowFlag(VSYNC);
         core::MainWindow(800, 600, "Window");
         core::InitialScene(std::make_unique<Menu>());
     }

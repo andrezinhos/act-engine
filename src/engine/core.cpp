@@ -14,11 +14,9 @@ std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
 
 void core::WindowFlag(Flags flag){
-    switch(flag){
-        case RESIZABLE: mkr::flags_active[0] = 1; break;
-        case MAXIMIZED: mkr::flags_active[1] = 1; break;
-        case FULLSCREEN: mkr::flags_active[2] = 1; break;
-    }
+    if (flag == RESIZABLE) mkr::flags_active[0] = 1;
+    if (flag == MAXIMIZED) mkr::flags_active[1] = 1;
+    if (flag == FULLSCREEN) mkr::flags_active[2] = 1;
 }
 
 void core::init(){
