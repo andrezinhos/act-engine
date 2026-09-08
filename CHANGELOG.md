@@ -1,9 +1,10 @@
 
 **0.14.7**
 ---
----
+
 MONKEY RENDER
 ---
+
 **ADDED**
 - TrueType font support via stb_truetype
 - ASCII Text Rendering
@@ -17,13 +18,11 @@ MONKEY RENDER
 **REMOVED**
 - VSync flag support
 
----
 AUDIO MAKE
 ---
 
 - UNCHANGED
 
----
 ENGINE
 ---
 
