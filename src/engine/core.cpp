@@ -1,6 +1,6 @@
 #include "core.hpp"
 #include "ios.hpp"
-#include "amk.hpp"
+#include "amk.h"
 #include "mkgl.hpp"
 #include "scene.hpp"
 #include "stack.hpp"
@@ -8,7 +8,7 @@
 #include <thread>
 #include <chrono>
 
-constexpr const char* VERSION = "0.14.7";
+constexpr const char* VERSION = "0.14.9";
 Time core::time = {};
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
@@ -68,7 +68,7 @@ void core::MainWindow(int width, int height, const char *title){
         mkr::Initialize();
         time.lastTime = glfwGetTime();
         mkr::setWindowIcon("eng/w_icon.png");
-        amk::initAudioDevice();
+        initAudioDevice();
         printf("[INFO] ENGINE INITIALIZED\n");
     } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");
 }
@@ -87,7 +87,7 @@ void core::Finish(){
     stack::UnloadAll();
     currScene.reset();
     nextScene.reset();
-    amk::endAudioDevice();
+    endAudioDevice();
     mkr::Shutdown();
 }
 

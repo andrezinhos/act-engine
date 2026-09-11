@@ -33,7 +33,7 @@ Texture mkr::LoadTextureSrc(const char* path){
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    mkgl::setTexImage2D(GL_RGBA, GL_RGBA, image.width, image.height, image.data);
+    mkgl::setTexImage2D(GL_RGBA, GL_RGBA8, image.width, image.height, image.data);
     mkgl::unloadImage(image);
 
     return tex;

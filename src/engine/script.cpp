@@ -144,7 +144,7 @@ void script::start_funcs(){
         core::MainWindow(width, height, title.c_str());
     };
 
-    core_table["master_vol"] = [](double vol){ amk::MasterVolume(vol); };
+    core_table["master_vol"] = [](double vol){ MasterVolume(vol); };
     state["eng"] = core_table;
 
     /* IO FUNCS */

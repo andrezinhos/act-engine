@@ -2,11 +2,10 @@
 #include "animation.hpp"
 #include "mkgl.hpp"
 #include "mkr.hpp"
-#include "amk.hpp"
-#include <vector>
+#include "amk.h"
 
 struct Sound{
-    std::vector<unsigned char> data;
+    unsigned char* data;
     Decoder decoder;
     NodeSource source;
     int id;

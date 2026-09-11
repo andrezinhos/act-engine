@@ -66,7 +66,7 @@ void Sound::load(const char* path){
 void Sound::play(){
     auto it = stack::soundmap.find(stack::soundmap[id].id);
     if (it != stack::soundmap.end()){
-        amk::PlayAudioFile(it->second.decoder, it->second.source);
+        PlayAudioFile(&it->second.decoder, &it->second.source);
     }
 }
 
@@ -77,28 +77,28 @@ void Music::load(const char* path){
 void Music::play(){
     auto it = stack::musicmap.find(stack::musicmap[id].id);
     if (it != stack::musicmap.end()){
-        amk::PlayAudioFile(it->second.decoder, it->second.source);
+        PlayAudioFile(&it->second.decoder, &it->second.source);
     }
 }
 
 void Music::stop(){
     auto it = stack::musicmap.find(stack::musicmap[id].id);
     if (it != stack::musicmap.end()){
-        amk::StopAudioFile(it->second.decoder, it->second.source);
+        StopAudioFile(&it->second.decoder, &it->second.source);
     }
 }
 
 void Music::pause(){
     auto it = stack::musicmap.find(stack::musicmap[id].id);
     if (it != stack::musicmap.end()){
-        amk::PauseAudioFile(it->second.source);
+        PauseAudioFile(&it->second.source);
     }
 }
 
 void Music::resume(){
     auto it = stack::musicmap.find(stack::musicmap[id].id);
     if (it != stack::musicmap.end()){
-        amk::ResumeAudioFile(it->second.source);
+        ResumeAudioFile(&it->second.source);
     }
 }
 
@@ -122,7 +122,7 @@ void Text::spacing(double space){
 void Text::draw(const std::string& text, float size, Color color){
     auto it = stack::fontmap.find(id);
     if (it != stack::fontmap.end()){
-        mktxt::RenderTextEx(it->second, text, position, size, color);
+        mktxt::RenderTextEx(it->second, text.c_str(), position, size, color);
     }
     else {
         mktxt::RenderText(text, position, size, color);

@@ -6,58 +6,49 @@
 typedef unsigned int uint;
 typedef unsigned char byte;
 
-constexpr int MKR_POSITION_LAYOUT = 0;
-constexpr int MKR_COLOR_LAYOUT = 1;
-constexpr int MKR_TEXTURE_LAYOUT = 2;
+static const int MKR_POSITION_LAYOUT = 0;
+static const int MKR_COLOR_LAYOUT = 1;
+static const int MKR_TEXTURE_LAYOUT = 2;
+
+static const int MKR_VERTEX_STRIDE = 9; 
 
 struct Color {
-    float r, g, b;
+    float r, g, b, a;
 };
 
-constexpr Color White = {1.0f, 1.0f, 1.0f};
-constexpr Color Black = {0.0f, 0.0f, 0.0f};
-constexpr Color Red = {1.0f, 0.0f, 0.0f};
-constexpr Color Green = {0.0f, 1.0f, 0.0f};
-constexpr Color Blue = {0.0f, 0.0f, 1.0f};
-constexpr Color Yellow = {1.0f, 1.0f, 0.0f};
-
-enum class types{
-    arr,
-    buff,
-    element,
-
-    prog,
-    proj,
-    view,
-    model,
-};
+static const Color White = {1.0f, 1.0f, 1.0f, 1.0f};
+static const Color Black = {0.0f, 0.0f, 0.0f, 1.0f};
+static const Color Red = {1.0f, 0.0f, 0.0f, 1.0f};
+static const Color Green = {0.0f, 1.0f, 0.0f, 1.0f};
+static const Color Blue = {0.0f, 0.0f, 1.0f, 1.0f};
+static const Color Yellow = {1.0f, 1.0f, 0.0f, 1.0f};
 
 struct vertex{
     float position[3];
-    float color[3];
+    float color[4];
     float uv[2];
 };
 
-struct Image {
+typedef struct{
     byte* data;
     int width, height, channels;
-};
+} Image;
 
-struct Texture{
+typedef struct {
     uint id;
     int width, height;
-};
+} Texture;
 
-struct Shader{
+typedef struct{
     uint id;
 
     int uview;
     int umodel;
     int utex;
-};
+} Shader;
 
-constexpr size_t VMAX = 1000;
-constexpr size_t IMAX = 1500;
+static const size_t VMAX = 1000;
+static const size_t IMAX = 1500;
 
 struct DCall{
     uint start = 0;
@@ -81,7 +72,8 @@ private:
 
     static void linkProgram(uint* prog, uint vs, uint fs);
 public:
-    static std::vector<byte> loadBytes(const char* path);
+    static void freeptr(void* ptr);
+    static byte* loadBytes(const char* path, size_t* size);
     static void enableBlend(bool flag);
     static void genBuffer(uint* obj);
     static void genArrayBuffer(uint* obj);
@@ -90,7 +82,7 @@ public:
     static void unbind();
     static void bindDataStatic(GLenum type, const void* data, size_t size);
     static void bindDataDynamic(GLenum type, const void* data, size_t size);
-    static void bindSubData(types b, const void* data, size_t size);
+    static void bindSubData(GLenum, const void* data, size_t size);
     static void sendAttribPtr(int layout, int locSize, int stride, int ptr);
 
     static Image loadImage(const char* path);

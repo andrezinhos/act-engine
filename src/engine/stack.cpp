@@ -1,7 +1,7 @@
 #include "stack.hpp"
 #include "esys.hpp"
 #include "mkr.hpp"
-#include "amk.hpp"
+#include "amk.h"
 
 std::unordered_map<int, Texture> stack::texmap;
 static int sprite_count = 0;
@@ -23,22 +23,23 @@ int stack::PushSprite(Texture& sprite){
 
 int stack::PushSoundAudio(const char* path){
     int id = sound_count++;
-    soundmap[id].data = amk::loadBytes(path);
-    amk::LoadSoundAudioFile(
-        soundmap[id].data.data(),
-        soundmap[id].data.size(),
-        soundmap[id].decoder,
-        soundmap[id].source
+    size_t size = 0;
+    soundmap[id].data = loadBytes(path, &size);
+    LoadSoundAudioFile(
+        soundmap[id].data,
+        size,
+        &soundmap[id].decoder,
+        &soundmap[id].source
     );
     return id;
 }
 
 int stack::PushMusicAudio(const char* path){
     int id = music_count++;
-    amk::LoadMusicAudioFile(
+    LoadMusicAudioFile(
         path,
-        musicmap[id].decoder,
-        musicmap[id].source
+        &musicmap[id].decoder,
+        &musicmap[id].source
     );
     return id;
 }
@@ -54,10 +55,10 @@ void stack::UnloadAll(){
         mkr::UnloadTexture(tex);
     }
     for(auto& [id, sound] : soundmap){
-        amk::UnloadAudio(sound.decoder, sound.source);
+        UnloadSoundAudio(sound.data, &sound.decoder, &sound.source);
     }
     for(auto& [id, music] : musicmap){
-        amk::UnloadAudio(music.decoder, music.source);
+        UnloadAudioFile(&music.decoder, &music.source);
     }
     for(auto& [id, font] : fontmap){
         mktxt::UnloadFont(font);

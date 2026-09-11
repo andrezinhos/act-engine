@@ -74,9 +74,9 @@ Mesh mkr::DefaultQuad(){
     mkgl::bindBuff(&mesh.ebo, GL_ELEMENT_ARRAY_BUFFER);
     mkgl::bindDataStatic(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.data(), mesh.indices.size() * sizeof(uint));
 
-    mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, 8, 0);
-    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT, 3, 8, 3);
-    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT, 2, 8, 6);
+    mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
+    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    4, MKR_VERTEX_STRIDE, 3);
+    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 7);
 
     mkgl::unbind();
 
@@ -96,9 +96,9 @@ void mkr::DefaultBatch(){
     mkgl::bindBuff(&state.dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
     mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
 
-    mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, 8, 0);
-    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT, 3, 8, 3);
-    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT, 2, 8, 6);
+    mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
+    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    4, MKR_VERTEX_STRIDE, 3);
+    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 7);
     mkgl::unbind();
 
     state.dbatch.vertices.reserve(VMAX);
@@ -126,17 +126,17 @@ void mkr::UnloadDefaultBatch(){
 }
 
 void mkr::sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv){
-    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { uv.x, uv.x }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { uv.y, uv.x }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.y, uv.y }});
-    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.x, uv.y }});
+    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { uv.x, uv.x }});
+    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { uv.y, uv.x }});
+    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { uv.y, uv.y }});
+    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { uv.x, uv.y }});
 }
 
 void mkr::sendVertex(Vec2 position, Vec2 size, Color color, float u0, float v0, float u1, float v1){
-    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { u0, v0 }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { u1, v0 }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u1, v1 }});
-    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u0, v1 }});
+    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { u0, v0 }});
+    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { u1, v0 }});
+    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { u1, v1 }});
+    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { u0, v1 }});
 }
 
 void mkr::sendIndices(uint base){
@@ -167,13 +167,13 @@ void mkr::flush(){
 
     mkgl::bindBuff(&state.dbatch.vbo, GL_ARRAY_BUFFER);
     mkgl::bindSubData(
-        types::buff, state.dbatch.vertices.data(),
+        GL_ARRAY_BUFFER, state.dbatch.vertices.data(),
         state.dbatch.vertices.size() * sizeof(vertex)
     );
 
     mkgl::bindBuff(&state.dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
     mkgl::bindSubData(
-        types::element, state.dbatch.indices.data(),
+        GL_ELEMENT_ARRAY_BUFFER, state.dbatch.indices.data(),
         state.dbatch.indices.size() * sizeof(uint32_t)
     );
 

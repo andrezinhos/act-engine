@@ -38,46 +38,52 @@ bool mktxt::GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack){
 Font mktxt::DefaultFont(){
     Font font = {};
 
-    font.data = mkgl::loadBytes("eng/Tiny5.ttf");
+    font.spacing = 1.0f;
+    size_t size = 0;
+    font.data = mkgl::loadBytes("eng/Tiny5.ttf", &size);
 
-    std::vector<byte> atlas(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT, 0);
+    byte* atlas = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT);
     
-    mktxt::GetFontAtlas(font.data.data(), atlas.data(), font.cpack);
+    mktxt::GetFontAtlas(font.data, atlas, font.cpack);
 
-    std::vector<byte> rgba(512*512*4);
+    byte* rgba = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT * 4);
     for(int i = 0; i < 512*512; i++){
         rgba[i*4 + 0] = 255; 
         rgba[i*4 + 1] = 255; 
         rgba[i*4 + 2] = 255;
         rgba[i*4 + 3] = atlas[i];
     }
-    GenTexture(font.fontTex, rgba.data(), FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, GL_RGBA);
+    GenTexture(font.fontTex, rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, GL_RGBA);
 
-    font.data.clear();
-    atlas.clear();
+    mkgl::freeptr(font.data);
+    mkgl::freeptr(atlas);
+    mkgl::freeptr(rgba);
     return font;
 };
 
 Font mktxt::LoadFont(const char* path){
     Font font = {};
 
-    font.data = mkgl::loadBytes(path);
+    font.spacing = 1.0f;
+    size_t size = 0;
+    font.data = mkgl::loadBytes(path, &size);
 
-    std::vector<byte> atlas(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT, 0);
+    byte* atlas = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT);
     
-    mktxt::GetFontAtlas(font.data.data(), atlas.data(), font.cpack);
+    mktxt::GetFontAtlas(font.data, atlas, font.cpack);
 
-    std::vector<byte> rgba(512*512*4);
+    byte* rgba = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT * 4);
     for(int i = 0; i < 512*512; i++){
         rgba[i*4 + 0] = 255; 
         rgba[i*4 + 1] = 255; 
         rgba[i*4 + 2] = 255;
         rgba[i*4 + 3] = atlas[i];
     }
-    GenTexture(font.fontTex, rgba.data(), FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, GL_RGBA);
+    GenTexture(font.fontTex, rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, GL_RGBA8);
 
-    font.data.clear();
-    atlas.clear();
+    mkgl::freeptr(font.data);
+    mkgl::freeptr(atlas);
+    mkgl::freeptr(rgba);
     return font;
 };
 
@@ -90,12 +96,13 @@ void mktxt::UnloadFont(const Font& font){
     printf("[INFO] FONT UNLOADED\n");
 }
 
-void mktxt::RenderTextEx(Font &font, const std::string &text, Vec2 position, float minSize, Color color){
+void mktxt::RenderTextEx(Font &font, const char* text, Vec2 position, float minSize, Color color){
     float scale = minSize / FONT_SIZE_DEFAULT;
     
     float lineHeight = FONT_SIZE_DEFAULT * scale * font.spacing;
     float startX = position.x;
-    for(char c : text){
+    for(int i = 0; i < text[i]; i++){
+        char c = text[i];
         if (c == '\n'){
             position.x = startX;
             position.y += lineHeight;
@@ -137,5 +144,5 @@ void mktxt::RenderTextEx(Font &font, const std::string &text, Vec2 position, flo
 }
 
 void mktxt::RenderText(const std::string& text, Vec2 position, float minSize, Color color){
-    RenderTextEx(mkr::state.dfont, text, position, minSize, color);
+    RenderTextEx(mkr::state.dfont, text.c_str(), position, minSize, color);
 }

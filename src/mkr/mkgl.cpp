@@ -9,21 +9,39 @@
 #define STBI_NO_PSD
 #define STBI_NO_HDR
 #include "stb_image.h"
+#include <cstdio>
+#include <cstdlib>
 
-std::vector<byte> mkgl::loadBytes(const char* path){
-    std::ifstream file(path, std::ios::binary);
+void mkgl::freeptr(void* ptr){
+    free(ptr);
+    ptr = nullptr;
+}
 
-    if (!file.is_open()) return {};
+byte* mkgl::loadBytes(const char* path, size_t* size){
+    FILE* file = fopen(path, "rb");
 
-    file.seekg(0, std::ios::end);
-    size_t size = file.tellg();
-    file.seekg(0, std::ios::beg);
+    if (!file) return nullptr;
 
-    std::vector<byte> buffer(size);
+    fseek(file, 0, SEEK_END);
+    size_t fsize = ftell(file);
+    rewind(file);
 
-    file.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
-    file.close();
+    byte* buffer = (byte*)malloc(fsize);
+    if (!buffer){
+        perror("Error to load File");
+        fclose(file);
+        return nullptr;
+    }
 
+    size_t outsize = fread(buffer, 1, fsize, file);
+    fclose(file);
+
+    if (outsize != fsize){
+        freeptr(buffer);
+        return nullptr;
+    }
+    
+    if (size) *size = outsize;
     return buffer;
 }
 
@@ -95,9 +113,8 @@ void mkgl::bindDataDynamic(GLenum type, const void* data, size_t size){
     glBufferData(type, size, data, GL_DYNAMIC_DRAW);
 }
 
-void mkgl::bindSubData(types b, const void *data, size_t size){
-    if (b == types::buff) glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
-    if (b == types::element) glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
+void mkgl::bindSubData(GLenum type, const void *data, size_t size){
+    glBufferSubData(type, 0, size, data);
 }
 
 void mkgl::sendAttribPtr(int layout, int size, int stride, int ptr){
@@ -107,10 +124,10 @@ void mkgl::sendAttribPtr(int layout, int size, int stride, int ptr){
 
 std::vector<vertex> mkgl::SetNDC(){
     return {
-        {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-        {{0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-        {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+        {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+        {{0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+        {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
 }
 
@@ -121,6 +138,7 @@ bool mkgl::getShaderError(uint* shader){
 
     if (!pass){
         getShaderLogInfo(shader, log);
+        return false;
     }
 
     return true;
@@ -173,18 +191,19 @@ void mkgl::clearScreen(Color color){
 Image mkgl::loadImage(const char* path){
     Image image = {};
 
-    std::vector<byte> imgbuf = loadBytes(path);
+    size_t imgsize = 0;
+    byte* imgbuf = loadBytes(path, &imgsize);
 
     image.data = stbi_load_from_memory(
-        imgbuf.data(),
-        imgbuf.size(),
+        imgbuf,
+        imgsize,
         &image.width,
         &image.height,
         &image.channels,
         4
     );
 
-    imgbuf.clear();
+    freeptr(imgbuf);
     return image;
 }
 
