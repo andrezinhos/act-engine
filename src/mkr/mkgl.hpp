@@ -10,7 +10,7 @@ static const int MKR_POSITION_LAYOUT = 0;
 static const int MKR_COLOR_LAYOUT = 1;
 static const int MKR_TEXTURE_LAYOUT = 2;
 
-static const int MKR_VERTEX_STRIDE = 9; 
+static const int MKR_VERTEX_STRIDE = 9;
 
 struct Color {
     float r, g, b, a;
@@ -47,8 +47,8 @@ typedef struct{
     int utex;
 } Shader;
 
-static const size_t VMAX = 1000;
-static const size_t IMAX = 1500;
+static const size_t VMAX = 1004;
+static const size_t IMAX = 1506;
 
 struct DCall{
     uint start = 0;
@@ -56,12 +56,14 @@ struct DCall{
     Texture* texref = nullptr;
 };
 
-struct Batch{
+typedef struct {
     std::vector<vertex> vertices;
     std::vector<uint> indices;
     std::vector<DCall> calls;
     uint vao, vbo, ebo;
-};
+} Batch;
+
+#define freeptr(p) do {free(p); p = nullptr;} while(0)
 
 class mkgl{
 private:
@@ -72,7 +74,6 @@ private:
 
     static void linkProgram(uint* prog, uint vs, uint fs);
 public:
-    static void freeptr(void* ptr);
     static byte* loadBytes(const char* path, size_t* size);
     static void enableBlend(bool flag);
     static void genBuffer(uint* obj);
@@ -90,7 +91,7 @@ public:
     static uint genTex(GLenum type);
     static void setTexParams(GLenum type, GLenum wrap, GLenum format);
     static void setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data);
-    static std::string loadShaderFile(const std::string& path);
+    static char* loadShaderFile(const char* path);
 
     static std::vector<vertex> SetNDC();
 

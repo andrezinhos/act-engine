@@ -1,4 +1,5 @@
 #include "mkgl.hpp"
+#include <cstring>
 #include <string>
 #include <fstream>
 #define STB_IMAGE_IMPLEMENTATION
@@ -11,11 +12,6 @@
 #include "stb_image.h"
 #include <cstdio>
 #include <cstdlib>
-
-void mkgl::freeptr(void* ptr){
-    free(ptr);
-    ptr = nullptr;
-}
 
 byte* mkgl::loadBytes(const char* path, size_t* size){
     FILE* file = fopen(path, "rb");
@@ -40,22 +36,35 @@ byte* mkgl::loadBytes(const char* path, size_t* size){
         freeptr(buffer);
         return nullptr;
     }
-    
+
     if (size) *size = outsize;
     return buffer;
 }
 
-std::string mkgl::loadShaderFile(const std::string& path){
-    std::ifstream file(path, std::ios::binary);
+char* mkgl::loadShaderFile(const char* path){
+    FILE* file = fopen(path, "rb");
 
-    file.seekg(0, std::ios::end);
-    size_t size = file.tellg();
-    file.seekg(0, std::ios::beg);
+    if (!file) return nullptr;
 
-    std::string types(size, '\0');
-    file.read(&types[0], size);
+    fseek(file, 0, SEEK_END);
+    size_t fsize = ftell(file);
+    rewind(file);
 
-    return types;
+    char* buffer = (char*)malloc(fsize + 1);
+    if (!buffer){
+        fclose(file);
+        return nullptr;
+    }
+
+    size_t outsize = fread(buffer, 1, fsize, file);
+    buffer[fsize] = '\0';
+    fclose(file);
+
+    if (outsize != fsize){
+        freeptr(buffer);
+        return nullptr;
+    }
+    return buffer;
 }
 
 void mkgl::getShaderLogInfo(uint* shader, char* log){

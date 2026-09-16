@@ -12,6 +12,8 @@ add_library(amk STATIC
   amk.c
 )
 
+target_compile_options(amk PRIVATE -Wall -O2 -march=x86-64-v2 -mtune=generic -DNDEBUG)
+
 # general headers
 target_include_directories(amk PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}

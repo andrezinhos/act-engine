@@ -95,14 +95,16 @@ void mkr::Shutdown(){
 
 Shader mkr::LoadShader(const char* vsPath, const char* fsPath) {
     Shader shader = {};
-    std::string vert_file = mkgl::loadShaderFile(vsPath);
-    std::string frag_file = mkgl::loadShaderFile(fsPath);
+    char* vert_file = mkgl::loadShaderFile(vsPath);
+    char* frag_file = mkgl::loadShaderFile(fsPath);
 
-    uint vs = mkgl::genShader(vert_file.c_str(), GL_VERTEX_SHADER);
+    uint vs = mkgl::genShader(vert_file, GL_VERTEX_SHADER);
     mkgl::compileShader(vs);
+    freeptr(vert_file);
 
-    uint fs = mkgl::genShader(frag_file.c_str(), GL_FRAGMENT_SHADER);
+    uint fs = mkgl::genShader(frag_file, GL_FRAGMENT_SHADER);
     mkgl::compileShader(fs);
+    freeptr(frag_file);
 
     mkgl::genShaderProg(&shader.id, vs, fs);
 

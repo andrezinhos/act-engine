@@ -20,14 +20,16 @@ set(AMK_LIB ${CMAKE_SOURCE_DIR}/src/amk/lib/libamk.a)
 
 # executable files
 add_executable(app
-  src/engine/main.cpp
   src/engine/core.cpp
   src/engine/ios.cpp
   src/engine/stack.cpp
+  src/engine/script.cpp
   # src/engine/animation.cpp
   src/engine/esys.cpp
-  src/engine/script.cpp
+  src/engine/main.cpp
 )
+
+target_compile_options(app PRIVATE -Wall -O2 -march=x86-64-v2 -mtune=generic -DNDEBUG)
 
 # general headers
 target_include_directories(app PRIVATE

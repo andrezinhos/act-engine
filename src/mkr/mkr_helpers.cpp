@@ -154,8 +154,8 @@ void mkr::drawElements(size_t count, void* offset){
 }
 
 void mkr::limitFlush(){
-    size_t max_v = state.dbatch.vertices.size() + 4;
-    size_t max_i = state.dbatch.indices.size() + 6;
+    size_t max_v = state.dbatch.vertices.size();
+    size_t max_i = state.dbatch.indices.size();
     if (max_v < VMAX || max_i < IMAX) return;
     else flush();
 }

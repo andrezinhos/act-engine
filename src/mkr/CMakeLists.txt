@@ -19,6 +19,8 @@ add_library(mkr STATIC
   mkr.cpp
 )
 
+target_compile_options(mkr PRIVATE -Wall -O2 -march=x86-64-v2 -mtune=generic -DNDEBUG)
+
 # general headers
 target_include_directories(mkr PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
