@@ -12,29 +12,35 @@ set(LUA_LIB "C:/lua/src/liblua.a")
 set(GLFW_HEADERS ${CMAKE_SOURCE_DIR}/external/glfw)
 set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3dll.a)
 
-set(MKR_HEADERS ${CMAKE_SOURCE_DIR}/src/mkr)
-set(MKR_LIB ${CMAKE_SOURCE_DIR}/src/mkr/lib/libmkr.a)
+set(MKR_HEADERS ${CMAKE_SOURCE_DIR}/mkr)
+set(MKR_LIB ${CMAKE_SOURCE_DIR}/mkr/lib/libmkr.a)
 
-set(AMK_HEADERS ${CMAKE_SOURCE_DIR}/src/amk)
-set(AMK_LIB ${CMAKE_SOURCE_DIR}/src/amk/lib/libamk.a)
+set(AMK_HEADERS ${CMAKE_SOURCE_DIR}/amk)
+set(AMK_LIB ${CMAKE_SOURCE_DIR}/amk/lib/libamk.a)
 
 # executable files
 add_executable(app
-  src/engine/core.cpp
-  src/engine/ios.cpp
-  src/engine/stack.cpp
-  src/engine/script.cpp
-  # src/engine/animation.cpp
-  src/engine/esys.cpp
-  src/engine/main.cpp
+  src/core.cpp
+  src/ios.cpp
+  src/stack.cpp
+  src/script.cpp
+  # src/animation.cpp
+  src/esys.cpp
+  src/main.cpp
 )
 
-target_compile_options(app PRIVATE -Wall -O2 -march=x86-64-v2 -mtune=generic -DNDEBUG)
+target_compile_options(app PRIVATE
+  -Wall
+  -std=c++17
+  -O2
+  -march=x86-64-v2
+  -DNDEBUG
+)
 
 # general headers
 target_include_directories(app PRIVATE
   ${CMAKE_SOURCE_DIR}/external
-  ${CMAKE_SOURCE_DIR}/src/engine
+  ${CMAKE_SOURCE_DIR}/src
   ${GLFW_HEADERS}
   ${LUA_HEADERS}
   ${MKR_HEADERS}

@@ -1,8 +1,8 @@
 Clear-Host
 Write-Host "CLEANING RESOURCES"
 
-$build_mkr = "src/mkr/build"
-$build_amk = "src/amk/build"
+$build_mkr = "mkr/build"
+$build_amk = "amk/build"
 $build = "build"
 
 if (Test-Path -Path $build_mkr){

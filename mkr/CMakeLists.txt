@@ -19,18 +19,24 @@ add_library(mkr STATIC
   mkr.cpp
 )
 
-target_compile_options(mkr PRIVATE -Wall -O2 -march=x86-64-v2 -mtune=generic -DNDEBUG)
+target_compile_options(mkr PRIVATE
+  -Wall
+  -std=c++17
+  -O2
+  -march=x86-64-v2
+  -DNDEBUG
+)
 
 # general headers
-target_include_directories(mkr PRIVATE
+target_include_directories(mkr PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../external
+  ${CMAKE_CURRENT_SOURCE_DIR}/../external
   ${GLFW_HEADERS}
 )
 
-target_link_libraries(mkr PRIVATE ${GLFW_LIB})
+target_link_libraries(mkr PUBLIC ${GLFW_LIB})
 
 # OS libs
 if(WIN32)
-  target_link_libraries(mkr PRIVATE gdi32 opengl32 user32 shell32)
+  target_link_libraries(mkr PUBLIC gdi32 opengl32)
 endif()

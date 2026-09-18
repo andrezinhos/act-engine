@@ -1,7 +1,4 @@
 #include "mkgl.hpp"
-#include <cstring>
-#include <string>
-#include <fstream>
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_GIF
 #define STBI_NO_PNM
@@ -12,6 +9,7 @@
 #include "stb_image.h"
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 byte* mkgl::loadBytes(const char* path, size_t* size){
     FILE* file = fopen(path, "rb");

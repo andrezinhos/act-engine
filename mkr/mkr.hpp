@@ -69,7 +69,6 @@ public:
     static void UnloadDefaultShader();
     static void UnloadDefaultQuad();
     static void UnloadDefaultTexture();
-    static void UnloadDefaultFont();
     static void UnloadDefaultBatch();
 
     static Shader LoadShader(const char* vs, const char* fs);

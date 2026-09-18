@@ -4,11 +4,11 @@ Write-Host "BUILDING..."
 $source = Get-Location
 $build = "build"
 
-$build_mkr = "src/mkr/build"
-$lib_mkr = "src/mkr/lib"
+$build_mkr = "mkr/build"
+$lib_mkr = "mkr/lib"
 
-$build_amk = "src/amk/build"
-$lib_amk = "src/amk/lib"
+$build_amk = "amk/build"
+$lib_amk = "amk/lib"
 
 if (-Not (Test-Path -Path "bin")){
 	New-Item -Path "bin" -ItemType Directory | Out-Null

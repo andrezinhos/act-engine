@@ -12,17 +12,16 @@ add_library(amk STATIC
   amk.c
 )
 
-target_compile_options(amk PRIVATE -Wall -O2 -march=x86-64-v2 -mtune=generic -DNDEBUG)
+target_compile_options(amk PRIVATE
+  -Wall
+  -std=c17
+  -O2
+  -march=x86-64-v2
+  -DNDEBUG
+)
 
 # general headers
 target_include_directories(amk PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../external
+  ${CMAKE_CURRENT_SOURCE_DIR}/../external
 )
-
-target_link_libraries(amk PRIVATE ${GLFW_LIB})
-
-# OS libs
-if(WIN32)
-  target_link_libraries(amk PRIVATE user32 shell32 kernel32)
-endif()
