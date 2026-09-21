@@ -51,7 +51,7 @@ public:
     static int flags_active[3];
     static Window wmain;
     static DState state;
-    static void setWindowIcon(const char* path);
+    static void setWindowIcon(cstr path);
     static void setCursorMode(Cursor cur);
     static bool startWindow(int width, int height, const char* title);
 
@@ -63,19 +63,14 @@ public:
 
     static Shader DefaultShader();
     static Mesh DefaultQuad();
-    static Texture DefaultTexture();
     static void DefaultBatch();
 
     static void UnloadDefaultShader();
     static void UnloadDefaultQuad();
-    static void UnloadDefaultTexture();
     static void UnloadDefaultBatch();
 
-    static Shader LoadShader(const char* vs, const char* fs);
-    static Texture LoadTextureSrc(const char* path);
-    static Font LoadFontSrc(const char* path);
-
-    static void UnloadTexture(const Texture& tex);
+    static Shader LoadShader(cstr vs, cstr fs);
+    static Font LoadFontSrc(cstr path);
     static void UnloadShader(const Shader& shader);
     static void ScreenClear(Color color);
 

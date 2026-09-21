@@ -1,7 +1,6 @@
 #include "core.hpp"
 #include "esys.hpp"
-#include "gmath.hpp"
-#include "ios.hpp"
+#include "mkmath.hpp"
 #include "script.hpp"
 #include <memory>
 #include <string>
@@ -21,14 +20,14 @@ void Menu::Init(){
     neutral.pos(0, 0);
     neutral.size(100, 100);
 
-    cam = {Vec2::Zero(), 0.0f, 1.0f};
+    cam = {Vec2Zero(), 0.0f, 1.0f};
 }
 
 void Menu::Update(float dt){
 
     // printf("DELTA: %.3f\n", dt);
     // printf("FPS: %d\n", core::GetFPS());
-    fps_string = "FPS: " + std::to_string(core::GetFPS());
+    // fps_string = "FPS: " + std::to_string(core::GetFPS());
 }
 
 void Menu::Draw(){

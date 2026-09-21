@@ -1,4 +1,6 @@
 #include "esys.hpp"
+#include "mkgl.hpp"
+#include "mktex.hpp"
 #include "stack.hpp"
 
 void Rect::pos(float x, float y){
@@ -13,14 +15,14 @@ void Rect::size(int x, int y){
 
 void Rect::draw(Color color){
     mkr::RenderRectangle(
-        {(float)source.x, (float)source.y}, 
-        {(float)source.width, (float)source.height}, 
+        {(float)source.x, (float)source.y},
+        {(float)source.width, (float)source.height},
         color
     );
 }
 
-void Sprite::load(const char* path){
-    source = mkr::LoadTextureSrc(path);
+void Sprite::load(cstr path){
+    source = mktex::LoadTextureSrc(path);
     id = stack::PushSprite(source);
 }
 
@@ -41,7 +43,7 @@ void Sprite::draw(){
     auto it = stack::texmap.find(id);
     if (it != stack::texmap.end()){
         Vec2 size = {
-            static_cast<float>(it->second.width), 
+            static_cast<float>(it->second.width),
             static_cast<float>(it->second.height)
         };
         mkr::RenderTexture(&it->second, position, size, White);
@@ -52,44 +54,44 @@ void Sprite::draw_area(Rect& rec){
     auto it = stack::texmap.find(id);
     if (it != stack::texmap.end()){
         Vec2 size = {
-            static_cast<float>(it->second.width), 
+            static_cast<float>(it->second.width),
             static_cast<float>(it->second.height)
         };
         mkr::RenderTextureRec(&it->second, rec.source, position, size, White);
     }
 }
 
-void Sound::load(const char* path){
+void Sound::load(cstr path){
     id = stack::PushSoundAudio(path);
 }
 
 void Sound::play(){
-    auto it = stack::soundmap.find(stack::soundmap[id].id);
+    auto it = stack::soundmap.find(id);
     if (it != stack::soundmap.end()){
         PlayAudioFile(&it->second.decoder, &it->second.source);
     }
 }
 
-void Music::load(const char* path){
+void Music::load(cstr path){
     id = stack::PushMusicAudio(path);
 }
 
 void Music::play(){
-    auto it = stack::musicmap.find(stack::musicmap[id].id);
+    auto it = stack::musicmap.find(id);
     if (it != stack::musicmap.end()){
         PlayAudioFile(&it->second.decoder, &it->second.source);
     }
 }
 
 void Music::stop(){
-    auto it = stack::musicmap.find(stack::musicmap[id].id);
+    auto it = stack::musicmap.find(id);
     if (it != stack::musicmap.end()){
         StopAudioFile(&it->second.decoder, &it->second.source);
     }
 }
 
 void Music::pause(){
-    auto it = stack::musicmap.find(stack::musicmap[id].id);
+    auto it = stack::musicmap.find(id);
     if (it != stack::musicmap.end()){
         PauseAudioFile(&it->second.source);
     }
@@ -102,11 +104,11 @@ void Music::resume(){
     }
 }
 
-void Text::load(const char* path){
+void Text::load(cstr path){
     id = stack::PushFont(path);
 }
 
-void Text::pos(int x, int y){      
+void Text::pos(int x, int y){
     position.x = x;
     position.y = y;
 }
@@ -115,14 +117,14 @@ void Text::spacing(double space){
     auto it = stack::fontmap.find(id);
     if (it != stack::fontmap.end())
         it->second.spacing = static_cast<float>(space);
-    else 
+    else
         mkr::state.dfont.spacing = static_cast<float>(space);
 }
 
-void Text::draw(const std::string& text, float size, Color color){
+void Text::draw(cstr text, float size, Color color){
     auto it = stack::fontmap.find(id);
     if (it != stack::fontmap.end()){
-        mktxt::RenderTextEx(it->second, text.c_str(), position, size, color);
+        mktxt::RenderTextEx(it->second, text, position, size, color);
     }
     else {
         mktxt::RenderText(text, position, size, color);

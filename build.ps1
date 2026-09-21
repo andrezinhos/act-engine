@@ -32,7 +32,7 @@ if (-Not (Test-Path -Path $lib_mkr)){
 Set-Location $build_mkr
 Write-Host "MONKEY RENDER BUILD"
 cmake .. | Out-Null
-cmake --build .
+cmake --build . -- -j2
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "MONKEY RENDER BUILD ERROR"

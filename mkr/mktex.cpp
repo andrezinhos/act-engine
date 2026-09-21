@@ -1,45 +1,92 @@
 #include "mkr.hpp"
+#include "mktex.hpp"
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_NO_GIF
+#define STBI_NO_PNM
+#define STBI_NO_BMP
+#define STBI_NO_PIC
+#define STBI_NO_PSD
+#define STBI_NO_HDR
+#include "stb_image.h"
 
-Texture mkr::DefaultTexture(){
+Image mktex::loadImage(const char* path){
+    Image image = {};
+
+    size_t imgsize = 0;
+    byte* imgbuf = mkgl::loadBytes(path, &imgsize);
+
+    image.data = stbi_load_from_memory(
+        imgbuf,
+        imgsize,
+        &image.width,
+        &image.height,
+        &image.channels,
+        4
+    );
+
+    freeptr(imgbuf);
+    return image;
+}
+
+void mktex::unloadImage(Image& image){
+    stbi_image_free(image.data);
+}
+
+uint mktex::genTex(GLenum type){
+    uint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(type, tex);
+    return tex;
+}
+
+void mktex::setTexParams(GLenum type, GLenum wrap, GLenum format){
+    glTexParameteri(type, wrap, format);
+}
+
+void mktex::setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data){
+    glTexImage2D(GL_TEXTURE_2D, 0, internal, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+Texture mktex::DefaultTexture(){
     Texture tex;
-    tex.id = mkgl::genTex(GL_TEXTURE_2D);
+    tex.id = genTex(GL_TEXTURE_2D);
 
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     uint color = 0xFFFFFFFF;
-    mkgl::setTexImage2D(GL_RGBA, GL_RGBA, 1, 1, &color);
-
+    setTexImage2D(GL_RGBA, GL_RGBA, 1, 1, &color);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return tex;
 }
 
-void mkr::UnloadDefaultTexture(){
-    if (state.dtex.id != 0) glDeleteTextures(1, &state.dtex.id);
+void mktex::UnloadDefaultTexture(){
+    if (mkr::state.dtex.id != 0) glDeleteTextures(1, &mkr::state.dtex.id);
 }
 
-Texture mkr::LoadTextureSrc(const char* path){
-    Image image = mkgl::loadImage(path);
+Texture mktex::LoadTextureSrc(const char* path){
+    Image image = mktex::loadImage(path);
     Texture tex;
-    tex.id = mkgl::genTex(GL_TEXTURE_2D);
+    tex.id = mktex::genTex(GL_TEXTURE_2D);
     tex.width = image.width;
     tex.height = image.height;
 
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    mkgl::setTexImage2D(GL_RGBA, GL_RGBA8, image.width, image.height, image.data);
-    mkgl::unloadImage(image);
+    setTexImage2D(GL_RGBA, GL_RGBA8, image.width, image.height, image.data);
+    unloadImage(image);
 
     return tex;
 }
 
-void mkr::UnloadTexture(const Texture& tex){
+void mktex::UnloadTexture(const Texture& tex){
     if (tex.id != 0) glDeleteTextures(1, &tex.id);
     printf("[INFO] TEXTURE UNLOADED\n");
 }
@@ -51,7 +98,7 @@ void mkr::RenderRectangle(Vec2 position, Vec2 size, Color color){
 
     sendVertex(position, size, color, {0.0f, 1.0f});
     sendIndices(base);
-    
+
     if (state.dbatch.calls.empty() || state.dbatch.calls.back().texref != &state.dtex){
         state.dbatch.calls.push_back({indexStart, 6, &state.dtex});
     }

@@ -7,7 +7,6 @@ local jump = Sound.new()
 local cam = Cam2D.new(Vec2.zero(), 0, 1)
 
 local txt = Text.new()
-local d = eng.delta()
 
 function Menu.Init()
     neutral:load("assets/sprites/w_icon.png")

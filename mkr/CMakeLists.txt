@@ -15,7 +15,7 @@ add_library(mkr STATIC
   mkgl.cpp
   mktxt.cpp
   mktex.cpp
-  mkr_helpers.cpp
+  mkr_aux.cpp
   mkr.cpp
 )
 

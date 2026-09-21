@@ -1,12 +1,4 @@
 #include "mkgl.hpp"
-#define STB_IMAGE_IMPLEMENTATION
-#define STBI_NO_GIF
-#define STBI_NO_PNM
-#define STBI_NO_BMP
-#define STBI_NO_PIC
-#define STBI_NO_PSD
-#define STBI_NO_HDR
-#include "stb_image.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -187,51 +179,12 @@ void mkgl::deleteShaders(uint vs, uint fs){
 }
 
 void mkgl::setUniformMat(GLint loc, Matrix& mat){
-    glUniformMatrix4fv(loc, 1, GL_FALSE, &mat.at(0, 0));
+    glUniformMatrix4fv(loc, 1, GL_FALSE, &mat.v[0][0]);
 }
 
 void mkgl::clearScreen(Color color){
     glClearColor(color.r, color.g, color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-}
-
-Image mkgl::loadImage(const char* path){
-    Image image = {};
-
-    size_t imgsize = 0;
-    byte* imgbuf = loadBytes(path, &imgsize);
-
-    image.data = stbi_load_from_memory(
-        imgbuf,
-        imgsize,
-        &image.width,
-        &image.height,
-        &image.channels,
-        4
-    );
-
-    freeptr(imgbuf);
-    return image;
-}
-
-void mkgl::unloadImage(Image& image){
-    stbi_image_free(image.data);
-}
-
-uint mkgl::genTex(GLenum type){
-    uint tex;
-    glGenTextures(1, &tex);
-    glBindTexture(type, tex);
-    return tex;
-}
-
-void mkgl::setTexParams(GLenum type, GLenum wrap, GLenum format){
-    glTexParameteri(type, wrap, format);
-}
-
-void mkgl::setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data){
-    glTexImage2D(GL_TEXTURE_2D, 0, internal, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void mkgl::deleteProg(uint* obj){

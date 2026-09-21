@@ -1,5 +1,6 @@
 #include "mkgl.hpp"
 #include "mktxt.hpp"
+#include "mktex.hpp"
 #include "mkr.hpp"
 #include "stb_image.h"
 
@@ -76,7 +77,7 @@ int mkr::GetWindowHeight(){
 void mkr::Initialize(){
     state.dshader = DefaultShader();
     state.dmesh = DefaultQuad();
-    state.dtex = DefaultTexture();
+    state.dtex = mktex::DefaultTexture();
     state.dfont = mktxt::DefaultFont();
     DefaultBatch();
     printf("[INFO] DEFAULT STATE LOADED\n");
@@ -85,7 +86,7 @@ void mkr::Initialize(){
 void mkr::Shutdown(){
     mkr::UnloadDefaultBatch();
     mktxt::UnloadDefaultFont();
-    mkr::UnloadDefaultTexture();
+    mktex::UnloadDefaultTexture();
     mkr::UnloadDefaultQuad();
     mkr::UnloadDefaultShader();
     printf("[INFO] DEFAULT STATE UNLOADED\n");
@@ -93,7 +94,7 @@ void mkr::Shutdown(){
     glfwTerminate();
 }
 
-Shader mkr::LoadShader(const char* vsPath, const char* fsPath) {
+Shader mkr::LoadShader(cstr vsPath, cstr fsPath) {
     Shader shader = {};
     char* vert_file = mkgl::loadShaderFile(vsPath);
     char* frag_file = mkgl::loadShaderFile(fsPath);
@@ -118,6 +119,7 @@ void mkr::ScreenClear(Color color){
 }
 
 void mkr::RenderBegin(){
+    glActiveTexture(GL_TEXTURE0);
     glUseProgram(state.dshader.id);
     glUniform1i(state.dshader.utex, 0);
 }
@@ -129,16 +131,16 @@ void mkr::RenderEnd(){
 }
 
 void mkr::CameraBegin(Camera2D& camera){
-    Matrix proj = gmath::GetProjectionMatrix(wmain.win_width, wmain.win_height);
-    Matrix view = gmath::GetViewMatrix(camera);
-    Matrix model = Matrix::Identity();
+    Matrix proj = mkmath::GetProjectionMatrix(wmain.win_width, wmain.win_height);
+    Matrix view = mkmath::GetViewMatrix(camera);
+    Matrix model = MatrixIdentity();
 
-    Matrix mvp = gmath::MultiplyMatrix(gmath::MultiplyMatrix(proj, view), model);
+    Matrix mvp = mkmath::MultiplyMatrix(mkmath::MultiplyMatrix(proj, view), model);
     mkgl::setUniformMat(state.dshader.umodel, mvp);
 }
 
 void mkr::CameraEnd(){
     flush();
-    Matrix view = Matrix::Identity();
+    Matrix view = MatrixIdentity();
     mkgl::setUniformMat(state.dshader.uview, view);
 }

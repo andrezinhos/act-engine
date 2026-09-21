@@ -1,10 +1,8 @@
 #pragma once
-#include "gmath.hpp"
-#include "mkr.hpp"
 #include "scene.hpp"
 #include <memory>
 
-constexpr double FPS_TARGET = 1.0 / 72.0;
+static const double FPS_TARGET = 1.0 / 72.0;
 
 enum Flags{
     RESIZABLE,
@@ -18,7 +16,7 @@ struct Time{
 
     int fps;
     int frameCount;
-    double fpsTimer;
+    float fpsTimer;
     bool Clock();
     void CountFps();
 };

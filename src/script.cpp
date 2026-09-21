@@ -1,24 +1,46 @@
 #include "esys.hpp"
 #include "core.hpp"
 #include "ios.hpp"
-#include <memory>
-#define SOL_ALL_SAFETIES_ON 1
 #include "script.hpp"
+#include "sol.hpp"
+
+static sol::state state;
+static sol::table scene_table;
+
+void LuaScene::Init(){
+    scene_table = sol::nil;
+    auto result = state.do_file(file);
+    scene_table = result;
+    if (scene_table["Init"].valid()) scene_table["Init"]();
+}
+
+void LuaScene::Update(float dt){
+    if (scene_table["Update"].valid()) scene_table["Update"](dt);
+}
+
+void LuaScene::Draw(){
+    if (scene_table["Draw"].valid()) scene_table["Draw"]();
+}
+
+void LuaScene::Exit(){
+    if (scene_table["Exit"].valid()) scene_table["Exit"]();
+}
 
 void script::start_types(){
     state.new_usertype<Vec2>("Vec2",
-        sol::constructors<Vec2(float, float)>(),
+        sol::no_constructor,
         "x", &Vec2::x,
         "y", &Vec2::y,
-        "zero", &Vec2::Zero
+        "zero", &Vec2Zero
     );
 
     state.new_usertype<Vec3>("Vec3",
-        sol::constructors<Vec3(float, float, float)>(),
+        sol::no_constructor,
         "x", &Vec3::x,
         "y", &Vec3::y,
         "z", &Vec3::z,
-        "zero", &Vec3::Zero
+        "zero", &Vec3Zero,
+        "one", &Vec3One
     );
 
     state.new_usertype<Camera2D>("Cam2D",
@@ -30,6 +52,7 @@ void script::start_types(){
 
     //this is needed in case of accessing texture parameters
     state.new_usertype<Texture>("Tex2D",
+        sol::no_constructor,
         "width", &Texture::width,
         "height", &Texture::height
     );
@@ -157,7 +180,7 @@ void script::start_funcs(){
 
     ios_table["err"] = [](const std::string& msg){
         printf("[ERROR] %s\n", msg.c_str());
-        std::abort();
+        abort();
     };
 
     ios_table["key_down"] = [](Keys key){

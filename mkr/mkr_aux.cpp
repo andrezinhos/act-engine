@@ -154,10 +154,8 @@ void mkr::drawElements(size_t count, void* offset){
 }
 
 void mkr::limitFlush(){
-    size_t max_v = state.dbatch.vertices.size();
-    size_t max_i = state.dbatch.indices.size();
-    if (max_v < VMAX || max_i < IMAX) return;
-    else flush();
+    if (state.dbatch.vertices.size() >= VMAX ||
+        state.dbatch.indices.size() >= IMAX) flush();
 }
 
 void mkr::flush(){
@@ -165,20 +163,21 @@ void mkr::flush(){
 
     mkgl::bindArrBuff(&state.dbatch.vao);
 
-    mkgl::bindBuff(&state.dbatch.vbo, GL_ARRAY_BUFFER);
+    // mkgl::bindBuff(&state.dbatch.vbo, GL_ARRAY_BUFFER);
+    mkgl::bindDataDynamic(GL_ARRAY_BUFFER, nullptr, VMAX * sizeof(vertex));
     mkgl::bindSubData(
         GL_ARRAY_BUFFER, state.dbatch.vertices.data(),
         state.dbatch.vertices.size() * sizeof(vertex)
     );
 
-    mkgl::bindBuff(&state.dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
+    // mkgl::bindBuff(&state.dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
+    mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
     mkgl::bindSubData(
         GL_ELEMENT_ARRAY_BUFFER, state.dbatch.indices.data(),
-        state.dbatch.indices.size() * sizeof(uint32_t)
+        state.dbatch.indices.size() * sizeof(uint)
     );
 
     for (const auto& d : state.dbatch.calls){
-        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, d.texref->id);
 
         drawElements(
@@ -186,6 +185,8 @@ void mkr::flush(){
             reinterpret_cast<void*>(d.start * sizeof(uint))
         );
     }
+
+    mkgl::unbind();
 
     state.dbatch.calls.clear();
     state.dbatch.indices.clear();

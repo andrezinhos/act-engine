@@ -1,19 +1,19 @@
 #include "stack.hpp"
 #include "esys.hpp"
-#include "mkr.hpp"
+#include "mktex.hpp"
 #include "amk.h"
 
 std::unordered_map<int, Texture> stack::texmap;
-static int sprite_count = 0;
+static int sprite_count = -1;
 
 std::unordered_map<int, Sound> stack::soundmap;
-static int sound_count = 0;
+static int sound_count = -1;
 
 std::unordered_map<int, Music> stack::musicmap;
-static int music_count = 0;
+static int music_count = -1;
 
 std::unordered_map<int, Font> stack::fontmap;
-static int font_count = 0;
+static int font_count = -1;
 
 int stack::PushSprite(Texture& sprite){
     int id = sprite_count++;
@@ -52,7 +52,7 @@ int stack::PushFont(const char *path){
 
 void stack::UnloadAll(){
     for (auto const& [id, tex] : texmap){
-        mkr::UnloadTexture(tex);
+        mktex::UnloadTexture(tex);
     }
     for(auto& [id, sound] : soundmap){
         UnloadSoundAudio(sound.data, &sound.decoder, &sound.source);

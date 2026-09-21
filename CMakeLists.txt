@@ -26,7 +26,7 @@ add_executable(app
   src/script.cpp
   # src/animation.cpp
   src/esys.cpp
-  src/main.cpp
+  src/f_main.cpp
 )
 
 target_compile_options(app PRIVATE

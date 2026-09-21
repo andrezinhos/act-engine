@@ -1,20 +1,23 @@
 #pragma once
 #include "glad.h"
-#include "gmath.hpp"
+#include "mkmath.hpp"
 #include <vector>
 
 typedef unsigned int uint;
 typedef unsigned char byte;
+typedef const char* cstr;
 
 static const int MKR_POSITION_LAYOUT = 0;
 static const int MKR_COLOR_LAYOUT = 1;
 static const int MKR_TEXTURE_LAYOUT = 2;
-
 static const int MKR_VERTEX_STRIDE = 9;
 
-struct Color {
-    float r, g, b, a;
-};
+typedef struct {
+    float r;
+    float g;
+    float b;
+    float a;
+} Color;
 
 static const Color White = {1.0f, 1.0f, 1.0f, 1.0f};
 static const Color Black = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -74,7 +77,7 @@ private:
 
     static void linkProgram(uint* prog, uint vs, uint fs);
 public:
-    static byte* loadBytes(const char* path, size_t* size);
+    static byte* loadBytes(cstr path, size_t* size);
     static void enableBlend(bool flag);
     static void genBuffer(uint* obj);
     static void genArrayBuffer(uint* obj);
@@ -86,16 +89,10 @@ public:
     static void bindSubData(GLenum, const void* data, size_t size);
     static void sendAttribPtr(int layout, int locSize, int stride, int ptr);
 
-    static Image loadImage(const char* path);
-    static void unloadImage(Image& image);
-    static uint genTex(GLenum type);
-    static void setTexParams(GLenum type, GLenum wrap, GLenum format);
-    static void setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data);
-    static char* loadShaderFile(const char* path);
-
+    static char* loadShaderFile(cstr path);
     static std::vector<vertex> SetNDC();
 
-    static uint genShader(const char* src, GLenum type);
+    static uint genShader(cstr src, GLenum type);
     static bool compileShader(uint shader);
     static void genShaderProg(uint* prog, uint vs, uint fs);
     static void deleteShaders(uint vs, uint fs);

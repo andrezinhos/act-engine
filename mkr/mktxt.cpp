@@ -1,19 +1,20 @@
 #include "mkr.hpp"
+#include "mktex.hpp"
 #include "mktxt.hpp"
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"
 
 void mktxt::GenTexture(Texture& tex, const void* data, int width, int height, GLenum format){
-    tex.id = mkgl::genTex(GL_TEXTURE_2D);
+    tex.id = mktex::genTex(GL_TEXTURE_2D);
     tex.width = width;
     tex.height = height;
 
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    mkgl::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    mkgl::setTexImage2D(GL_RGBA, format, width, height, data);
+    mktex::setTexImage2D(GL_RGBA, format, width, height, data);
 }
 
 bool mktxt::GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack){

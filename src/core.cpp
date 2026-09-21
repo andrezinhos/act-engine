@@ -4,11 +4,10 @@
 #include "mkgl.hpp"
 #include "scene.hpp"
 #include "stack.hpp"
-#include <memory>
 #include <thread>
 #include <chrono>
 
-constexpr const char* VERSION = "0.14.9";
+static const cstr VERSION = "0.14.11";
 Time core::time = {};
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
@@ -40,7 +39,7 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
     while(Loop()) {
         if (!time.Clock()) continue;
         time.CountFps();
-    
+
         if (nextScene){
             if (currScene) currScene->Exit();
             currScene = std::move(nextScene);
@@ -115,24 +114,23 @@ bool Time::Clock(){
     double newTime = glfwGetTime();
     double elapsed = newTime - lastTime;
     if (elapsed < 0.001) {
-        // WaitTime();
         WaitFor(FPS_TARGET - elapsed - 0.001);
         return false;
     }
 
-    delta = static_cast<float>(elapsed);
+    delta = elapsed;
     lastTime = newTime;
     if (delta > 0.1) delta = 0.1;
     return true;
 }
 
 void Time::CountFps(){
-    frameCount++;
+    frameCount += 1;
     fpsTimer += delta;
 
-    if (fpsTimer >= 1.0){
+    if (fpsTimer >= 1.0f){
         fps = frameCount;
         frameCount = 0;
-        fpsTimer -= 1.0;
+        fpsTimer -= 1.0f;
     }
 }

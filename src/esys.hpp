@@ -10,7 +10,7 @@ struct Sound{
     NodeSource source;
     int id;
 
-    void load(const char* path);
+    void load(cstr path);
     void play();
 };
 
@@ -19,7 +19,7 @@ struct Music{
     NodeSource source;
     int id;
 
-    void load(const char* path);
+    void load(cstr path);
     void play();
     void stop();
     void pause();
@@ -39,7 +39,7 @@ struct Sprite{
     Vec2 position;
     int id;
 
-    void load(const char* path);
+    void load(cstr path);
     void pos(float x, float y);
     void size(int x, int y);
     void draw();
@@ -51,10 +51,10 @@ struct Text{
     Vec2 position;
     int id;
 
-    void load(const char* path);
+    void load(cstr path);
     void pos(int x, int y);
     void spacing(double space);
-    void draw(const std::string& text, float size, Color color);
+    void draw(cstr text, float size, Color color);
 };
 
 struct Anim2D{
