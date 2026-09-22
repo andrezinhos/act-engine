@@ -7,6 +7,8 @@
 #define MA_NO_MP3
 #define MA_NO_FLAC
 #define MA_NO_RESOURCE_MANAGER
+#define MA_NO_GENERATION
+#define MA_NO_ENCODING
 #define MA_NO_WEBAUDIO
 #define MA_NO_DSOUND
 #define MA_NO_JACK
@@ -43,7 +45,7 @@ unsigned char* loadBytes(const char* path, size_t* size){
     size_t read = fread(buffer, 1, fsize, file);
     fclose(file);
     if (read != fsize){
-        audiofree(buffer);
+        free(buffer);
         return NULL;
     }
 
@@ -52,10 +54,10 @@ unsigned char* loadBytes(const char* path, size_t* size){
 }
 
 bool LoadSfx(void* data, size_t size, audio_decoder* dec, audio_src* src){
-    ma_decoder_config dec_config = ma_decoder_config_init(master.format, master.channels, master.samplesSize);
+    ma_decoder_config dec_config = ma_decoder_config_init(master.format, master.channels, master.sampleRate);
     ma_result decres = ma_decoder_init_memory(data, size, &dec_config, dec);
     if (decres != MA_SUCCESS){
-        printf("[ERROR] CANNOT LOAD SOUND FILE (DECODER)\n");
+        check_error("[ERROR] CANNOT DECODE SOUND FILE", decres);
         return false;
     }
 
@@ -70,7 +72,7 @@ bool LoadSfx(void* data, size_t size, audio_decoder* dec, audio_src* src){
     if (result != MA_SUCCESS){
         ma_decoder_uninit(dec);
         audiofree(data);
-        printf("[ERROR] CANNOT LOAD SOUND FILE\n");
+        check_error("[ERROR] CANNOT LOAD SOUND FILE:", result);
         return false;
     }
 
@@ -80,10 +82,10 @@ bool LoadSfx(void* data, size_t size, audio_decoder* dec, audio_src* src){
 }
 
 bool LoadStream(const char* path, audio_decoder* dec, audio_src* src){
-    ma_decoder_config dec_config = ma_decoder_config_init(master.format, master.channels, master.samplesSize);
+    ma_decoder_config dec_config = ma_decoder_config_init(master.format, master.channels, master.sampleRate);
     ma_result decres = ma_decoder_init_file(path, &dec_config, dec);
     if (decres != MA_SUCCESS){
-        printf("[ERROR] CANNOT LOAD STREAM FILE (DECODER): %d\n", decres);
+        check_error("[ERROR] CANNOT DECODE SOUND FILE", decres);
         return false;
     }
 
@@ -97,12 +99,11 @@ bool LoadStream(const char* path, audio_decoder* dec, audio_src* src){
 
     if (result != MA_SUCCESS){
         ma_decoder_uninit(dec);
-        printf("[ERROR] CANNOT LOAD SOUND FILE: %d\n", result);
+        check_error("[ERROR] CANNOT LOAD SOUND FILE:", result);
         return false;
     }
 
     printf("[INFO] AUDIO FILE LOADED\n");
-
     return true;
 }
 

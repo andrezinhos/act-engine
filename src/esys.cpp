@@ -67,7 +67,6 @@ void Sound::load(cstr path){
 }
 
 void Sound::play(){
-    // auto it = stack::soundmap.find(id);
     if (data){
         PlaySfx(data);
     }
@@ -79,32 +78,19 @@ void Music::load(cstr path){
 }
 
 void Music::play(){
-    // auto it = stack::musicmap.find(id);
-    // if (it != stack::musicmap.end()){
-    if (data){
-        PlayStream(data);
-    }
+    if (data) PlayStream(data);
 }
 
 void Music::stop(){
-    // auto it = stack::musicmap.find(id);
-    if (data){
-        StopStream(data);
-    }
+    if (data) StopStream(data);
 }
 
 void Music::pause(){
-    // auto it = stack::musicmap.find(id);
-    if (data){
-        PauseStream(data);
-    }
+    if (data) PauseStream(data);
 }
 
 void Music::resume(){
-    // auto it = stack::musicmap.find(id);
-    if (data){
-        ResumeStream(data);
-    }
+    if (data) ResumeStream(data);
 }
 
 void Text::load(cstr path){

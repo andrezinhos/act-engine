@@ -62,15 +62,19 @@ int stack::PushFont(const char *path){
 
 void stack::UnloadAll(){
     for (auto const& [id, tex] : texmap){
+        if (texmap.empty()) break;
         mktex::UnloadTexture(tex);
     }
     for(auto& [id, sound] : soundmap){
+        if (soundmap.empty()) break;
         UnloadSfx(sound.release());
     }
     for(auto& [id, music] : musicmap){
+        if (musicmap.empty()) break;
         UnloadStream(music.release());
     }
     for(auto& [id, font] : fontmap){
+        if (fontmap.empty()) break;
         mktxt::UnloadFont(font);
     }
 

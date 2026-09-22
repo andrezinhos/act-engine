@@ -25,11 +25,19 @@ typedef struct{
 
     ma_format format;
     int channels;
-    int samplesSize;
+    int sampleRate;
 
+    ma_backend backend;
+    bool custom_opts;
 } Master;
 
 #define audiofree(p) do {free(p); p = NULL;} while(0)
+
+static const int HIGH = 48000;
+static const int LOW = 44100;
+
+static const int MONO = 1;
+static const int STEREO = 2;
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,6 +46,12 @@ extern "C" {
 extern Master master;
 
 void audio_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
+
+void audio_channels(int amount);
+void audio_quality(int quality);
+
+void check_error(const char* msg, ma_result res);
+
 bool start_audio();
 void end_audio();
 void set_master_volume(double vol);

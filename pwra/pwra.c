@@ -13,47 +13,86 @@ void audio_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_ui
     (void)pInput;
 }
 
+void audio_channels(int amount){
+    master.custom_opts = true;
+    master.channels = amount;
+}
+
+void audio_quality(int quality){
+    master.custom_opts = true;
+    master.sampleRate = quality;
+}
+
 bool start_audio(){
     ma_engine_config e_config = ma_engine_config_init();
 
-    master.channels = 2;
-    master.samplesSize = 48000;
     master.format = ma_format_f32;
 
+    if (!master.custom_opts){
+        master.channels = 1;
+        master.sampleRate = 44100;
+    }
+
     e_config.channels = master.channels;
-    e_config.sampleRate = master.samplesSize;
+    e_config.sampleRate = master.sampleRate;
     e_config.noAutoStart = MA_TRUE;
 
     ma_result einit = ma_engine_init(&e_config, &master.engine);
     if (einit != MA_SUCCESS){
-        printf("[ERROR] ma_engine_init failed with code: %d\n", einit);
+        printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", einit);
         return false;
     }
 
     ma_result sginit = ma_sound_group_init(&master.engine, 0, NULL, &master.sound_group);
     if (sginit != MA_SUCCESS){
-        printf("[ERROR] COULDN'T INITIALIZE AUDIO (ma_result: %d)\n", sginit);
+        printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", sginit);
         return false;
     }
 
     ma_result estart = ma_engine_start(&master.engine);
     if (estart != MA_SUCCESS){
-        printf("[ERROR] COULDN'T INITIALIZE AUDIO (ma_result: %d)\n", estart);
+        printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", estart);
         ma_engine_uninit(&master.engine);
         return false;
     }
 
     printf("[INFO] AUDIO INITIALIZED\n");
 
+#ifdef _WIN32
+    printf("[INFO] AUDIO BACKEND (WINDOWS): %s\n", ma_get_backend_name(master.backend));
+#elif __linux__
+    printf("[INFO] AUDIO BACKEND (LINUX): %s\n", ma_get_backend_name(master.backend));
+#elif __APPLE__
+    printf("[INFO] AUDIO BACKEND (MAC): %s\n", ma_get_backend_name(master.backend));
+#endif
     return true;
 }
 
 void end_audio(){
     ma_engine_stop(&master.engine);
+    ma_sound_group_stop(&master.sound_group);
     ma_sound_group_uninit(&master.sound_group);
     ma_engine_uninit(&master.engine);
 
     printf("[INFO] AUDIO UNINITIALIZED\n");
+}
+
+
+void check_error(const char *msg, ma_result res){
+    printf("%s: ", msg);
+
+    if (res == -2) printf("INVALID ARGS");
+    else if (res == -3) printf("OUT OF MEMORY");
+    else if (res == -4) printf("OUT OF RANGE");
+    else if (res == -5) printf("ACCESS DENIED");
+    else if (res == -6) printf("DOES NOT EXIST");
+    else if (res == -7) printf("NO SPACE");
+    else if (res == -8) printf("BAD MESSAGE");
+    else if (res == -9) printf("BUSY");
+    else if (res == -10) printf("IO ERROR");
+    else if (res == -100) printf("NOT SUPPORTED FILE");
+
+    printf("\n");
 }
 
 void set_master_volume(double vol){

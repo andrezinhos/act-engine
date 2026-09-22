@@ -22,4 +22,5 @@ target_compile_options(pwra PRIVATE
 # general headers
 target_include_directories(pwra PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../external
 )
