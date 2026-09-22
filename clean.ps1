@@ -2,7 +2,7 @@ Clear-Host
 Write-Host "CLEANING RESOURCES"
 
 $build_mkr = "mkr/build"
-$build_amk = "amk/build"
+$build_amk = "pwra/build"
 $build = "build"
 
 if (Test-Path -Path $build_mkr){

@@ -15,8 +15,8 @@ set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3dll.a)
 set(MKR_HEADERS ${CMAKE_SOURCE_DIR}/mkr)
 set(MKR_LIB ${CMAKE_SOURCE_DIR}/mkr/lib/libmkr.a)
 
-set(AMK_HEADERS ${CMAKE_SOURCE_DIR}/amk)
-set(AMK_LIB ${CMAKE_SOURCE_DIR}/amk/lib/libamk.a)
+set(PWRA_HEADERS ${CMAKE_SOURCE_DIR}/pwra)
+set(PWRA_LIB ${CMAKE_SOURCE_DIR}/pwra/lib/libpwra.a)
 
 # executable files
 add_executable(app
@@ -31,7 +31,6 @@ add_executable(app
 
 target_compile_options(app PRIVATE
   -Wall
-  -std=c++17
   -O2
   -march=x86-64-v2
   -DNDEBUG
@@ -44,11 +43,11 @@ target_include_directories(app PRIVATE
   ${GLFW_HEADERS}
   ${LUA_HEADERS}
   ${MKR_HEADERS}
-  ${AMK_HEADERS}
+  ${PWRA_HEADERS}
 )
 
 # linking main dependecies
-target_link_libraries(app PRIVATE ${GLFW_LIB} ${LUA_LIB} ${MKR_LIB} ${AMK_LIB})
+target_link_libraries(app PRIVATE ${GLFW_LIB} ${LUA_LIB} ${MKR_LIB} ${PWRA_LIB})
 
 # OS libs
 if(WIN32)

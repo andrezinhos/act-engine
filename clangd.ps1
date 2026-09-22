@@ -7,8 +7,8 @@ $build = "build"
 $build_mkr = "mkr/build"
 $lib_mkr = "mkr/lib"
 
-$build_amk = "amk/build"
-$lib_amk = "amk/lib"
+$build_amk = "pwra/build"
+$lib_amk = "pwra/lib"
 
 if (-Not (Test-Path -Path "bin")){
 	New-Item -Path "bin" -ItemType Directory | Out-Null

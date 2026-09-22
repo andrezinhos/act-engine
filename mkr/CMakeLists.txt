@@ -21,7 +21,6 @@ add_library(mkr STATIC
 
 target_compile_options(mkr PRIVATE
   -Wall
-  -std=c++17
   -O2
   -march=x86-64-v2
   -DNDEBUG

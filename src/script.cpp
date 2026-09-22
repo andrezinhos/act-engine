@@ -2,6 +2,7 @@
 #include "core.hpp"
 #include "ios.hpp"
 #include "script.hpp"
+#include "pwra.h"
 #include "sol.hpp"
 
 static sol::state state;
@@ -167,7 +168,7 @@ void script::start_funcs(){
         core::MainWindow(width, height, title.c_str());
     };
 
-    core_table["master_vol"] = [](double vol){ MasterVolume(vol); };
+    core_table["master_vol"] = [](double vol){ set_master_volume(vol); };
     state["eng"] = core_table;
 
     /* IO FUNCS */

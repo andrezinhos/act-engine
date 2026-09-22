@@ -1,15 +1,15 @@
 #include "stack.hpp"
-#include "esys.hpp"
 #include "mktex.hpp"
-#include "amk.h"
+#include "pwra.h"
+#include <memory>
 
 std::unordered_map<int, Texture> stack::texmap;
 static int sprite_count = -1;
 
-std::unordered_map<int, Sound> stack::soundmap;
+std::unordered_map<int, std::unique_ptr<Sfx>> stack::soundmap;
 static int sound_count = -1;
 
-std::unordered_map<int, Music> stack::musicmap;
+std::unordered_map<int, std::unique_ptr<Stream>> stack::musicmap;
 static int music_count = -1;
 
 std::unordered_map<int, Font> stack::fontmap;
@@ -24,23 +24,33 @@ int stack::PushSprite(Texture& sprite){
 int stack::PushSoundAudio(const char* path){
     int id = sound_count++;
     size_t size = 0;
-    soundmap[id].data = loadBytes(path, &size);
-    LoadSoundAudioFile(
-        soundmap[id].data,
+    auto ref = std::make_unique<Sfx>();
+    ref->data = loadBytes(path, &size);
+    bool pass = LoadSfx(
+        ref->data,
         size,
-        &soundmap[id].decoder,
-        &soundmap[id].source
+        &ref->decoder,
+        &ref->source
     );
+
+    if (!pass) UnloadSfx(ref.release());
+
+    soundmap[id] = std::move(ref);
     return id;
 }
 
 int stack::PushMusicAudio(const char* path){
     int id = music_count++;
-    LoadMusicAudioFile(
+    auto res = std::make_unique<Stream>();
+    bool pass = LoadStream(
         path,
-        &musicmap[id].decoder,
-        &musicmap[id].source
+        &res->decoder,
+        &res->source
     );
+
+    if (!pass) UnloadStream(res.release());
+
+    musicmap[id] = std::move(res);
     return id;
 }
 
@@ -55,10 +65,10 @@ void stack::UnloadAll(){
         mktex::UnloadTexture(tex);
     }
     for(auto& [id, sound] : soundmap){
-        UnloadSoundAudio(sound.data, &sound.decoder, &sound.source);
+        UnloadSfx(sound.release());
     }
     for(auto& [id, music] : musicmap){
-        UnloadAudioFile(&music.decoder, &music.source);
+        UnloadStream(music.release());
     }
     for(auto& [id, font] : fontmap){
         mktxt::UnloadFont(font);

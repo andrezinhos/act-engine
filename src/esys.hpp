@@ -2,12 +2,10 @@
 #include "animation.hpp"
 #include "mkgl.hpp"
 #include "mkr.hpp"
-#include "amk.h"
+#include "pwra.h"
 
 struct Sound{
-    unsigned char* data;
-    Decoder decoder;
-    NodeSource source;
+    Sfx* data;
     int id;
 
     void load(cstr path);
@@ -15,8 +13,7 @@ struct Sound{
 };
 
 struct Music{
-    Decoder decoder;
-    NodeSource source;
+    Stream* data;
     int id;
 
     void load(cstr path);

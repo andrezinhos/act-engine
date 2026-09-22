@@ -63,44 +63,47 @@ void Sprite::draw_area(Rect& rec){
 
 void Sound::load(cstr path){
     id = stack::PushSoundAudio(path);
+    data = stack::soundmap[id].get();
 }
 
 void Sound::play(){
-    auto it = stack::soundmap.find(id);
-    if (it != stack::soundmap.end()){
-        PlayAudioFile(&it->second.decoder, &it->second.source);
+    // auto it = stack::soundmap.find(id);
+    if (data){
+        PlaySfx(data);
     }
 }
 
 void Music::load(cstr path){
     id = stack::PushMusicAudio(path);
+    data = stack::musicmap[id].get();
 }
 
 void Music::play(){
-    auto it = stack::musicmap.find(id);
-    if (it != stack::musicmap.end()){
-        PlayAudioFile(&it->second.decoder, &it->second.source);
+    // auto it = stack::musicmap.find(id);
+    // if (it != stack::musicmap.end()){
+    if (data){
+        PlayStream(data);
     }
 }
 
 void Music::stop(){
-    auto it = stack::musicmap.find(id);
-    if (it != stack::musicmap.end()){
-        StopAudioFile(&it->second.decoder, &it->second.source);
+    // auto it = stack::musicmap.find(id);
+    if (data){
+        StopStream(data);
     }
 }
 
 void Music::pause(){
-    auto it = stack::musicmap.find(id);
-    if (it != stack::musicmap.end()){
-        PauseAudioFile(&it->second.source);
+    // auto it = stack::musicmap.find(id);
+    if (data){
+        PauseStream(data);
     }
 }
 
 void Music::resume(){
-    auto it = stack::musicmap.find(stack::musicmap[id].id);
-    if (it != stack::musicmap.end()){
-        ResumeAudioFile(&it->second.source);
+    // auto it = stack::musicmap.find(id);
+    if (data){
+        ResumeStream(data);
     }
 }
 

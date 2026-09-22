@@ -1,6 +1,6 @@
 #include "core.hpp"
 #include "ios.hpp"
-#include "amk.h"
+#include "pwra.h"
 #include "mkgl.hpp"
 #include "scene.hpp"
 #include "stack.hpp"
@@ -67,7 +67,7 @@ void core::MainWindow(int width, int height, const char *title){
         mkr::Initialize();
         time.lastTime = glfwGetTime();
         mkr::setWindowIcon("eng/w_icon.png");
-        initAudioDevice();
+        start_audio();
         printf("[INFO] ENGINE INITIALIZED\n");
     } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");
 }
@@ -86,7 +86,7 @@ void core::Finish(){
     stack::UnloadAll();
     currScene.reset();
     nextScene.reset();
-    endAudioDevice();
+    end_audio();
     mkr::Shutdown();
 }
 

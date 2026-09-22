@@ -7,8 +7,8 @@ $build = "build"
 $build_mkr = "mkr/build"
 $lib_mkr = "mkr/lib"
 
-$build_amk = "amk/build"
-$lib_amk = "amk/lib"
+$build_pwra = "pwra/build"
+$lib_pwra = "pwra/lib"
 
 if (-Not (Test-Path -Path "bin")){
 	New-Item -Path "bin" -ItemType Directory | Out-Null
@@ -50,21 +50,21 @@ Set-Location $source
 # ------------------------------------------
 # enter the audio make dir to build
 
-if (-Not (Test-Path -Path $build_amk)){
-	New-Item -Path $build_amk -ItemType Directory | Out-Null
+if (-Not (Test-Path -Path $build_pwra)){
+	New-Item -Path $build_pwra -ItemType Directory | Out-Null
 }
 
-if (-Not (Test-Path -Path $lib_amk)){
-	New-Item -Path $lib_amk -ItemType Directory | Out-Null
+if (-Not (Test-Path -Path $lib_pwra)){
+	New-Item -Path $lib_pwra -ItemType Directory | Out-Null
 }
 
-Set-Location $build_amk
-Write-Host "AUDIO MAKE BUILD"
+Set-Location $build_pwra
+Write-Host "POWER AUDIO BUILD"
 cmake .. | Out-Null
-cmake --build .
+cmake --build . -- -j2
 
 if ($LASTEXITCODE -ne 0){
-	Write-Host "AUDIO MAKE BUILD ERROR"
+	Write-Host "POWER AUDIO BUILD ERROR"
 	Set-Location $source
 	exit 1
 }
@@ -77,7 +77,7 @@ Set-Location $source
 
 Set-Location $build
 cmake ..
-cmake --build .
+cmake --build . -- -j2
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "BUILD ERROR"

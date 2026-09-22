@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(audio_make)
+project(power_audio)
 
 # standard version of C++
 set(CMAKE_CC_STANDARD 17)
@@ -7,21 +7,19 @@ set(CMAKE_CC_STANDARD_REQUIRED ON)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
 # executable files
-add_library(amk STATIC
-  amk_helpers.c
-  amk.c
+add_library(pwra STATIC
+  pwra_aux.c
+  pwra.c
 )
 
-target_compile_options(amk PRIVATE
+target_compile_options(pwra PRIVATE
   -Wall
-  -std=c17
   -O2
   -march=x86-64-v2
   -DNDEBUG
 )
 
 # general headers
-target_include_directories(amk PRIVATE
+target_include_directories(pwra PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../external
 )
