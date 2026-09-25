@@ -7,15 +7,15 @@
 #include <thread>
 #include <chrono>
 
-static const cstr VERSION = "0.14.11";
+constexpr cstr VERSION = "0.14.12";
 Time core::time = {};
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
 
 void core::WindowFlag(Flags flag){
-    if (flag == RESIZABLE) mkr::flags_active[0] = 1;
-    if (flag == MAXIMIZED) mkr::flags_active[1] = 1;
-    if (flag == FULLSCREEN) mkr::flags_active[2] = 1;
+    if (flag == RESIZABLE) flags_active[0] = 1;
+    if (flag == MAXIMIZED) flags_active[1] = 1;
+    if (flag == FULLSCREEN) flags_active[2] = 1;
 }
 
 void core::init(){
@@ -39,6 +39,7 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
     while(Loop()) {
         if (!time.Clock()) continue;
         time.CountFps();
+        ios::InputUpdate();
 
         if (nextScene){
             if (currScene) currScene->Exit();
@@ -59,8 +60,8 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
 
 void core::MainWindow(int width, int height, const char *title){
     core::init();
-    mkr::wmain.win_width = width;
-    mkr::wmain.win_height = height;
+    wmain.win_width = width;
+    wmain.win_height = height;
     bool win_started = mkr::startWindow(width, height, title);
 
     if (win_started){
@@ -73,12 +74,12 @@ void core::MainWindow(int width, int height, const char *title){
 }
 
 bool special_esc(){
-	return glfwGetKey(mkr::wmain.main, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+	return glfwGetKey(wmain.main, GLFW_KEY_ESCAPE) == GLFW_PRESS;
 }
 
 bool core::Loop(){
-    ios::InputUpdate();
-    if (glfwWindowShouldClose(mkr::wmain.main) || special_esc()) return false;
+    if (glfwWindowShouldClose(wmain.main) ||
+        special_esc()) return false;
     return true;
 }
 

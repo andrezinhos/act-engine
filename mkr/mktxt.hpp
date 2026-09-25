@@ -4,11 +4,11 @@
 
 typedef stbtt_bakedchar CharPack;
 
-static const uint FONT_SIZE_DEFAULT = 64;
-static const uint FONT_TOTAL_CHARS = 96;
+#define FONT_SIZE_DEFAULT 64
+#define FONT_TOTAL_CHARS 96
 
-static const uint FONT_ATLAS_WIDTH = 512;
-static const uint FONT_ATLAS_HEIGHT = 512;
+#define FONT_ATLAS_WIDTH 512
+#define FONT_ATLAS_HEIGHT 512
 
 typedef struct{
     byte* data;
@@ -28,5 +28,5 @@ public:
     static void UnloadFont(const Font& font);
 
     static void RenderTextEx(Font& font, const char* text, Vec2 position, float size, Color color);
-    static void RenderText(const std::string& text, Vec2 position, float size, Color color);
+    static void RenderText(const char* text, Vec2 position, float size, Color color);
 };

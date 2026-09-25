@@ -26,14 +26,12 @@ int stack::PushSoundAudio(const char* path){
     size_t size = 0;
     auto ref = std::make_unique<Sfx>();
     ref->data = loadBytes(path, &size);
-    bool pass = LoadSfx(
+    LoadSfx(
         ref->data,
         size,
         &ref->decoder,
         &ref->source
     );
-
-    if (!pass) UnloadSfx(ref.release());
 
     soundmap[id] = std::move(ref);
     return id;
@@ -42,13 +40,11 @@ int stack::PushSoundAudio(const char* path){
 int stack::PushMusicAudio(const char* path){
     int id = music_count++;
     auto res = std::make_unique<Stream>();
-    bool pass = LoadStream(
+    LoadStream(
         path,
         &res->decoder,
         &res->source
     );
-
-    if (!pass) UnloadStream(res.release());
 
     musicmap[id] = std::move(res);
     return id;

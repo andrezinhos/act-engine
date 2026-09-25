@@ -20,6 +20,9 @@
         "disabled",
         "Music",
         "Text",
-        "Rect"
+        "Rect",
+        "stereo",
+        "audio",
+        "high"
     ]
 }

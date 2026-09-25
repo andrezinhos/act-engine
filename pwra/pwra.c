@@ -100,8 +100,8 @@ void set_master_volume(double vol){
 }
 
 void PlaySfx(Sfx* sfx){
-    ma_sound_seek_to_pcm_frame(&sfx->source, 0);
     ma_sound_start(&sfx->source);
+    ma_sound_seek_to_pcm_frame(&sfx->source, 0);
 }
 
 void SetSfxPitch(Sfx *sfx, double value){

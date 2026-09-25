@@ -1,6 +1,8 @@
 #include "esys.hpp"
 #include "mkgl.hpp"
+#include "mkr.hpp"
 #include "mktex.hpp"
+#include "pwra.h"
 #include "stack.hpp"
 
 void Rect::pos(float x, float y){
@@ -67,9 +69,11 @@ void Sound::load(cstr path){
 }
 
 void Sound::play(){
-    if (data){
-        PlaySfx(data);
-    }
+    if (data) PlaySfx(data);
+}
+
+void Sound::pitch(double amount){
+    if (data) SetSfxPitch(data, amount);
 }
 
 void Music::load(cstr path){
@@ -107,7 +111,7 @@ void Text::spacing(double space){
     if (it != stack::fontmap.end())
         it->second.spacing = static_cast<float>(space);
     else
-        mkr::state.dfont.spacing = static_cast<float>(space);
+        dstate->dfont.spacing = static_cast<float>(space);
 }
 
 void Text::draw(cstr text, float size, Color color){
@@ -118,4 +122,25 @@ void Text::draw(cstr text, float size, Color color){
     else {
         mktxt::RenderText(text, position, size, color);
     }
+}
+
+void Anim2D::load(cstr path){
+    ref = mktex::LoadTextureSrc(path);
+    id = stack::PushSprite(ref);
+}
+
+void Anim2D::set_frames(const std::vector<Rectangle>& frames){
+    source.frames = frames;
+}
+
+void Anim2D::play(bool loop){
+    anim::PlayAnimation(source, loop);
+}
+
+void Anim2D::pos(int x, int y){
+    position = (Vec2){(float)x, (float)y};
+}
+
+void Anim2D::size(double size){
+    size_val = size;
 }

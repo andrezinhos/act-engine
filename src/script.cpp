@@ -5,8 +5,8 @@
 #include "pwra.h"
 #include "sol.hpp"
 
-static sol::state state;
-static sol::table scene_table;
+sol::state state;
+sol::table scene_table;
 
 void LuaScene::Init(){
     scene_table = sol::nil;
@@ -86,6 +86,11 @@ void script::start_types(){
 	state["hidden"] = Cursor::HIDDEN;
 	state["disabled"] = Cursor::DISABLED;
 
+	state["high"] = HIGH;
+	state["low"] = LOW;
+	state["mono"] = MONO;
+	state["stereo"] = STEREO;
+
 	state["red"] = Red;
 	state["green"] = Green;
 	state["blue"] = Blue;
@@ -115,7 +120,8 @@ void script::load_conteiners(){
 
     state.new_usertype<Sound>("Sound",
         "load", &Sound::load,
-        "play", &Sound::play
+        "play", &Sound::play,
+        "pitch", &Sound::pitch
     );
 
     state.new_usertype<Music>("Music",
@@ -135,6 +141,14 @@ void script::load_conteiners(){
         "spacing", &Text::spacing,
         "draw", &Text::draw
     );
+
+    state.new_usertype<Anim2D>("Anim2D",
+        "load", &Anim2D::load,
+        "pos", &Anim2D::pos,
+        "size", &Anim2D::size,
+        "set_frames", &Anim2D::set_frames,
+        "play", &Anim2D::play
+    );
 }
 
 void script::init_script(){
@@ -150,7 +164,7 @@ void script::start_funcs(){
     core_table["win_flag"] = [](Flags flag){ core::WindowFlag(flag); };
     core_table["get_fps"] = [](){
         std::string fps_string = "FPS: " + std::to_string(core::GetFPS());
-        mktxt::RenderText(fps_string, {10, 50}, 30, White);
+        mktxt::RenderText(fps_string.c_str(), {10, 50}, 30, White);
     };
     core_table["delta"] = core::GetDelta;
 
@@ -164,35 +178,39 @@ void script::start_funcs(){
         core::setScene(std::make_unique<LuaScene>(path));
     };
 
-    core_table["start"] = [](int width, int height, const std::string& title){
-        core::MainWindow(width, height, title.c_str());
+    core_table["start"] = [](int width, int height, const char* title){
+        core::MainWindow(width, height, title);
     };
 
-    core_table["master_vol"] = [](double vol){ set_master_volume(vol); };
     state["eng"] = core_table;
 
     /* IO FUNCS */
 
     sol::table ios_table = state.create_table();
 
-    ios_table["debug"] = [](const std::string& msg){
-        printf("[DEBUG] %s\n", msg.c_str());
+    ios_table["debug"] = [](const char* msg){
+        printf("[DEBUG] %s\n", msg);
     };
 
-    ios_table["err"] = [](const std::string& msg){
-        printf("[ERROR] %s\n", msg.c_str());
-        abort();
+    ios_table["err"] = [](const char* msg){
+        printf("[ERROR] %s\n", msg);
+        std::abort();
     };
 
-    ios_table["key_down"] = [](Keys key){
-    	return ios::KeyDown(key);
-    };
-
-    ios_table["key_pressed"] = [](Keys key){
-    	return ios::KeyPressed(key);
-    };
+    ios_table["key_down"] = [](Keys key){ return ios::KeyDown(key); };
+    ios_table["key_pressed"] = [](Keys key){ return ios::KeyPressed(key); };
 
     state["ios"] = ios_table;
+
+    /* AUDIO FUNCS */
+
+    sol::table audio_table = state.create_table();
+
+    audio_table["master_vol"] = [](double vol){ set_master_volume(vol); };
+    audio_table["channels"] = [](int amount){ audio_channels(amount); };
+    audio_table["quality"] = [](int qua){ audio_quality(qua); };
+
+    state["audio"] = audio_table;
 
     /* RENDER FUNCS */
 

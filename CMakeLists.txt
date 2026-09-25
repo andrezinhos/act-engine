@@ -9,14 +9,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(LUA_HEADERS "C:/lua/src")
 set(LUA_LIB "C:/lua/src/liblua.a")
 
-set(GLFW_HEADERS ${CMAKE_SOURCE_DIR}/external/glfw)
 set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3dll.a)
 
 set(MKR_HEADERS ${CMAKE_SOURCE_DIR}/mkr)
 set(MKR_LIB ${CMAKE_SOURCE_DIR}/mkr/lib/libmkr.a)
 
 set(PWRA_HEADERS ${CMAKE_SOURCE_DIR}/pwra)
-set(PWRA_LIB ${CMAKE_SOURCE_DIR}/pwra/lib/libpwra.a)
+set(PWRA_LIB ${CMAKE_SOURCE_DIR}/pwra/lib/libpwra.dll.a)
 
 # executable files
 add_executable(app
@@ -24,7 +23,7 @@ add_executable(app
   src/ios.cpp
   src/stack.cpp
   src/script.cpp
-  # src/animation.cpp
+  src/animation.cpp
   src/esys.cpp
   src/f_main.cpp
 )
@@ -40,7 +39,6 @@ target_compile_options(app PRIVATE
 target_include_directories(app PRIVATE
   ${CMAKE_SOURCE_DIR}/external
   ${CMAKE_SOURCE_DIR}/src
-  ${GLFW_HEADERS}
   ${LUA_HEADERS}
   ${MKR_HEADERS}
   ${PWRA_HEADERS}
@@ -52,5 +50,5 @@ target_link_libraries(app PRIVATE ${GLFW_LIB} ${LUA_LIB} ${MKR_LIB} ${PWRA_LIB})
 # OS libs
 if(WIN32)
   message("WINDOWS COMPILATION")
-  target_link_libraries(app PRIVATE gdi32 opengl32 user32 shell32)
+  target_link_libraries(app PRIVATE user32 shell32)
 endif()

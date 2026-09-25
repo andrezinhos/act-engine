@@ -3,6 +3,7 @@
 #include "mkgl.hpp"
 #include "mkr.hpp"
 #include "pwra.h"
+#include <vector>
 
 struct Sound{
     Sfx* data;
@@ -10,6 +11,7 @@ struct Sound{
 
     void load(cstr path);
     void play();
+    void pitch(double amount);
 };
 
 struct Music{
@@ -56,4 +58,15 @@ struct Text{
 
 struct Anim2D{
     Sheet source;
+    Texture ref;
+    Vec2 position;
+    float size_val;
+    int id;
+
+    void load(cstr path);
+    void set_frames(const std::vector<Rectangle>& frames);
+    void pos(int x, int y);
+    void size(double size);
+    void play(bool loop);
+    void draw();
 };

@@ -89,7 +89,7 @@ Font mktxt::LoadFont(const char* path){
 };
 
 void mktxt::UnloadDefaultFont(){
-    if(mkr::state.dfont.fontTex.id != 0) glDeleteTextures(1, &mkr::state.dfont.fontTex.id);
+    if(dstate->dfont.fontTex.id != 0) glDeleteTextures(1, &dstate->dfont.fontTex.id);
 }
 
 void mktxt::UnloadFont(const Font& font){
@@ -99,9 +99,9 @@ void mktxt::UnloadFont(const Font& font){
 
 void mktxt::RenderTextEx(Font &font, const char* text, Vec2 position, float minSize, Color color){
     float scale = minSize / FONT_SIZE_DEFAULT;
-
     float lineHeight = FONT_SIZE_DEFAULT * scale * font.spacing;
     float startX = position.x;
+
     for(int i = 0; i < text[i]; i++){
         char c = text[i];
         if (c == '\n'){
@@ -144,6 +144,6 @@ void mktxt::RenderTextEx(Font &font, const char* text, Vec2 position, float minS
     }
 }
 
-void mktxt::RenderText(const std::string& text, Vec2 position, float minSize, Color color){
-    RenderTextEx(mkr::state.dfont, text.c_str(), position, minSize, color);
+void mktxt::RenderText(const char* text, Vec2 position, float minSize, Color color){
+    RenderTextEx(dstate->dfont, text, position, minSize, color);
 }

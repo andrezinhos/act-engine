@@ -20,11 +20,13 @@ function Menu.Init()
     txt:pos(100, 100)
 
     jump:load("assets/audio/Jump.wav")
+
+    jump:pitch(1.0)
 end
 
 function Menu.Update(dt)
     if (ios.key_pressed(key.e)) then
-        jump:play()
+        -- jump:play()
         eng.change_scene("game.lua")
     end
 end

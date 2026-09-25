@@ -1,19 +1,18 @@
-#include "mkgl.hpp"
 #include "mktxt.hpp"
 #include "mktex.hpp"
 #include "mkr.hpp"
 #include "stb_image.h"
 
-Window mkr::wmain;
-DState mkr::state = {};
-int mkr::flags_active[3];
+Window wmain;
+DState* dstate = nullptr;
+int flags_active[3];
 
 void frameCallback(GLFWwindow* window, int w, int h){
 	if (w == 0 || h == 0) return;
 
     glViewport(0, 0, w, h);
-    mkr::wmain.win_width = w;
-    mkr::wmain.win_height = h;
+    wmain.win_width = w;
+    wmain.win_height = h;
 }
 
 void mkr::setWindowIcon(const char* path){
@@ -31,8 +30,8 @@ void mkr::setCursorMode(Cursor cur){
 bool mkr::startWindow(int width, int height, const char* title){
 
 	if (flags_active[2] == 1) {
-		mkr::wmain.moni = glfwGetPrimaryMonitor();
-		mkr::wmain.mode = glfwGetVideoMode(mkr::wmain.moni);
+		wmain.moni = glfwGetPrimaryMonitor();
+		wmain.mode = glfwGetVideoMode(wmain.moni);
 
 		glfwWindowHint(GLFW_RED_BITS, wmain.mode->redBits);
 		glfwWindowHint(GLFW_GREEN_BITS, wmain.mode->greenBits);
@@ -67,18 +66,20 @@ bool mkr::startWindow(int width, int height, const char* title){
 }
 
 int mkr::GetWindowWidth(){
-	return mkr::wmain.win_width;
+	return wmain.win_width;
 }
 
 int mkr::GetWindowHeight(){
-	return mkr::wmain.win_height;
+	return wmain.win_height;
 }
 
 void mkr::Initialize(){
-    state.dshader = DefaultShader();
-    state.dmesh = DefaultQuad();
-    state.dtex = mktex::DefaultTexture();
-    state.dfont = mktxt::DefaultFont();
+    dstate = new DState();
+
+    dstate->dshader = DefaultShader();
+    dstate->dmesh = DefaultQuad();
+    dstate->dtex = mktex::DefaultTexture();
+    dstate->dfont = mktxt::DefaultFont();
     DefaultBatch();
     printf("[INFO] DEFAULT STATE LOADED\n");
 }
@@ -89,8 +90,11 @@ void mkr::Shutdown(){
     mktex::UnloadDefaultTexture();
     mkr::UnloadDefaultQuad();
     mkr::UnloadDefaultShader();
+
+    delete dstate;
+    dstate = nullptr;
     printf("[INFO] DEFAULT STATE UNLOADED\n");
-    glfwDestroyWindow(mkr::wmain.main);
+    glfwDestroyWindow(wmain.main);
     glfwTerminate();
 }
 
@@ -120,8 +124,8 @@ void mkr::ScreenClear(Color color){
 
 void mkr::RenderBegin(){
     glActiveTexture(GL_TEXTURE0);
-    glUseProgram(state.dshader.id);
-    glUniform1i(state.dshader.utex, 0);
+    glUseProgram(dstate->dshader.id);
+    glUniform1i(dstate->dshader.utex, 0);
 }
 
 void mkr::RenderEnd(){
@@ -136,11 +140,11 @@ void mkr::CameraBegin(Camera2D& camera){
     Matrix model = MatrixIdentity();
 
     Matrix mvp = mkmath::MultiplyMatrix(mkmath::MultiplyMatrix(proj, view), model);
-    mkgl::setUniformMat(state.dshader.umodel, mvp);
+    mkgl::setUniformMat(dstate->dshader.umodel, mvp);
 }
 
 void mkr::CameraEnd(){
     flush();
     Matrix view = MatrixIdentity();
-    mkgl::setUniformMat(state.dshader.uview, view);
+    mkgl::setUniformMat(dstate->dshader.uview, view);
 }

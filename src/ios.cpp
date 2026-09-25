@@ -8,7 +8,7 @@ void ios::InputUpdate(){
 	for (int key = 0; key <= 348; key++){
 		prev[key] = curr[key];
 
-		curr[key] = glfwGetKey(mkr::wmain.main, key) == GLFW_PRESS;
+		curr[key] = glfwGetKey(wmain.main, key) == GLFW_PRESS;
 	}
 }
 

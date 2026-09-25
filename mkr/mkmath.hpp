@@ -1,27 +1,27 @@
 #pragma once
 #include <math.h>
 
-static const float PI = 3.14159265358979323846f;
+#define PI 3.14159265358979323846f
 
-typedef struct{
+typedef struct {
     float x;
     float y;
-}Vec2;
+} Vec2;
 
-inline static Vec2 Vec2Zero(){
+inline Vec2 Vec2Zero(){
     return (Vec2){0.0f, 0.0f};
 }
 
-inline static Vec2 Vec2One(){
+inline Vec2 Vec2One(){
     return (Vec2){1.0f, 1.0f};
 }
 
-inline static Vec2 AddVec2(Vec2 v1, Vec2 v2){
+inline Vec2 AddVec2(Vec2 v1, Vec2 v2){
     return (Vec2){v1.x + v2.x, v1.y + v2.y};
 }
 
-inline static Vec2 SubtractVec2(Vec2 v1, Vec2 v2){
-     return (Vec2){v1.x - v2.x, v1.y - v2.y};
+inline Vec2 SubtractVec2(Vec2 v1, Vec2 v2){
+    return (Vec2){v1.x - v2.x, v1.y - v2.y};
 }
 
 typedef struct {
@@ -30,19 +30,19 @@ typedef struct {
     float z;
 } Vec3;
 
-inline static Vec3 Vec3Zero(){
+inline Vec3 Vec3Zero(){
     return (Vec3){0.0f, 0.0f, 0.0f};
 }
 
-inline static Vec3 Vec3One(){
+inline Vec3 Vec3One(){
     return (Vec3){1.0f, 1.0f, 1.0f};
 }
 
-inline static Vec3 AddVec3(Vec3 v1, Vec3 v2){
+inline Vec3 AddVec3(Vec3 v1, Vec3 v2){
     return (Vec3){v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
 }
 
-inline static Vec3 SubtractVec3(Vec3 v1, Vec3 v2){
+inline Vec3 SubtractVec3(Vec3 v1, Vec3 v2){
     return (Vec3){v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
 }
 
@@ -50,11 +50,11 @@ typedef struct {
     float x, y, z, w;
 } Vec4;
 
-typedef struct{
+typedef struct {
     float v[4][4];
 } Matrix;
 
-inline static const Matrix MatrixIdentity(){
+inline const Matrix MatrixIdentity(){
     Matrix result = {};
 
     result.v[0][0] = 1; result.v[1][0] = 0; result.v[2][0] = 0; result.v[3][0] = 0;
@@ -63,14 +63,6 @@ inline static const Matrix MatrixIdentity(){
     result.v[0][3] = 0; result.v[1][3] = 0; result.v[2][3] = 0; result.v[3][3] = 1;
 
     return result;
-
-
-    // return {{
-    //     {1, 0, 0, 0},
-    //     {0, 1, 0, 0},
-    //     {0, 0, 1, 0},
-    //     {0, 0, 0, 1}
-    // }};
 }
 
 struct Transform {

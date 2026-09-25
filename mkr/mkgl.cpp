@@ -51,7 +51,7 @@ char* mkgl::loadShaderFile(const char* path){
     fclose(file);
 
     if (outsize != fsize){
-        freeptr(buffer);
+        free(buffer);
         return nullptr;
     }
     return buffer;
@@ -128,6 +128,17 @@ std::vector<vertex> mkgl::SetNDC(){
         {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
         {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
+}
+
+vertex* mkgl::SetVertex(){
+    vertex* verts = (vertex*)malloc(sizeof(vertex) * 4);
+
+    verts[0] = {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}};
+    verts[1] = {{0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}};
+    verts[2] = {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}};
+    verts[3] = {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}};
+
+    return verts;
 }
 
 bool mkgl::getShaderError(uint* shader){

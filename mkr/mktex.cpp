@@ -65,7 +65,7 @@ Texture mktex::DefaultTexture(){
 }
 
 void mktex::UnloadDefaultTexture(){
-    if (mkr::state.dtex.id != 0) glDeleteTextures(1, &mkr::state.dtex.id);
+    if (dstate->dtex.id != 0) glDeleteTextures(1, &dstate->dtex.id);
 }
 
 Texture mktex::LoadTextureSrc(const char* path){
@@ -93,22 +93,22 @@ void mktex::UnloadTexture(const Texture& tex){
 
 void mkr::RenderRectangle(Vec2 position, Vec2 size, Color color){
     limitFlush();
-    uint32_t base = state.dbatch.vertices.size();
-    uint32_t indexStart = state.dbatch.indices.size();
+    uint32_t base = dstate->dbatch.vertices.size();
+    uint32_t indexStart = dstate->dbatch.indices.size();
 
     sendVertex(position, size, color, {0.0f, 1.0f});
     sendIndices(base);
 
-    if (state.dbatch.calls.empty() || state.dbatch.calls.back().texref != &state.dtex){
-        state.dbatch.calls.push_back({indexStart, 6, &state.dtex});
+    if (dstate->dbatch.calls.empty() || dstate->dbatch.calls.back().texref != &dstate->dtex){
+        dstate->dbatch.calls.push_back({indexStart, 6, &dstate->dtex});
     }
-    else state.dbatch.calls.back().count += 6;
+    else dstate->dbatch.calls.back().count += 6;
 }
 
 void mkr::RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec2 size, Color color){
     limitFlush();
-    uint base = state.dbatch.vertices.size();
-    uint indexStart = state.dbatch.indices.size();
+    uint base = dstate->dbatch.vertices.size();
+    uint indexStart = dstate->dbatch.indices.size();
 
     float u0 = rectangle.x / (float)tex->width;
     float v0 = rectangle.y / (float)tex->height;
@@ -119,22 +119,22 @@ void mkr::RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec
     sendVertex(position, size, color, u0, v0, u1, v1);
     sendIndices(base);
 
-    if (state.dbatch.calls.empty() || state.dbatch.calls.back().texref != tex){
-        state.dbatch.calls.push_back({indexStart, 6, tex});
+    if (dstate->dbatch.calls.empty() || dstate->dbatch.calls.back().texref != tex){
+        dstate->dbatch.calls.push_back({indexStart, 6, tex});
     }
-    else state.dbatch.calls.back().count += 6;
+    else dstate->dbatch.calls.back().count += 6;
 }
 
 void mkr::RenderTexture(Texture *tex, Vec2 position, Vec2 size, Color color){
     limitFlush();
-    uint base = state.dbatch.vertices.size();
-    uint indexStart = state.dbatch.indices.size();
+    uint base = dstate->dbatch.vertices.size();
+    uint indexStart = dstate->dbatch.indices.size();
 
     sendVertex(position, size, color, {0.0f, 1.0f});
     sendIndices(base);
 
-    if (state.dbatch.calls.empty() || state.dbatch.calls.back().texref != tex){
-        state.dbatch.calls.push_back({indexStart, 6, tex});
+    if (dstate->dbatch.calls.empty() || dstate->dbatch.calls.back().texref != tex){
+        dstate->dbatch.calls.push_back({indexStart, 6, tex});
     }
-    else state.dbatch.calls.back().count += 6;
+    else dstate->dbatch.calls.back().count += 6;
 }

@@ -32,7 +32,7 @@ if (-Not (Test-Path -Path $lib_mkr)){
 Set-Location $build_mkr
 Write-Host "MONKEY RENDER BUILD"
 cmake .. | Out-Null
-cmake --build . -- -j2
+cmake --build .
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "MONKEY RENDER BUILD ERROR"
@@ -61,7 +61,7 @@ if (-Not (Test-Path -Path $lib_pwra)){
 Set-Location $build_pwra
 Write-Host "POWER AUDIO BUILD"
 cmake .. | Out-Null
-cmake --build . -- -j2
+cmake --build .
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "POWER AUDIO BUILD ERROR"
@@ -77,7 +77,7 @@ Set-Location $source
 
 Set-Location $build
 cmake ..
-cmake --build . -- -j2
+cmake --build .
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "BUILD ERROR"

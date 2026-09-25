@@ -1,4 +1,3 @@
-#include "mkgl.hpp"
 #include "mkr.hpp"
 
 bool mkr::createWindowContext(){
@@ -22,8 +21,8 @@ bool mkr::createWindowContext(){
 
 void mkr::setWindowPosition(int width, int height){
     if (flags_active[2] == 0){
-        mkr::wmain.moni = glfwGetPrimaryMonitor();
-        mkr::wmain.mode = glfwGetVideoMode(mkr::wmain.moni);
+        wmain.moni = glfwGetPrimaryMonitor();
+        wmain.mode = glfwGetVideoMode(wmain.moni);
 
         int monitorX = wmain.mode->width;
         int monitorY = wmain.mode->height;
@@ -47,7 +46,7 @@ Shader mkr::DefaultShader() {
     mkgl::compileShader(fs);
 
     mkgl::genShaderProg(&shader.id, vs, fs);
-    glGetUniformLocation(state.dshader.id, "uMvp");
+    glGetUniformLocation(dstate->dshader.id, "uMvp");
     mkgl::deleteShaders(vs, fs);
 
     return shader;
@@ -84,16 +83,16 @@ Mesh mkr::DefaultQuad(){
 }
 
 void mkr::DefaultBatch(){
-    mkgl::genArrayBuffer(&state.dbatch.vao);
-    mkgl::genBuffer(&state.dbatch.vbo);
-    mkgl::genBuffer(&state.dbatch.ebo);
+    mkgl::genArrayBuffer(&dstate->dbatch.vao);
+    mkgl::genBuffer(&dstate->dbatch.vbo);
+    mkgl::genBuffer(&dstate->dbatch.ebo);
 
-    mkgl::bindArrBuff(&state.dbatch.vao);
+    mkgl::bindArrBuff(&dstate->dbatch.vao);
 
-    mkgl::bindBuff(&state.dbatch.vbo, GL_ARRAY_BUFFER);
+    mkgl::bindBuff(&dstate->dbatch.vbo, GL_ARRAY_BUFFER);
     mkgl::bindDataDynamic(GL_ARRAY_BUFFER, nullptr, VMAX * sizeof(vertex));
 
-    mkgl::bindBuff(&state.dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
+    mkgl::bindBuff(&dstate->dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
     mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
 
     mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
@@ -101,52 +100,52 @@ void mkr::DefaultBatch(){
     mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 7);
     mkgl::unbind();
 
-    state.dbatch.vertices.reserve(VMAX);
-    state.dbatch.indices.reserve(IMAX);
+    dstate->dbatch.vertices.reserve(VMAX);
+    dstate->dbatch.indices.reserve(IMAX);
 }
 
 void mkr::UnloadDefaultShader(){
-    mkgl::deleteProg(&state.dshader.id);
+    mkgl::deleteProg(&dstate->dshader.id);
 }
 
 void mkr::UnloadDefaultQuad(){
-    mkgl::deleteVertexArr(&state.dmesh.vao);
-    mkgl::deleteBuffer(&state.dmesh.vbo);
-    mkgl::deleteBuffer(&state.dmesh.ebo);
+    mkgl::deleteVertexArr(&dstate->dmesh.vao);
+    mkgl::deleteBuffer(&dstate->dmesh.vbo);
+    mkgl::deleteBuffer(&dstate->dmesh.ebo);
 }
 
 void mkr::UnloadDefaultBatch(){
-    mkgl::deleteVertexArr(&state.dbatch.vao);
-    mkgl::deleteBuffer(&state.dbatch.vbo);
-    mkgl::deleteBuffer(&state.dbatch.ebo);
+    mkgl::deleteVertexArr(&dstate->dbatch.vao);
+    mkgl::deleteBuffer(&dstate->dbatch.vbo);
+    mkgl::deleteBuffer(&dstate->dbatch.ebo);
 
-    state.dbatch.calls.clear();
-    state.dbatch.indices.clear();
-    state.dbatch.vertices.clear();
+    dstate->dbatch.calls.clear();
+    dstate->dbatch.indices.clear();
+    dstate->dbatch.vertices.clear();
 }
 
 void mkr::sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv){
-    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { uv.x, uv.x }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { uv.y, uv.x }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { uv.y, uv.y }});
-    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { uv.x, uv.y }});
+    dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { uv.x, uv.x }});
+    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { uv.y, uv.x }});
+    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { uv.y, uv.y }});
+    dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { uv.x, uv.y }});
 }
 
 void mkr::sendVertex(Vec2 position, Vec2 size, Color color, float u0, float v0, float u1, float v1){
-    state.dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { u0, v0 }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { u1, v0 }});
-    state.dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { u1, v1 }});
-    state.dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { u0, v1 }});
+    dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { u0, v0 }});
+    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { u1, v0 }});
+    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { u1, v1 }});
+    dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { u0, v1 }});
 }
 
 void mkr::sendIndices(uint base){
-    state.dbatch.indices.push_back(base + 0);
-    state.dbatch.indices.push_back(base + 1);
-    state.dbatch.indices.push_back(base + 3);
+    dstate->dbatch.indices.push_back(base + 0);
+    dstate->dbatch.indices.push_back(base + 1);
+    dstate->dbatch.indices.push_back(base + 3);
 
-    state.dbatch.indices.push_back(base + 1);
-    state.dbatch.indices.push_back(base + 2);
-    state.dbatch.indices.push_back(base + 3);
+    dstate->dbatch.indices.push_back(base + 1);
+    dstate->dbatch.indices.push_back(base + 2);
+    dstate->dbatch.indices.push_back(base + 3);
 }
 
 void mkr::drawElements(size_t count, void* offset){
@@ -154,30 +153,30 @@ void mkr::drawElements(size_t count, void* offset){
 }
 
 void mkr::limitFlush(){
-    if (state.dbatch.vertices.size() >= VMAX ||
-        state.dbatch.indices.size() >= IMAX) flush();
+    if (dstate->dbatch.vertices.size() >= VMAX ||
+        dstate->dbatch.indices.size() >= IMAX) flush();
 }
 
 void mkr::flush(){
-    if (state.dbatch.vertices.empty()) return;
+    if (dstate->dbatch.vertices.empty()) return;
 
-    mkgl::bindArrBuff(&state.dbatch.vao);
+    mkgl::bindArrBuff(&dstate->dbatch.vao);
 
-    // mkgl::bindBuff(&state.dbatch.vbo, GL_ARRAY_BUFFER);
+    // mkgl::bindBuff(&dstate->dbatch.vbo, GL_ARRAY_BUFFER);
     mkgl::bindDataDynamic(GL_ARRAY_BUFFER, nullptr, VMAX * sizeof(vertex));
     mkgl::bindSubData(
-        GL_ARRAY_BUFFER, state.dbatch.vertices.data(),
-        state.dbatch.vertices.size() * sizeof(vertex)
+        GL_ARRAY_BUFFER, dstate->dbatch.vertices.data(),
+        dstate->dbatch.vertices.size() * sizeof(vertex)
     );
 
-    // mkgl::bindBuff(&state.dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
+    // mkgl::bindBuff(&dstate->dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
     mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
     mkgl::bindSubData(
-        GL_ELEMENT_ARRAY_BUFFER, state.dbatch.indices.data(),
-        state.dbatch.indices.size() * sizeof(uint)
+        GL_ELEMENT_ARRAY_BUFFER, dstate->dbatch.indices.data(),
+        dstate->dbatch.indices.size() * sizeof(uint)
     );
 
-    for (const auto& d : state.dbatch.calls){
+    for (const auto& d : dstate->dbatch.calls){
         glBindTexture(GL_TEXTURE_2D, d.texref->id);
 
         drawElements(
@@ -188,7 +187,7 @@ void mkr::flush(){
 
     mkgl::unbind();
 
-    state.dbatch.calls.clear();
-    state.dbatch.indices.clear();
-    state.dbatch.vertices.clear();
+    dstate->dbatch.calls.clear();
+    dstate->dbatch.indices.clear();
+    dstate->dbatch.vertices.clear();
 }

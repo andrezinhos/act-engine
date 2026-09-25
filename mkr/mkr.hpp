@@ -3,11 +3,11 @@
 #include "glfw/glfw3.h"
 #include "mktxt.hpp"
 
-enum Cursor{
+typedef enum{
     NORMAL,
     HIDDEN,
     DISABLED
-};
+} Cursor;
 
 struct Rectangle{
     float x, y;
@@ -37,6 +37,10 @@ struct DState{
     Font dfont;
 };
 
+extern int flags_active[3];
+extern Window wmain;
+extern DState* dstate;
+
 class mkr{
 private:
     static bool createWindowContext();
@@ -48,9 +52,6 @@ private:
     static void limitFlush();
     static void flush();
 public:
-    static int flags_active[3];
-    static Window wmain;
-    static DState state;
     static void setWindowIcon(cstr path);
     static void setCursorMode(Cursor cur);
     static bool startWindow(int width, int height, const char* title);

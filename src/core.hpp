@@ -2,7 +2,7 @@
 #include "scene.hpp"
 #include <memory>
 
-static const double FPS_TARGET = 1.0 / 72.0;
+constexpr double FPS_TARGET = 1.0 / 72.0;
 
 enum Flags{
     RESIZABLE,
