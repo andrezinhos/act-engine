@@ -28,8 +28,8 @@ Image mktex::loadImage(const char* path){
     return image;
 }
 
-void mktex::unloadImage(Image& image){
-    stbi_image_free(image.data);
+void mktex::unloadImage(Image* image){
+    stbi_image_free(image->data);
 }
 
 uint mktex::genTex(GLenum type){
@@ -81,13 +81,13 @@ Texture mktex::LoadTextureSrc(const char* path){
     setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     setTexImage2D(GL_RGBA, GL_RGBA8, image.width, image.height, image.data);
-    unloadImage(image);
+    unloadImage(&image);
 
     return tex;
 }
 
-void mktex::UnloadTexture(const Texture& tex){
-    if (tex.id != 0) glDeleteTextures(1, &tex.id);
+void mktex::UnloadTexture(Texture* tex){
+    if (tex->id != 0) glDeleteTextures(1, &tex->id);
     printf("[INFO] TEXTURE UNLOADED\n");
 }
 

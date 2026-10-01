@@ -89,6 +89,7 @@ struct Camera3D{
 };
 
 namespace mkmath{
+
     inline float Rads(float angle){
         return angle * PI / 180.0f;
     }
@@ -122,16 +123,16 @@ namespace mkmath{
         return hypot(v.x, v.y, v.z);
     }
 
-    inline Vec2 Normalize(Vec2 v){
+    inline Vec2 NormalizeVec2(Vec2 v){
         float len = Length(v);
         if (len == 0) return Vec2Zero();
         return (Vec2){v.x / len, v.y / len};
     }
 
-    inline Vec3 Normalize(Vec3 v){
+    inline Vec3 NormalizeVec3(Vec3 v){
         float len = Length(v);
         if (len == 0) return Vec3Zero();
-        return {v.x / len, v.y / len, v.z / len};
+        return (Vec3){v.x / len, v.y / len, v.z / len};
     }
 
     inline Matrix TranslateMatrix(Vec3 position){
@@ -210,11 +211,11 @@ namespace mkmath{
         };
     }
 
-    inline float Dot(Vec2 v1, Vec2 v2){
+    inline float DotVec2(Vec2 v1, Vec2 v2){
         return (float)((v1.x*v2.x)+(v1.y*v2.y));
     }
 
-    inline float Dot(Vec3 v1, Vec3 v2){
+    inline float DotVec3(Vec3 v1, Vec3 v2){
         return (float)((v1.x*v2.x)+(v1.y*v2.y)+(v1.z*v2.z));
     }
 
@@ -341,9 +342,9 @@ namespace mkmath{
     }
 
     inline Matrix LookAt(Vec3 eye, Vec3 target, Vec3 upChute){
-        Vec3 forward = Normalize(SubtractVec3(target, eye));
-        Vec3 side = Normalize(Cross(forward, upChute));
-        Vec3 up = Normalize(Cross(side, forward));
+        Vec3 forward = NormalizeVec3(SubtractVec3(target, eye));
+        Vec3 side = NormalizeVec3(Cross(forward, upChute));
+        Vec3 up = NormalizeVec3(Cross(side, forward));
 
         Matrix result = MatrixIdentity();
 
@@ -351,9 +352,9 @@ namespace mkmath{
         result.v[0][1] = up.x; result.v[1][1] = up.y; result.v[2][1] = up.z;
         result.v[0][2] = -forward.x; result.v[1][2] = -forward.y; result.v[2][2] = -forward.z;
 
-        result.v[3][0] = -Dot(side, eye);
-        result.v[3][1] = -Dot(up, eye);
-        result.v[3][2] = Dot(forward, eye);
+        result.v[3][0] = -DotVec3(side, eye);
+        result.v[3][1] = -DotVec3(up, eye);
+        result.v[3][2] = DotVec3(forward, eye);
 
         return result;
     }

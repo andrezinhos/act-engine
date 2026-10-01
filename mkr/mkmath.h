@@ -89,7 +89,6 @@ inline const Matrix MatrixIdentity() {
     return result;
 }
 
-
 inline float Rads(float angle){
     return angle * PI / 180.0f;
 }
@@ -123,13 +122,13 @@ inline float Vec3Length(Vec3 v){
     return hypot(v.x, v.y, v.z);
 }
 
-inline Vec2 Vec2Normalize(Vec2 v){
+inline Vec2 NormalizeVec2(Vec2 v){
     float len = Vec2Length(v);
     if (len == 0) return Vec2Zero();
     return (Vec2){v.x / len, v.y / len};
 }
 
-inline Vec3 Vec3Normalize(Vec3 v){
+inline Vec3 NormalizeVec3(Vec3 v){
     float len = Vec3Length(v);
     if (len == 0) return Vec3Zero();
     return (Vec3){v.x / len, v.y / len, v.z / len};
@@ -211,11 +210,11 @@ inline Vec3 Cross(Vec3 v1, Vec3 v2){
     };
 }
 
-inline float Vec2Dot(Vec2 v1, Vec2 v2){
+inline float DotVec2(Vec2 v1, Vec2 v2){
     return (float)((v1.x*v2.x)+(v1.y*v2.y));
 }
 
-inline float Vec3Dot(Vec3 v1, Vec3 v2){
+inline float DotVec3(Vec3 v1, Vec3 v2){
     return (float)((v1.x*v2.x)+(v1.y*v2.y)+(v1.z*v2.z));
 }
 
@@ -342,9 +341,9 @@ inline Matrix GetMatrixModel(Vec3& position, Vec3& rotation, Vec3& scale){
 }
 
 inline Matrix LookAt(Vec3 eye, Vec3 target, Vec3 upChute){
-    Vec3 forward = Vec3Normalize(SubtractVec3(target, eye));
-    Vec3 side = Vec3Normalize(Cross(forward, upChute));
-    Vec3 up = Vec3Normalize(Cross(side, forward));
+    Vec3 forward = NormalizeVec3(SubtractVec3(target, eye));
+    Vec3 side = NormalizeVec3(Cross(forward, upChute));
+    Vec3 up = NormalizeVec3(Cross(side, forward));
 
     Matrix result = MatrixIdentity();
 
@@ -352,9 +351,9 @@ inline Matrix LookAt(Vec3 eye, Vec3 target, Vec3 upChute){
     result.v[0][1] = up.x; result.v[1][1] = up.y; result.v[2][1] = up.z;
     result.v[0][2] = -forward.x; result.v[1][2] = -forward.y; result.v[2][2] = -forward.z;
 
-    result.v[3][0] = -Vec3Dot(side, eye);
-    result.v[3][1] = -Vec3Dot(up, eye);
-    result.v[3][2] = Vec3Dot(forward, eye);
+    result.v[3][0] = -DotVec3(side, eye);
+    result.v[3][1] = -DotVec3(up, eye);
+    result.v[3][2] = DotVec3(forward, eye);
 
     return result;
 }

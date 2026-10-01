@@ -1,7 +1,6 @@
 #pragma once
 #include "animation.hpp"
-#include "mkgl.hpp"
-#include "mkr.hpp"
+#include "mktxt.hpp"
 #include "pwra.h"
 #include <vector>
 
@@ -62,9 +61,11 @@ struct Anim2D{
     Vec2 position;
     float size_val;
     int id;
+    bool playing;
 
+    void duration(double dur);
     void load(cstr path);
-    void set_frames(const std::vector<Rectangle>& frames);
+    void set_frames(const std::vector<std::vector<float>>& frames);
     void pos(int x, int y);
     void size(double size);
     void play(bool loop);

@@ -1,14 +1,13 @@
 #include "core.hpp"
 #include "ios.hpp"
 #include "pwra.h"
-#include "mkgl.hpp"
+#include "mkr.hpp"
 #include "scene.hpp"
 #include "stack.hpp"
-#include <thread>
-#include <chrono>
+#include "time.hpp"
 
-constexpr cstr VERSION = "0.14.12";
-Time core::time = {};
+constexpr cstr VERSION = "0.15.2";
+
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
 
@@ -37,8 +36,8 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
     currScene->Init();
 
     while(Loop()) {
-        if (!time.Clock()) continue;
-        time.CountFps();
+        if (!Time::Clock()) continue;
+        Time::CountFps();
         ios::InputUpdate();
 
         if (nextScene){
@@ -48,7 +47,7 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
         }
 
         mkr::ScreenClear(Black);
-        currScene->Update(time.delta);
+        currScene->Update(Time::GetDelta());
 
         mkr::RenderBegin();
         currScene->Draw();
@@ -66,7 +65,6 @@ void core::MainWindow(int width, int height, const char *title){
 
     if (win_started){
         mkr::Initialize();
-        time.lastTime = glfwGetTime();
         mkr::setWindowIcon("eng/w_icon.png");
         start_audio();
         printf("[INFO] ENGINE INITIALIZED\n");
@@ -89,49 +87,4 @@ void core::Finish(){
     nextScene.reset();
     end_audio();
     mkr::Shutdown();
-}
-
-float core::GetDelta(){
-    return time.delta;
-}
-
-int core::GetFPS() {
-    return time.fps;
-}
-
-void WaitTime(){
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(1)
-    );
-}
-
-void WaitFor(double value){
-    std::this_thread::sleep_for(
-        std::chrono::duration<double>(value)
-    );
-}
-
-bool Time::Clock(){
-    double newTime = glfwGetTime();
-    double elapsed = newTime - lastTime;
-    if (elapsed < 0.001) {
-        WaitFor(FPS_TARGET - elapsed - 0.001);
-        return false;
-    }
-
-    delta = elapsed;
-    lastTime = newTime;
-    if (delta > 0.1) delta = 0.1;
-    return true;
-}
-
-void Time::CountFps(){
-    frameCount += 1;
-    fpsTimer += delta;
-
-    if (fpsTimer >= 1.0f){
-        fps = frameCount;
-        frameCount = 0;
-        fpsTimer -= 1.0f;
-    }
 }

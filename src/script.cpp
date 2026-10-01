@@ -1,5 +1,7 @@
 #include "esys.hpp"
+#include "mkr.hpp"
 #include "core.hpp"
+#include "time.hpp"
 #include "ios.hpp"
 #include "script.hpp"
 #include "pwra.h"
@@ -143,11 +145,12 @@ void script::load_conteiners(){
     );
 
     state.new_usertype<Anim2D>("Anim2D",
+        "duration", &Anim2D::duration,
         "load", &Anim2D::load,
         "pos", &Anim2D::pos,
         "size", &Anim2D::size,
-        "set_frames", &Anim2D::set_frames,
-        "play", &Anim2D::play
+        "play", &Anim2D::play,
+        "draw", &Anim2D::draw
     );
 }
 
@@ -163,10 +166,10 @@ void script::start_funcs(){
 
     core_table["win_flag"] = [](Flags flag){ core::WindowFlag(flag); };
     core_table["get_fps"] = [](){
-        std::string fps_string = "FPS: " + std::to_string(core::GetFPS());
+        std::string fps_string = "FPS: " + std::to_string(Time::GetFrames());
         mktxt::RenderText(fps_string.c_str(), {10, 50}, 30, White);
     };
-    core_table["delta"] = core::GetDelta;
+    core_table["delta"] = Time::GetDelta;
 
     core_table["initial_scene"] = [](const std::string& file){
         std::string path = "assets/scenes/"+file;
@@ -214,15 +217,28 @@ void script::start_funcs(){
 
     /* RENDER FUNCS */
 
-    sol::table mkr_table = state.create_table();
+    sol::table render = state.create_table();
 
-    mkr_table["win_width"] = mkr::GetWindowWidth;
-    mkr_table["win_height"] = mkr::GetWindowHeight;
-    mkr_table["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
-    mkr_table["cam_end"] = mkr::CameraEnd;
-    mkr_table["cursor"] = [](Cursor cur) { mkr::setCursorMode(cur); };
+    render["win_width"] = mkr::GetWindowWidth;
+    render["win_height"] = mkr::GetWindowHeight;
+    render["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
+    render["cam_end"] = mkr::CameraEnd;
+    render["cursor"] = [](Cursor cur) { mkr::setCursorMode(cur); };
 
-    state["render"] = mkr_table;
+    render["animation_frames"] = [](Anim2D& anim, sol::table frames){
+        Rectangle r;
+        for(auto& frame : frames){
+            sol::table f = frame.second.as<sol::table>();
+            r.x = f[1].get<float>();
+            r.y = f[2].get<float>();
+            r.width = f[3].get<float>();
+            r.height = f[4].get<float>();
+            anim.source.frames.push_back(r);
+        }
+    },
+
+
+    state["render"] = render;
 }
 
 void script::load_script_file(){

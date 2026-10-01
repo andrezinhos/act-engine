@@ -3,6 +3,43 @@
 #include <cstdlib>
 #include <cstring>
 
+void mkgl::ArenaAlloc(ArenaV *arena, int amount){
+    arena->cap = amount;
+    arena->count = 0;
+    arena->vertices = (vertex*)malloc(sizeof(vertex) * amount);
+}
+
+void mkgl::ArenaFree(ArenaV *arena){
+    freeptr(arena->vertices);
+    arena->count = 0;
+    arena->cap = 0;
+}
+
+void mkgl::ArenaNewAlloc(ArenaV *arena){
+
+    //we reached our actual limit
+    if (arena->cap + 4 > arena->cap){
+
+        //we don't reached the maximum limit
+        if (arena->cap < VMAX){
+
+            size_t newcap = arena->cap + 4;
+            if (arena->cap > VMAX) arena->cap = VMAX;
+
+            vertex* tmp = (vertex*)realloc(arena->vertices, sizeof(vertex) * newcap);
+            if (!tmp) return;
+            arena->vertices = tmp;
+            arena->cap = newcap;
+        }
+
+        //we reached our limit
+        else {
+            arena->count = 0;
+        }
+
+    }
+}
+
 byte* mkgl::loadBytes(const char* path, size_t* size){
     FILE* file = fopen(path, "rb");
 
@@ -57,17 +94,17 @@ char* mkgl::loadShaderFile(const char* path){
     return buffer;
 }
 
-void mkgl::getShaderLogInfo(uint* shader, char* log){
+void getShaderLogInfo(uint* shader, char* log){
     glGetShaderInfoLog(*shader, 512, nullptr, log);
     printf("ERROR ON COMPILING SHADER:\n %s", log);
 }
 
-void mkgl::getProgramLogInfo(uint* prog, char* log){
+void getProgramLogInfo(uint* prog, char* log){
     glGetProgramInfoLog(*prog, 512, nullptr, log);
     printf("ERROR ON LINKING PROGRAM:\n %s", log);
 }
 
-void mkgl::linkProgram(uint* prog, uint vs, uint fs){
+void linkProgram(uint* prog, uint vs, uint fs){
     glAttachShader(*prog, vs);
     glAttachShader(*prog, fs);
     glLinkProgram(*prog);
@@ -123,25 +160,42 @@ void mkgl::sendAttribPtr(int layout, int size, int stride, int ptr){
 
 std::vector<vertex> mkgl::SetNDC(){
     return {
-        {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-        {{0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-        {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+        {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+        {{0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+        {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
 }
 
-vertex* mkgl::SetVertex(){
-    vertex* verts = (vertex*)malloc(sizeof(vertex) * 4);
+void mkgl::SetVertex(){
+    return;
+    // ArenaV arena = {};
 
-    verts[0] = {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}};
-    verts[1] = {{0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}};
-    verts[2] = {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}};
-    verts[3] = {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}};
+    // //initial space
+    // arena.cap = 4;
+    // arena.count = 0;
+    // mkgl::ArenaAlloc(&arena, arena.cap);
 
-    return verts;
+    // printf("%p\n", arena.vertices);
+
+    // arena.vertices[arena.count++] = {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}};
+    // arena.vertices[arena.count++] = {{0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}};
+    // arena.vertices[arena.count++] = {{-0.5f,-0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}};
+    // arena.vertices[arena.count++] = {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}};
+
+    // printf("%d\n", arena.cap);
+
+    // ArenaNewAlloc(&arena);
+
+    // printf("%d\n", arena.cap);
+
+    // ArenaFree(&arena);
+
+    // printf("%p\n", arena.vertices);
+
 }
 
-bool mkgl::getShaderError(uint* shader){
+bool getShaderError(uint* shader){
     int pass;
     char log[512];
     glGetShaderiv(*shader, GL_COMPILE_STATUS, &pass);
@@ -154,7 +208,7 @@ bool mkgl::getShaderError(uint* shader){
     return true;
 }
 
-bool mkgl::getShaderProgError(uint* prog){
+bool getShaderProgError(uint* prog){
     int pass;
     char log[512];
     glGetProgramiv(*prog, GL_LINK_STATUS, &pass);
@@ -189,8 +243,8 @@ void mkgl::deleteShaders(uint vs, uint fs){
     glDeleteShader(fs);
 }
 
-void mkgl::setUniformMat(GLint loc, Matrix& mat){
-    glUniformMatrix4fv(loc, 1, GL_FALSE, &mat.v[0][0]);
+void mkgl::setUniformMat(GLint loc, Matrix* mat){
+    glUniformMatrix4fv(loc, 1, GL_FALSE, &mat->v[0][0]);
 }
 
 void mkgl::clearScreen(Color color){

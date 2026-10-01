@@ -1,13 +1,14 @@
 #include "animation.hpp"
-#include "core.hpp"
+#include "mkr.hpp"
+#include "time.hpp"
 
 void anim::PlayAnimation(Sheet& sheet, bool loop){
     if (sheet.end && !loop) return;
 
-    sheet.counter = core::GetDelta();
+    sheet.counter += Time::GetDelta();
 
     if (sheet.counter >= sheet.duration){
-        sheet.counter = 0;
+        sheet.counter -= sheet.duration;
         sheet.currFrame++;
 
         if (sheet.currFrame >= (int)sheet.frames.size()){

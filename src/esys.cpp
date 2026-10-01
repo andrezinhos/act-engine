@@ -1,8 +1,6 @@
 #include "esys.hpp"
-#include "mkgl.hpp"
 #include "mkr.hpp"
 #include "mktex.hpp"
-#include "pwra.h"
 #include "stack.hpp"
 
 void Rect::pos(float x, float y){
@@ -25,7 +23,7 @@ void Rect::draw(Color color){
 
 void Sprite::load(cstr path){
     source = mktex::LoadTextureSrc(path);
-    id = stack::PushSprite(source);
+    id = stack::PushSprite(&source);
 }
 
 void Sprite::pos(float x, float y){
@@ -117,20 +115,26 @@ void Text::spacing(double space){
 void Text::draw(cstr text, float size, Color color){
     auto it = stack::fontmap.find(id);
     if (it != stack::fontmap.end()){
-        mktxt::RenderTextEx(it->second, text, position, size, color);
+        mktxt::RenderTextEx(&it->second, text, position, size, color);
     }
-    else {
-        mktxt::RenderText(text, position, size, color);
-    }
+    else mktxt::RenderText(text, position, size, color);
 }
 
-void Anim2D::load(cstr path){
+
+void Anim2D::duration(double dur){
+    source.duration = dur / 12.0;
+}
+
+void Anim2D::load(const char* path){
     ref = mktex::LoadTextureSrc(path);
-    id = stack::PushSprite(ref);
+    id = stack::PushSprite(&ref);
 }
 
-void Anim2D::set_frames(const std::vector<Rectangle>& frames){
-    source.frames = frames;
+void Anim2D::set_frames(const std::vector<std::vector<float>>& frames){
+    source.frames.reserve(frames.size());
+    for (auto& f : frames){
+        source.frames.push_back({f[0], f[1], f[2], f[3]});
+    }
 }
 
 void Anim2D::play(bool loop){
@@ -143,4 +147,11 @@ void Anim2D::pos(int x, int y){
 
 void Anim2D::size(double size){
     size_val = size;
+}
+
+void Anim2D::draw(){
+    auto it = stack::texmap.find(id);
+    if (it != stack::texmap.end()){
+        anim::RenderAnimation(source, &it->second, position, size_val, White);
+    }
 }

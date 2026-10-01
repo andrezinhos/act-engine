@@ -23,6 +23,7 @@
         "Rect",
         "stereo",
         "audio",
-        "high"
+        "high",
+        "Anim2D"
     ]
 }

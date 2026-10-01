@@ -1,11 +1,12 @@
 #pragma once
-#include "mkr.hpp"
+#include "mktypes.h"
+#include "mkmath.hpp"
 #include <vector>
 
 struct Sheet{
     std::vector<Rectangle> frames;
     int currFrame;
-    int counter;
+    float counter;
     double duration;
     bool end;
 };

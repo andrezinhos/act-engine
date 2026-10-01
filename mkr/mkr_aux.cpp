@@ -55,6 +55,7 @@ Shader mkr::DefaultShader() {
 Mesh mkr::DefaultQuad(){
     Mesh mesh = {};
 
+    mkgl::SetVertex();
     mesh.vertices = mkgl::SetNDC();
     mesh.indices = {
         0, 1, 3,
@@ -74,8 +75,8 @@ Mesh mkr::DefaultQuad(){
     mkgl::bindDataStatic(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.data(), mesh.indices.size() * sizeof(uint));
 
     mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
-    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    4, MKR_VERTEX_STRIDE, 3);
-    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 7);
+    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    3, MKR_VERTEX_STRIDE, 3);
+    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 6);
 
     mkgl::unbind();
 
@@ -96,8 +97,8 @@ void mkr::DefaultBatch(){
     mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
 
     mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
-    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    4, MKR_VERTEX_STRIDE, 3);
-    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 7);
+    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    3, MKR_VERTEX_STRIDE, 3);
+    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 6);
     mkgl::unbind();
 
     dstate->dbatch.vertices.reserve(VMAX);
@@ -125,17 +126,17 @@ void mkr::UnloadDefaultBatch(){
 }
 
 void mkr::sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv){
-    dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { uv.x, uv.x }});
-    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { uv.y, uv.x }});
-    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { uv.y, uv.y }});
-    dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { uv.x, uv.y }});
+    dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { uv.x, uv.x }});
+    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { uv.y, uv.x }});
+    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.y, uv.y }});
+    dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.x, uv.y }});
 }
 
 void mkr::sendVertex(Vec2 position, Vec2 size, Color color, float u0, float v0, float u1, float v1){
-    dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { u0, v0 }});
-    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b, color.a }, { u1, v0 }});
-    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { u1, v1 }});
-    dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b, color.a }, { u0, v1 }});
+    dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { u0, v0 }});
+    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { u1, v0 }});
+    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u1, v1 }});
+    dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u0, v1 }});
 }
 
 void mkr::sendIndices(uint base){

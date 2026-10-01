@@ -29,6 +29,10 @@ void mkr::setCursorMode(Cursor cur){
 
 bool mkr::startWindow(int width, int height, const char* title){
 
+    wmain.main = NULL;
+    wmain.mode = NULL;
+    wmain.moni = NULL;
+
 	if (flags_active[2] == 1) {
 		wmain.moni = glfwGetPrimaryMonitor();
 		wmain.mode = glfwGetVideoMode(wmain.moni);
@@ -92,7 +96,8 @@ void mkr::Shutdown(){
     mkr::UnloadDefaultShader();
 
     delete dstate;
-    dstate = nullptr;
+    dstate = NULL;
+
     printf("[INFO] DEFAULT STATE UNLOADED\n");
     glfwDestroyWindow(wmain.main);
     glfwTerminate();
@@ -140,11 +145,11 @@ void mkr::CameraBegin(Camera2D& camera){
     Matrix model = MatrixIdentity();
 
     Matrix mvp = mkmath::MultiplyMatrix(mkmath::MultiplyMatrix(proj, view), model);
-    mkgl::setUniformMat(dstate->dshader.umodel, mvp);
+    mkgl::setUniformMat(dstate->dshader.umodel, &mvp);
 }
 
 void mkr::CameraEnd(){
     flush();
     Matrix view = MatrixIdentity();
-    mkgl::setUniformMat(dstate->dshader.uview, view);
+    mkgl::setUniformMat(dstate->dshader.uview, &view);
 }

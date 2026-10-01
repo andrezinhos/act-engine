@@ -1,17 +1,17 @@
 #pragma once
-#include "mkgl.hpp"
+#include "glad.h"
+#include "mktypes.h"
 
-class mktex{
-public:
-    static Texture DefaultTexture();
-    static void UnloadDefaultTexture();
+namespace mktex{
+    Texture DefaultTexture();
+    void UnloadDefaultTexture();
 
-    static Texture LoadTextureSrc(const char* path);
-    static void UnloadTexture(const Texture& tex);
+    Texture LoadTextureSrc(const char* path);
+     void UnloadTexture(Texture* tex);
 
-    static Image loadImage(const char* path);
-    static void unloadImage(Image& image);
-    static uint genTex(GLenum type);
-    static void setTexParams(GLenum type, GLenum wrap, GLenum format);
-    static void setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data);
+     Image loadImage(const char* path);
+     void unloadImage(Image* image);
+     uint genTex(GLenum type);
+     void setTexParams(GLenum type, GLenum wrap, GLenum format);
+     void setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data);
 };

@@ -10,16 +10,16 @@ enum Flags{
     FULLSCREEN,
 };
 
-struct Time{
-    double lastTime;
-    float delta;
+// struct Time{
+//     double lastTime;
+//     float delta;
 
-    int fps;
-    int frameCount;
-    float fpsTimer;
-    bool Clock();
-    void CountFps();
-};
+//     int fps;
+//     int frameCount;
+//     float fpsTimer;
+//     bool Clock();
+//     void CountFps();
+// };
 
 class core {
 private:
@@ -27,10 +27,6 @@ private:
     static std::unique_ptr<Scene> currScene;
     static std::unique_ptr<Scene> nextScene;
 public:
-    static Time time;
-    static float GetDelta();
-    static int GetFPS();
-
     static void setScene(std::unique_ptr<Scene> scene);
     static void InitialScene(std::unique_ptr<Scene> initial);
 

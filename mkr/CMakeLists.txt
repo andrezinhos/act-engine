@@ -36,6 +36,8 @@ target_include_directories(mkr PUBLIC
   ${GLFW_HEADERS}
 )
 
+target_compile_definitions(mkr PRIVATE MKR_SL=0)
+
 target_link_libraries(mkr PUBLIC ${GLFW_LIB})
 
 # OS libs

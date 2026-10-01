@@ -3,31 +3,20 @@
 #include "glfw/glfw3.h"
 #include "mktxt.hpp"
 
-typedef enum{
-    NORMAL,
-    HIDDEN,
-    DISABLED
-} Cursor;
-
-struct Rectangle{
-    float x, y;
-    float width, height;
-};
-
 struct Mesh{
     uint vao, vbo, ebo;
     std::vector<vertex> vertices;
     std::vector<uint> indices;
 };
 
-struct Window{
+typedef struct {
     Cursor cursor;
     GLFWimage icon;
-	GLFWmonitor* moni = nullptr;
-	const GLFWvidmode* mode = nullptr;
-    GLFWwindow* main = nullptr;
+	GLFWmonitor* moni;
+	const GLFWvidmode* mode;
+    GLFWwindow* main;
     int win_width, win_height;
-};
+} Window;
 
 struct DState{
     Batch dbatch;

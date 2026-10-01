@@ -19,6 +19,7 @@ set(PWRA_LIB ${CMAKE_SOURCE_DIR}/pwra/lib/libpwra.dll.a)
 
 # executable files
 add_executable(app
+  src/time.cpp
   src/core.cpp
   src/ios.cpp
   src/stack.cpp

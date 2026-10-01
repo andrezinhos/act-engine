@@ -4,20 +4,20 @@
 #include <memory>
 
 std::unordered_map<int, Texture> stack::texmap;
-static int sprite_count = -1;
+int stack::sprite_count = 0;
 
 std::unordered_map<int, std::unique_ptr<Sfx>> stack::soundmap;
-static int sound_count = -1;
+int stack::sound_count = 0;
 
 std::unordered_map<int, std::unique_ptr<Stream>> stack::musicmap;
-static int music_count = -1;
+int stack::music_count = 0;
 
 std::unordered_map<int, Font> stack::fontmap;
-static int font_count = -1;
+int stack::font_count = 0;
 
-int stack::PushSprite(Texture& sprite){
+int stack::PushSprite(Texture* sprite){
     int id = sprite_count++;
-    texmap[id] = sprite;
+    texmap[id] = *sprite;
     return id;
 }
 
@@ -57,9 +57,9 @@ int stack::PushFont(const char *path){
 }
 
 void stack::UnloadAll(){
-    for (auto const& [id, tex] : texmap){
+    for (auto& [id, tex] : texmap){
         if (texmap.empty()) break;
-        mktex::UnloadTexture(tex);
+        mktex::UnloadTexture(&tex);
     }
     for(auto& [id, sound] : soundmap){
         if (soundmap.empty()) break;
@@ -71,7 +71,7 @@ void stack::UnloadAll(){
     }
     for(auto& [id, font] : fontmap){
         if (fontmap.empty()) break;
-        mktxt::UnloadFont(font);
+        mktxt::UnloadFont(&font);
     }
 
     texmap.clear();
