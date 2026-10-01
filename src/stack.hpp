@@ -1,6 +1,7 @@
 #pragma once
-#include "mkgl.hpp"
-#include "esys.hpp"
+#include "mktypes.h"
+#include "mktxt.hpp"
+#include "pwra.h"
 #include <unordered_map>
 #include <memory>
 

@@ -1,6 +1,5 @@
 #include "stack.hpp"
 #include "mktex.hpp"
-#include "pwra.h"
 #include <memory>
 
 std::unordered_map<int, Texture> stack::texmap;
