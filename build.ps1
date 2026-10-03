@@ -18,7 +18,6 @@ if (-Not (Test-Path -Path $build)){
     New-Item -Path $build -ItemType Directory | Out-Null
 }
 
-# ------------------------------------------
 # enter the monkey render dir to build
 
 if (-Not (Test-Path -Path $build_mkr)){
@@ -31,7 +30,6 @@ if (-Not (Test-Path -Path $lib_mkr)){
 
 Set-Location $build_mkr
 Write-Host "MONKEY RENDER BUILD"
-cmake .. | Out-Null
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){
@@ -43,12 +41,7 @@ if ($LASTEXITCODE -ne 0){
 Clear-Host
 Set-Location $source
 
-# return to root
-# ------------------------------------------
-
-
-# ------------------------------------------
-# enter the audio make dir to build
+# enter the power audio dir to build
 
 if (-Not (Test-Path -Path $build_pwra)){
 	New-Item -Path $build_pwra -ItemType Directory | Out-Null
@@ -60,7 +53,6 @@ if (-Not (Test-Path -Path $lib_pwra)){
 
 Set-Location $build_pwra
 Write-Host "POWER AUDIO BUILD"
-cmake .. | Out-Null
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){
@@ -72,11 +64,8 @@ if ($LASTEXITCODE -ne 0){
 Clear-Host
 Set-Location $source
 
-# return to root
-# ------------------------------------------
-
+Write-Host "ENGINE BUILD"
 Set-Location $build
-cmake ..
 cmake --build .
 
 if ($LASTEXITCODE -ne 0){

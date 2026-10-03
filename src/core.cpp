@@ -3,10 +3,10 @@
 #include "pwra.h"
 #include "mkr.hpp"
 #include "scene.hpp"
-#include "stack.hpp"
 #include "time.hpp"
+#include "stack.hpp"
 
-constexpr cstr VERSION = "0.15.2";
+constexpr cstr VERSION = "0.15.4";
 
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
@@ -15,16 +15,6 @@ void core::WindowFlag(Flags flag){
     if (flag == RESIZABLE) flags_active[0] = 1;
     if (flag == MAXIMIZED) flags_active[1] = 1;
     if (flag == FULLSCREEN) flags_active[2] = 1;
-}
-
-void core::init(){
-    bool has_init = glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    if (has_init) printf("ACT ENGINE v%s\n", VERSION);
 }
 
 void core::setScene(std::unique_ptr<Scene> scene){
@@ -58,7 +48,9 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
 }
 
 void core::MainWindow(int width, int height, const char *title){
-    core::init();
+
+    if (mkr::configInit()) printf("ACT ENGINE v%s\n", VERSION);
+
     wmain.win_width = width;
     wmain.win_height = height;
     bool win_started = mkr::startWindow(width, height, title);
@@ -68,11 +60,12 @@ void core::MainWindow(int width, int height, const char *title){
         mkr::setWindowIcon("eng/w_icon.png");
         start_audio();
         printf("[INFO] ENGINE INITIALIZED\n");
-    } else printf("[ERROR] ENGINE COULD NOT INITIALIZE");
+    }
+    else printf("[ERROR] ENGINE COULD NOT INITIALIZE\n");
 }
 
 bool special_esc(){
-	return glfwGetKey(wmain.main, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+	return glfwGetKey(wmain.main, 256) == 1;
 }
 
 bool core::Loop(){

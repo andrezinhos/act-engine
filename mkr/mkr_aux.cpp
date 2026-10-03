@@ -12,9 +12,11 @@ bool mkr::createWindowContext(){
 
     const byte* vendor = glGetString(GL_VENDOR);
     const byte* renderer = glGetString(GL_RENDERER);
+    const byte* glver = glGetString(GL_VERSION);
 
     printf("[INFO] GPU: %s\n", renderer);
     printf("[INFO] VENDOR: %s\n", vendor);
+    printf("[INFO] OPENGL VERSION: %s\n", glver);
 
     return true;
 }
@@ -163,14 +165,14 @@ void mkr::flush(){
 
     mkgl::bindArrBuff(&dstate->dbatch.vao);
 
-    // mkgl::bindBuff(&dstate->dbatch.vbo, GL_ARRAY_BUFFER);
+    mkgl::bindBuff(&dstate->dbatch.vbo, GL_ARRAY_BUFFER);
     mkgl::bindDataDynamic(GL_ARRAY_BUFFER, nullptr, VMAX * sizeof(vertex));
     mkgl::bindSubData(
         GL_ARRAY_BUFFER, dstate->dbatch.vertices.data(),
         dstate->dbatch.vertices.size() * sizeof(vertex)
     );
 
-    // mkgl::bindBuff(&dstate->dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
+    mkgl::bindBuff(&dstate->dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
     mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
     mkgl::bindSubData(
         GL_ELEMENT_ARRAY_BUFFER, dstate->dbatch.indices.data(),

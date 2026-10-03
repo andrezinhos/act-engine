@@ -19,7 +19,7 @@ if (-Not (Test-Path -Path $build)){
 }
 
 # ------------------------------------------
-# enter the monkey render dir to build
+# enter the monkey render dir
 
 if (-Not (Test-Path -Path $build_mkr)){
 	New-Item -Path $build_mkr -ItemType Directory | Out-Null
@@ -30,12 +30,11 @@ if (-Not (Test-Path -Path $lib_mkr)){
 }
 
 Set-Location $build_mkr
-Write-Host "MONKEY RENDER BUILD"
-cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON | Out-Null
-cmake --build .
+Write-Host "MONKEY RENDER"
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 if ($LASTEXITCODE -ne 0){
-	Write-Host "MONKEY RENDER BUILD ERROR"
+	Write-Host "MONKEY RENDER ERROR"
 	Set-Location $source
 	exit 1
 }
@@ -47,7 +46,7 @@ Set-Location $source
 # ------------------------------------------
 
 # ------------------------------------------
-# enter the audio make dir to build
+# enter the power audio dir
 
 if (-Not (Test-Path -Path $build_amk)){
 	New-Item -Path $build_amk -ItemType Directory | Out-Null
@@ -58,12 +57,11 @@ if (-Not (Test-Path -Path $lib_amk)){
 }
 
 Set-Location $build_amk
-Write-Host "AUDIO MAKE BUILD"
-cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON | Out-Null
-cmake --build .
+Write-Host "POWER AUDIO"
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 if ($LASTEXITCODE -ne 0){
-	Write-Host "AUDIO MAKE BUILD ERROR"
+	Write-Host "POWER AUDIO ERROR"
 	Set-Location $source
 	exit 1
 }
@@ -76,7 +74,6 @@ Set-Location $source
 
 Set-Location $build
 cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-cmake --build .
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "BUILD ERROR"

@@ -44,8 +44,8 @@ local playing = false
 function Menu.Update(dt)
     if (ios.key_pressed(key.e)) and not playing then
         -- jump:play()
-        -- eng.change_scene("game.lua")
-        playing = true
+        eng.change_scene("game.lua")
+        -- playing = true
     end
 
     if (playing) then

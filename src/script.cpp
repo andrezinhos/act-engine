@@ -237,7 +237,6 @@ void script::start_funcs(){
         }
     },
 
-
     state["render"] = render;
 }
 

@@ -1,6 +1,5 @@
 #include "esys.hpp"
 #include "mkr.hpp"
-#include "mktex.hpp"
 #include "stack.hpp"
 
 void Rect::pos(float x, float y){
@@ -22,8 +21,8 @@ void Rect::draw(Color color){
 }
 
 void Sprite::load(cstr path){
-    source = mktex::LoadTextureSrc(path);
-    id = stack::PushSprite(&source);
+    id = stack::PushSprite(path);
+    source = stack::texmap[id].get();
 }
 
 void Sprite::pos(float x, float y){
@@ -32,32 +31,29 @@ void Sprite::pos(float x, float y){
 }
 
 void Sprite::size(int x, int y){
-    auto it = stack::texmap.find(id);
-    if (it != stack::texmap.end()){
-        it->second.width = x;
-        it->second.height = y;
+    if (source){
+        source->width = x;
+        source->height = y;
     }
 }
 
 void Sprite::draw(){
-    auto it = stack::texmap.find(id);
-    if (it != stack::texmap.end()){
+    if (source){
         Vec2 size = {
-            static_cast<float>(it->second.width),
-            static_cast<float>(it->second.height)
+            static_cast<float>(source->width),
+            static_cast<float>(source->height)
         };
-        mkr::RenderTexture(&it->second, position, size, White);
+        mkr::RenderTexture(source, position, size, White);
     }
 }
 
 void Sprite::draw_area(Rect& rec){
-    auto it = stack::texmap.find(id);
-    if (it != stack::texmap.end()){
+    if (source){
         Vec2 size = {
-            static_cast<float>(it->second.width),
-            static_cast<float>(it->second.height)
+            static_cast<float>(source->width),
+            static_cast<float>(source->height)
         };
-        mkr::RenderTextureRec(&it->second, rec.source, position, size, White);
+        mkr::RenderTextureRec(source, rec.source, position, size, White);
     }
 }
 
@@ -97,6 +93,7 @@ void Music::resume(){
 
 void Text::load(cstr path){
     id = stack::PushFont(path);
+    source = stack::fontmap[id].get();
 }
 
 void Text::pos(int x, int y){
@@ -105,17 +102,15 @@ void Text::pos(int x, int y){
 }
 
 void Text::spacing(double space){
-    auto it = stack::fontmap.find(id);
-    if (it != stack::fontmap.end())
-        it->second.spacing = static_cast<float>(space);
+    if (source)
+        source->spacing = static_cast<float>(space);
     else
         dstate->dfont.spacing = static_cast<float>(space);
 }
 
 void Text::draw(cstr text, float size, Color color){
-    auto it = stack::fontmap.find(id);
-    if (it != stack::fontmap.end()){
-        mktxt::RenderTextEx(&it->second, text, position, size, color);
+    if (source){
+        mktxt::RenderTextEx(source, text, position, size, color);
     }
     else mktxt::RenderText(text, position, size, color);
 }
@@ -125,9 +120,9 @@ void Anim2D::duration(double dur){
     source.duration = dur / 12.0;
 }
 
-void Anim2D::load(const char* path){
-    ref = mktex::LoadTextureSrc(path);
-    id = stack::PushSprite(&ref);
+void Anim2D::load(cstr path){
+    id = stack::PushSprite(path);
+    ref = stack::texmap[id].get();
 }
 
 void Anim2D::set_frames(const std::vector<std::vector<float>>& frames){
@@ -142,7 +137,8 @@ void Anim2D::play(bool loop){
 }
 
 void Anim2D::pos(int x, int y){
-    position = (Vec2){(float)x, (float)y};
+    position.x = x;
+    position.y = y;
 }
 
 void Anim2D::size(double size){
@@ -150,8 +146,5 @@ void Anim2D::size(double size){
 }
 
 void Anim2D::draw(){
-    auto it = stack::texmap.find(id);
-    if (it != stack::texmap.end()){
-        anim::RenderAnimation(source, &it->second, position, size_val, White);
-    }
+    if (ref) anim::RenderAnimation(source, ref, position, size_val, White);
 }

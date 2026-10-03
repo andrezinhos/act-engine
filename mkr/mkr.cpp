@@ -1,5 +1,5 @@
-#include "mktxt.hpp"
 #include "mktex.hpp"
+#include "mktxt.hpp"
 #include "mkr.hpp"
 #include "stb_image.h"
 
@@ -25,6 +25,18 @@ void mkr::setCursorMode(Cursor cur){
     if (cur == NORMAL) glfwSetInputMode(wmain.main, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     if (cur == HIDDEN) glfwSetInputMode(wmain.main, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     if (cur == DISABLED) glfwSetInputMode(wmain.main, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+bool mkr::configInit(){
+    bool result = glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+    if (!result) return false;
+
+    return true;
 }
 
 bool mkr::startWindow(int width, int height, const char* title){

@@ -41,6 +41,8 @@ private:
     static void limitFlush();
     static void flush();
 public:
+    static bool configInit();
+
     static void setWindowIcon(cstr path);
     static void setCursorMode(Cursor cur);
     static bool startWindow(int width, int height, const char* title);

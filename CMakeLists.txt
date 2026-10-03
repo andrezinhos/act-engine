@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-set(LUA_HEADERS "C:/lua/src")
-set(LUA_LIB "C:/lua/src/liblua.a")
+set(LUA_HEADERS ${CMAKE_SOURCE_DIR}/external/lua/src)
+set(LUA_LIB ${CMAKE_SOURCE_DIR}/external/lua/build/liblua.a)
 
 set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3dll.a)
 
@@ -22,9 +22,9 @@ add_executable(app
   src/time.cpp
   src/core.cpp
   src/ios.cpp
-  src/stack.cpp
   src/script.cpp
   src/animation.cpp
+  src/stack.cpp
   src/esys.cpp
   src/f_main.cpp
 )
@@ -52,4 +52,7 @@ target_link_libraries(app PRIVATE ${GLFW_LIB} ${LUA_LIB} ${MKR_LIB} ${PWRA_LIB})
 if(WIN32)
   message("WINDOWS COMPILATION")
   target_link_libraries(app PRIVATE user32 shell32)
+
+elif(UNIX)
+# todo: unix links
 endif()

@@ -1,5 +1,7 @@
 #pragma once
 
+constexpr double FPS_TARGET = 1.0 / 72.0;
+
 class Time{
     static double lastTime;
     static float delta;

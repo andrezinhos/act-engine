@@ -1,9 +1,7 @@
 #pragma once
-#include "mktypes.h"
+#include <pwra.h>
 #include "mktxt.hpp"
-#include "pwra.h"
 #include <unordered_map>
-#include <memory>
 
 class stack{
 private:
@@ -12,14 +10,14 @@ private:
     static int music_count;
     static int font_count;
 public:
-    static std::unordered_map<int, Texture> texmap;
+    static std::unordered_map<int, std::unique_ptr<Texture>> texmap;
     static std::unordered_map<int, std::unique_ptr<Sfx>> soundmap;
     static std::unordered_map<int, std::unique_ptr<Stream>> musicmap;
-    static std::unordered_map<int, Font> fontmap;
+    static std::unordered_map<int, std::unique_ptr<Font>> fontmap;
 
-    static int PushSprite(Texture* tex);
-    static int PushSoundAudio(const char* path);
-    static int PushMusicAudio(const char* path);
-    static int PushFont(const char* path);
+    static int PushSprite(cstr path);
+    static int PushSoundAudio(cstr path);
+    static int PushMusicAudio(cstr path);
+    static int PushFont(cstr path);
     static void UnloadAll();
 };

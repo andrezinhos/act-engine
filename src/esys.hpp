@@ -33,7 +33,7 @@ struct Rect{
 };
 
 struct Sprite{
-    Texture source;
+    Texture* source;
     Vec2 position;
     int id;
 
@@ -45,7 +45,7 @@ struct Sprite{
 };
 
 struct Text{
-    Font font;
+    Font* source;
     Vec2 position;
     int id;
 
@@ -57,7 +57,7 @@ struct Text{
 
 struct Anim2D{
     Sheet source;
-    Texture ref;
+    Texture* ref;
     Vec2 position;
     float size_val;
     int id;
