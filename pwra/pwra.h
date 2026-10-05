@@ -57,7 +57,6 @@ PWRAPI bool start_audio();
 PWRAPI void end_audio();
 PWRAPI void set_master_volume(double vol);
 
-PWRAPI unsigned char* loadBytes(const char* path, size_t* size);
 PWRAPI bool LoadSfx(void* data, size_t size, audio_decoder* dec, audio_src* src);
 PWRAPI bool LoadStream(const char* path, audio_decoder* dec, audio_src* src);
 

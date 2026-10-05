@@ -4,7 +4,8 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"
 
-void GenTexture(Texture& tex, const void* data, int width, int height, GLenum format){
+Texture GenTexture(const void* data, int width, int height){
+    Tetxure tex = {};
     tex.id = mktex::genTex(GL_TEXTURE_2D);
     tex.width = width;
     tex.height = height;
@@ -14,7 +15,9 @@ void GenTexture(Texture& tex, const void* data, int width, int height, GLenum fo
     mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    mktex::setTexImage2D(GL_RGBA, format, width, height, data);
+    mktex::setTexImage2D(GL_RGBA, GL_RGBA8, width, height, data);
+
+    return tex;
 }
 
 bool GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack){
@@ -54,7 +57,7 @@ Font mktxt::DefaultFont(){
         rgba[i*4 + 2] = 255;
         rgba[i*4 + 3] = atlas[i];
     }
-    GenTexture(font.fontTex, rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, GL_RGBA);
+    font.fontTex = GenTexture(rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
 
     freeptr(font.data);
     freeptr(atlas);
@@ -80,7 +83,7 @@ Font mktxt::LoadFont(const char* path){
         rgba[i*4 + 2] = 255;
         rgba[i*4 + 3] = atlas[i];
     }
-    GenTexture(font.fontTex, rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, GL_RGBA8);
+    font.fontTex = GenTexture(rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
 
     freeptr(font.data);
     freeptr(atlas);

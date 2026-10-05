@@ -11,7 +11,7 @@ local txt = Text.new()
 local anim = Anim2D.new()
 
 function Menu.Init()
-    neutral:load("assets/sprites/w_icon.png")
+    neutral:load("eng/w_icon.png")
     neutral:pos(0, 0)
     neutral:size(128, 128)
 
@@ -55,7 +55,7 @@ end
 
 function Menu.Draw()
     render.cam_begin(cam)
-    neutral:draw()
+    -- neutral:draw()
     anim:draw()
     eng.get_fps()
     render.cam_end()

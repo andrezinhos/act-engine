@@ -1,31 +1,5 @@
 #include "pwra.h"
 
-unsigned char* loadBytes(const char* path, size_t* size){
-    FILE* file = fopen(path, "rb");
-    if (!file) return NULL;
-
-    fseek(file, 0, SEEK_END);
-    size_t fsize = ftell(file);
-    rewind(file);
-
-    unsigned char* buffer = malloc(fsize);
-
-    if (!buffer){
-        fclose(file);
-        return NULL;
-    }
-
-    size_t read = fread(buffer, 1, fsize, file);
-    fclose(file);
-    if (read != fsize){
-        free(buffer);
-        return NULL;
-    }
-
-    if (size) *size = read;
-    return buffer;
-}
-
 bool LoadSfx(void* data, size_t size, audio_decoder* dec, audio_src* src){
     ma_decoder_config dec_config = ma_decoder_config_init(master.format, master.channels, master.sampleRate);
     ma_result decres = ma_decoder_init_memory(data, size, &dec_config, dec);
@@ -83,7 +57,10 @@ bool LoadStream(const char* path, audio_decoder* dec, audio_src* src){
 void UnloadSfx(Sfx *sfx){
     ma_sound_uninit(&sfx->source);
     ma_decoder_uninit(&sfx->decoder);
-    audiofree(sfx->data);
+    free(sfx->data);
+    sfx->data = NULL;
+
+    free(sfx);
 
     printf("[INFO] AUDIO UNLOADED\n");
 }
@@ -91,5 +68,7 @@ void UnloadSfx(Sfx *sfx){
 void UnloadStream(Stream *stream){
     ma_sound_uninit(&stream->source);
     ma_decoder_uninit(&stream->decoder);
+    free(stream);
+    stream = NULL;
     printf("[INFO] AUDIO UNLOADED\n");
 }

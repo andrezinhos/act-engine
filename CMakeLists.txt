@@ -53,6 +53,6 @@ if(WIN32)
   message("WINDOWS COMPILATION")
   target_link_libraries(app PRIVATE user32 shell32)
 
-elif(UNIX)
+else(UNIX)
 # todo: unix links
 endif()

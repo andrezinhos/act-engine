@@ -31,11 +31,6 @@ typedef struct {
     float uv[2];
 } vertex;
 
-typedef struct{
-    byte* data;
-    int width, height, channels;
-} Image;
-
 typedef struct {
     uint id;
     int width, height;
