@@ -6,7 +6,7 @@
 #include "time.hpp"
 #include "stack.hpp"
 
-constexpr cstr VERSION = "0.15.4";
+constexpr cstr VERSION = "0.15.5";
 
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
@@ -58,7 +58,8 @@ void core::MainWindow(int width, int height, const char *title){
     if (win_started){
         mkr::Initialize();
         mkr::setWindowIcon("eng/w_icon.png");
-        start_audio();
+        pwra_start_audio();
+        reg::init();
         printf("[INFO] ENGINE INITIALIZED\n");
     }
     else printf("[ERROR] ENGINE COULD NOT INITIALIZE\n");
@@ -75,9 +76,9 @@ bool core::Loop(){
 }
 
 void core::Finish(){
-    stack::UnloadAll();
+    reg::clear();
     currScene.reset();
     nextScene.reset();
-    end_audio();
+    pwra_end_audio();
     mkr::Shutdown();
 }

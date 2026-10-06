@@ -17,16 +17,28 @@ set(MKR_LIB ${CMAKE_SOURCE_DIR}/mkr/lib/libmkr.a)
 set(PWRA_HEADERS ${CMAKE_SOURCE_DIR}/pwra)
 set(PWRA_LIB ${CMAKE_SOURCE_DIR}/pwra/lib/libpwra.dll.a)
 
-# executable files
-add_executable(app
-  src/time.cpp
+set(ENGINE_CORE
   src/core.cpp
+  src/time.cpp
+  src/reg.cpp
+)
+
+set(ENGINE_SYS
   src/ios.cpp
   src/script.cpp
   src/animation.cpp
-  src/stack.cpp
   src/esys.cpp
+)
+
+# executable files
+add_executable(app
+  ${ENGINE_CORE}
+  ${ENGINE_SYS}
   src/f_main.cpp
+)
+
+target_precompile_headers(app PRIVATE
+    "external/sol.hpp"
 )
 
 target_compile_options(app PRIVATE
@@ -34,7 +46,10 @@ target_compile_options(app PRIVATE
   -O2
   -march=x86-64-v2
   -DNDEBUG
+  -fno-rtti
 )
+
+set_target_properties(app PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
 # general headers
 target_include_directories(app PRIVATE
@@ -46,7 +61,12 @@ target_include_directories(app PRIVATE
 )
 
 # linking main dependecies
-target_link_libraries(app PRIVATE ${GLFW_LIB} ${LUA_LIB} ${MKR_LIB} ${PWRA_LIB})
+target_link_libraries(app PRIVATE
+  ${GLFW_LIB}
+  ${LUA_LIB}
+  ${MKR_LIB}
+  ${PWRA_LIB}
+)
 
 # OS libs
 if(WIN32)

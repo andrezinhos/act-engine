@@ -1,8 +1,8 @@
 #include "ios.hpp"
 #include "mkr.hpp"
 
-int ios::curr[348 + 1];
-int ios::prev[348 + 1];
+int curr[348 + 1];
+int prev[348 + 1];
 
 void ios::InputUpdate(){
 	for (int key = 0; key <= 348; key++){

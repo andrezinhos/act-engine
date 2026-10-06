@@ -5,6 +5,9 @@
 #include "ios.hpp"
 #include "script.hpp"
 #include "pwra.h"
+#define SOL_NO_EXCEPTIONS 1
+#define SOL_NO_RTTI 1
+#define SOL_NOEXCEPT_FUNCTION_TYPE 1
 #include "sol.hpp"
 
 sol::state state;
@@ -209,9 +212,9 @@ void script::start_funcs(){
 
     sol::table audio_table = state.create_table();
 
-    audio_table["master_vol"] = [](double vol){ set_master_volume(vol); };
-    audio_table["channels"] = [](int amount){ audio_channels(amount); };
-    audio_table["quality"] = [](int qua){ audio_quality(qua); };
+    audio_table["master_vol"] = [](double vol){ pwra_set_master_volume(vol); };
+    audio_table["channels"] = [](int amount){ pwra_audio_channels(amount); };
+    audio_table["quality"] = [](int qua){ pwra_audio_quality(qua); };
 
     state["audio"] = audio_table;
 

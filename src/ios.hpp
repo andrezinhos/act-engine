@@ -21,10 +21,10 @@ enum class Keys {
     F5 = 294,
 };
 
+extern int curr[348 + 1];
+extern int prev[348 + 1];
+
 class ios{
-private:
-    static int curr[348 + 1];
-    static int prev[348 + 1];
 public:
 	static void InputUpdate();
     static bool KeyDown(Keys key);

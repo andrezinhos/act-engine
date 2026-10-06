@@ -32,10 +32,6 @@ typedef struct {
 } Batch;
 
 namespace mkgl{
-    void ArenaAlloc(ArenaV* arena, int amount);
-    void ArenaFree(ArenaV* arena);
-    void ArenaNewAlloc(ArenaV* arena);
-
     byte* loadBytes(cstr path, size_t* size);
     void enableBlend(bool flag);
     void genBuffer(uint* obj);

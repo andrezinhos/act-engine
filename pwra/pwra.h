@@ -48,28 +48,28 @@ extern PWRAPI Master master;
 
 PWRAPI void audio_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
 
-PWRAPI void audio_channels(int amount);
-PWRAPI void audio_quality(int quality);
+PWRAPI void pwra_audio_channels(int amount);
+PWRAPI void pwra_audio_quality(int quality);
 
-PWRAPI void check_error(const char* msg, ma_result res);
+void check_error(const char* msg, ma_result res);
 
-PWRAPI bool start_audio();
-PWRAPI void end_audio();
-PWRAPI void set_master_volume(double vol);
+PWRAPI bool pwra_start_audio();
+PWRAPI void pwra_end_audio();
+PWRAPI void pwra_set_master_volume(double vol);
 
-PWRAPI bool LoadSfx(void* data, size_t size, audio_decoder* dec, audio_src* src);
-PWRAPI bool LoadStream(const char* path, audio_decoder* dec, audio_src* src);
+PWRAPI bool pwra_load_sfx(void* data, size_t size, audio_decoder* dec, audio_src* src);
+PWRAPI bool pwra_load_stream(const char* path, audio_decoder* dec, audio_src* src);
 
-PWRAPI void UnloadSfx(Sfx* sfx);
-PWRAPI void UnloadStream(Stream* stream);
+PWRAPI void pwra_unload_sfx(Sfx* sfx);
+PWRAPI void pwra_unload_stream(Stream* stream);
 
-PWRAPI void PlaySfx(Sfx* sfx);
-PWRAPI void SetSfxPitch(Sfx* sfx, double value);
+PWRAPI void pwra_play_sfx(Sfx* sfx);
+PWRAPI void pwra_set_pitch(Sfx* sfx, double value);
 
-PWRAPI void PlayStream(Stream* stream);
-PWRAPI void PauseStream(Stream* stream);
-PWRAPI void ResumeStream(Stream* stream);
-PWRAPI void StopStream(Stream* stream);
+PWRAPI void pwra_play_stream(Stream* stream);
+PWRAPI void pwra_pause_stream(Stream* stream);
+PWRAPI void pwra_resume_stream(Stream* stream);
+PWRAPI void pwra_stop_stream(Stream* stream);
 
 #ifdef __cplusplus
 }

@@ -3,43 +3,6 @@
 #include <cstdlib>
 #include <cstring>
 
-void mkgl::ArenaAlloc(ArenaV *arena, int amount){
-    arena->cap = amount;
-    arena->count = 0;
-    arena->vertices = (vertex*)malloc(sizeof(vertex) * amount);
-}
-
-void mkgl::ArenaFree(ArenaV *arena){
-    freeptr(arena->vertices);
-    arena->count = 0;
-    arena->cap = 0;
-}
-
-void mkgl::ArenaNewAlloc(ArenaV *arena){
-
-    //we reached our actual limit
-    if (arena->cap + 4 > arena->cap){
-
-        //we don't reached the maximum limit
-        if (arena->cap < VMAX){
-
-            size_t newcap = arena->cap + 4;
-            if (arena->cap > VMAX) arena->cap = VMAX;
-
-            vertex* tmp = (vertex*)realloc(arena->vertices, sizeof(vertex) * newcap);
-            if (!tmp) return;
-            arena->vertices = tmp;
-            arena->cap = newcap;
-        }
-
-        //we reached our limit
-        else {
-            arena->count = 0;
-        }
-
-    }
-}
-
 byte* mkgl::loadBytes(const char* path, size_t* size){
     FILE* file = fopen(path, "rb");
 

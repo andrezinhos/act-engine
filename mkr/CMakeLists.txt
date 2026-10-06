@@ -29,6 +29,8 @@ target_compile_options(mkr PRIVATE
   -DNDEBUG
 )
 
+set_target_properties(mkr PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+
 # general headers
 target_include_directories(mkr PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}

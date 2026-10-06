@@ -1,6 +1,6 @@
 #include "pwra.h"
 
-bool LoadSfx(void* data, size_t size, audio_decoder* dec, audio_src* src){
+bool pwra_load_sfx(void* data, size_t size, audio_decoder* dec, audio_src* src){
     ma_decoder_config dec_config = ma_decoder_config_init(master.format, master.channels, master.sampleRate);
     ma_result decres = ma_decoder_init_memory(data, size, &dec_config, dec);
     if (decres != MA_SUCCESS){
@@ -28,7 +28,7 @@ bool LoadSfx(void* data, size_t size, audio_decoder* dec, audio_src* src){
     return true;
 }
 
-bool LoadStream(const char* path, audio_decoder* dec, audio_src* src){
+bool pwra_load_stream(const char* path, audio_decoder* dec, audio_src* src){
     ma_decoder_config dec_config = ma_decoder_config_init(master.format, master.channels, master.sampleRate);
     ma_result decres = ma_decoder_init_file(path, &dec_config, dec);
     if (decres != MA_SUCCESS){
@@ -54,21 +54,16 @@ bool LoadStream(const char* path, audio_decoder* dec, audio_src* src){
     return true;
 }
 
-void UnloadSfx(Sfx *sfx){
+void pwra_unload_sfx(Sfx *sfx){
     ma_sound_uninit(&sfx->source);
     ma_decoder_uninit(&sfx->decoder);
     free(sfx->data);
     sfx->data = NULL;
-
-    free(sfx);
-
     printf("[INFO] AUDIO UNLOADED\n");
 }
 
-void UnloadStream(Stream *stream){
+void pwra_unload_stream(Stream *stream){
     ma_sound_uninit(&stream->source);
     ma_decoder_uninit(&stream->decoder);
-    free(stream);
-    stream = NULL;
     printf("[INFO] AUDIO UNLOADED\n");
 }

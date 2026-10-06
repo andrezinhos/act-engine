@@ -28,6 +28,8 @@ target_compile_options(pwra PRIVATE
   -DNDEBUG
 )
 
+set_target_properties(pwra PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+
 # general headers
 target_include_directories(pwra PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}

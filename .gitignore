@@ -1,5 +1,9 @@
 compile_commands.json
 
+__cmake_systeminformation/
+
+bll/
+
 audio/
 
 bin/

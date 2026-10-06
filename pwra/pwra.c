@@ -13,17 +13,17 @@ void audio_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_ui
     (void)pInput;
 }
 
-void audio_channels(int amount){
+void pwra_audio_channels(int amount){
     master.custom_opts = true;
     master.channels = amount;
 }
 
-void audio_quality(int quality){
+void pwra_audio_quality(int quality){
     master.custom_opts = true;
     master.sampleRate = quality;
 }
 
-bool start_audio(){
+bool pwra_start_audio(){
     ma_engine_config e_config = ma_engine_config_init();
 
     master.format = ma_format_f32;
@@ -68,7 +68,7 @@ bool start_audio(){
     return true;
 }
 
-void end_audio(){
+void pwra_end_audio(){
     ma_engine_stop(&master.engine);
     ma_sound_group_stop(&master.sound_group);
     ma_sound_group_uninit(&master.sound_group);
@@ -95,32 +95,32 @@ void check_error(const char *msg, ma_result res){
     printf("\n");
 }
 
-void set_master_volume(double vol){
+void pwra_set_master_volume(double vol){
     ma_sound_group_set_volume(&master.sound_group, vol);
 }
 
-void PlaySfx(Sfx* sfx){
+void pwra_play_sfx(Sfx* sfx){
     ma_sound_start(&sfx->source);
     ma_sound_seek_to_pcm_frame(&sfx->source, 0);
 }
 
-void SetSfxPitch(Sfx *sfx, double value){
+void pwra_set_pitch(Sfx *sfx, double value){
     ma_sound_set_pitch(&sfx->source, value);
 }
 
-void PlayStream(Stream* stream){
+void pwra_play_stream(Stream* stream){
     ma_sound_start(&stream->source);
 }
 
-void PauseStream(Stream* stream){
+void pwra_pause_stream(Stream* stream){
     ma_sound_stop(&stream->source);
 }
 
-void ResumeStream(Stream* stream){
+void pwra_resume_stream(Stream* stream){
     ma_sound_start(&stream->source);
 }
 
-void StopStream(Stream* stream){
+void pwra_stop_stream(Stream* stream){
     ma_sound_stop(&stream->source);
     ma_sound_seek_to_pcm_frame(&stream->source, 0);
 }

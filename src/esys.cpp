@@ -1,5 +1,6 @@
 #include "esys.hpp"
 #include "mkr.hpp"
+#include "pwra.h"
 #include "stack.hpp"
 
 void Rect::pos(float x, float y){
@@ -21,8 +22,8 @@ void Rect::draw(Color color){
 }
 
 void Sprite::load(cstr path){
-    id = stack::PushSprite(path);
-    source = stack::texmap[id].get();
+    id = reg::tex_register(path);
+    source = texmap[id].get();
 }
 
 void Sprite::pos(float x, float y){
@@ -58,42 +59,42 @@ void Sprite::draw_area(Rect& rec){
 }
 
 void Sound::load(cstr path){
-    id = stack::PushSoundAudio(path);
-    data = stack::soundmap[id].get();
+    id = reg::sfx_register(path);
+    data = soundmap[id].get();
 }
 
 void Sound::play(){
-    if (data) PlaySfx(data);
+    if (data) pwra_play_sfx(data);
 }
 
 void Sound::pitch(double amount){
-    if (data) SetSfxPitch(data, amount);
+    if (data) pwra_set_pitch(data, amount);
 }
 
 void Music::load(cstr path){
-    id = stack::PushMusicAudio(path);
-    data = stack::musicmap[id].get();
+    id = reg::stream_register(path);
+    data = musicmap[id].get();
 }
 
 void Music::play(){
-    if (data) PlayStream(data);
+    if (data) pwra_play_stream(data);
 }
 
 void Music::stop(){
-    if (data) StopStream(data);
+    if (data) pwra_stop_stream(data);
 }
 
 void Music::pause(){
-    if (data) PauseStream(data);
+    if (data) pwra_pause_stream(data);
 }
 
 void Music::resume(){
-    if (data) ResumeStream(data);
+    if (data) pwra_resume_stream(data);
 }
 
 void Text::load(cstr path){
-    id = stack::PushFont(path);
-    source = stack::fontmap[id].get();
+    id = reg::font_register(path);
+    source = fontmap[id].get();
 }
 
 void Text::pos(int x, int y){
@@ -121,8 +122,8 @@ void Anim2D::duration(double dur){
 }
 
 void Anim2D::load(cstr path){
-    id = stack::PushSprite(path);
-    ref = stack::texmap[id].get();
+    id = reg::tex_register(path);
+    ref = texmap[id].get();
 }
 
 void Anim2D::set_frames(const std::vector<std::vector<float>>& frames){

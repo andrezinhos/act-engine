@@ -5,7 +5,7 @@
 #include "stb_truetype.h"
 
 Texture GenTexture(const void* data, int width, int height){
-    Tetxure tex = {};
+    Texture tex = {};
     tex.id = mktex::genTex(GL_TEXTURE_2D);
     tex.width = width;
     tex.height = height;

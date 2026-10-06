@@ -1,5 +1,4 @@
 Clear-Host
-Write-Host "BUILDING..."
 
 $source = Get-Location
 $build = "build"
@@ -31,7 +30,7 @@ if (-Not (Test-Path -Path $lib_mkr)){
 
 Set-Location $build_mkr
 Write-Host "MONKEY RENDER"
-cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake .. -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "MONKEY RENDER ERROR"
@@ -58,7 +57,7 @@ if (-Not (Test-Path -Path $lib_amk)){
 
 Set-Location $build_amk
 Write-Host "POWER AUDIO"
-cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake .. -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "POWER AUDIO ERROR"
@@ -73,7 +72,7 @@ Set-Location $source
 # ------------------------------------------
 
 Set-Location $build
-cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake .. -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 if ($LASTEXITCODE -ne 0){
 	Write-Host "BUILD ERROR"
@@ -81,7 +80,6 @@ if ($LASTEXITCODE -ne 0){
 	exit 1
 }
 
-Write-Host "BUILD FINISHED"
 Read-Host "PRESS ENTER TO EXIT"
 Set-Location $source
 Clear-Host
