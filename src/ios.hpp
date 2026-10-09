@@ -21,9 +21,6 @@ enum class Keys {
     F5 = 294,
 };
 
-extern int curr[348 + 1];
-extern int prev[348 + 1];
-
 class ios{
 public:
 	static void InputUpdate();

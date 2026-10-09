@@ -36,7 +36,7 @@ typedef struct {
     int width, height, channels;
 } Image;
 
-typedef struct {
+typedef struct Texture {
     uint id;
     int width, height;
 } Texture;
@@ -49,7 +49,7 @@ typedef struct{
     int utex;
 } Shader;
 
-struct Rectangle{
+typedef struct Rectangle{
     float x, y;
     float width, height;
-};
+} Rectangle;

@@ -83,6 +83,8 @@ Texture mktex::LoadTextureSrc(const char* path){
     setTexImage2D(GL_RGBA, GL_RGBA8, image.width, image.height, image.data);
     unloadImage(&image);
 
+    printf("[INFO] TEXTURE LOADED: %s\n", path);
+
     return tex;
 }
 

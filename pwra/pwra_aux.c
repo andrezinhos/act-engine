@@ -50,7 +50,7 @@ bool pwra_load_stream(const char* path, audio_decoder* dec, audio_src* src){
         return false;
     }
 
-    printf("[INFO] AUDIO FILE LOADED\n");
+    printf("[INFO] AUDIO FILE LOADED: %s\n", path);
     return true;
 }
 

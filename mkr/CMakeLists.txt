@@ -24,9 +24,11 @@ add_library(mkr STATIC
 
 target_compile_options(mkr PRIVATE
   -Wall
-  -O2
-  -march=x86-64-v2
-  -DNDEBUG
+  -Wextra
+  -O0
+  -g
+  # -march=x86-64-v2
+  -DDEBUG
 )
 
 set_target_properties(mkr PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)

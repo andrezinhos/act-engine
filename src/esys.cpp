@@ -1,7 +1,7 @@
 #include "esys.hpp"
 #include "mkr.hpp"
 #include "pwra.h"
-#include "stack.hpp"
+#include "reg.hpp"
 
 void Rect::pos(float x, float y){
     source.x = x;
@@ -23,7 +23,7 @@ void Rect::draw(Color color){
 
 void Sprite::load(cstr path){
     id = reg::tex_register(path);
-    source = texmap[id].get();
+    source = reg::getTex(id);
 }
 
 void Sprite::pos(float x, float y){
@@ -60,7 +60,7 @@ void Sprite::draw_area(Rect& rec){
 
 void Sound::load(cstr path){
     id = reg::sfx_register(path);
-    data = soundmap[id].get();
+    data = reg::getSfx(id);
 }
 
 void Sound::play(){
@@ -73,7 +73,7 @@ void Sound::pitch(double amount){
 
 void Music::load(cstr path){
     id = reg::stream_register(path);
-    data = musicmap[id].get();
+    data = reg::getMusic(id);
 }
 
 void Music::play(){
@@ -94,7 +94,7 @@ void Music::resume(){
 
 void Text::load(cstr path){
     id = reg::font_register(path);
-    source = fontmap[id].get();
+    source = reg::getFont(id);
 }
 
 void Text::pos(int x, int y){
@@ -123,7 +123,7 @@ void Anim2D::duration(double dur){
 
 void Anim2D::load(cstr path){
     id = reg::tex_register(path);
-    ref = texmap[id].get();
+    ref = reg::getTex(id);
 }
 
 void Anim2D::set_frames(const std::vector<std::vector<float>>& frames){

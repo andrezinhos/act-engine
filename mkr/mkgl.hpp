@@ -2,6 +2,7 @@
 #include "glad.h"
 #include "mkmath.hpp"
 #include "mktypes.h"
+#include <cstddef>
 #include <vector>
 
 #define MKR_POSITION_LAYOUT 0
@@ -11,6 +12,7 @@
 
 #define VMAX 1004
 #define IMAX 1506
+#define CMAX 512
 
 typedef struct {
     uint start;
@@ -19,10 +21,22 @@ typedef struct {
 } DCall;
 
 typedef struct {
-    vertex* vertices;
+    vertex* verts;
     int count;
     int cap;
 } ArenaV;
+
+typedef struct {
+    uint inds;
+    int count;
+    int cap;
+} ArenaI;
+
+typedef struct {
+    DCall* dc;
+    int count;
+    int cap;
+} ArenaDC;
 
 typedef struct {
     std::vector<vertex> vertices;
@@ -33,29 +47,50 @@ typedef struct {
 
 namespace mkgl{
     byte* loadBytes(cstr path, size_t* size);
-    void enableBlend(bool flag);
-    void genBuffer(uint* obj);
-    void genArrayBuffer(uint* obj);
-    void bindArrBuff(uint* vo);
-    void bindBuff(uint* vo, GLenum type);
-    void unbind();
-    void bindDataStatic(GLenum type, const void* data, size_t size);
-    void bindDataDynamic(GLenum type, const void* data, size_t size);
-    void bindSubData(GLenum, const void* data, size_t size);
+    void enable_blend(bool flag);
+    void get_error(); // is useless actually
+
+    bool gen_array(uint* obj);
+    bool gen_buffer(uint* obj);
+
+    bool create_buffer(uint* vo);
+    bool create_array(uint* v);
+
+    void element_connect(uint* vao, uint* vo);
+
+    void buf_data_static(uint* buffer, const void* data, size_t size);
+    void buf_data_dynamic(uint* buffer, const void* data, size_t size);
+    void buf_sub_data(uint* buffer, const void* data, size_t size);
+    void buf_storage(int target, size_t size, void* data, GLbitfield flags);
+    void* map_buffer(int target, size_t size, GLbitfield flags);
+
+    void arr_unbind();
+    void buf_unbind();
+
+    void bind_arr_buf(uint* vo);
+    void bind_buf(uint* vo);
+    void bind_data_static(uint* buffer, const void* data, size_t size, int target);
+    void bind_data_dynamic(uint* buffer, const void* data, size_t size, int target);
+    void bind_sub_data(uint* buffer, const void* data, size_t size, int target);
+
+    // void sendMapAttribPtr(int layout, int locSize, int stride, int ptr);
     void sendAttribPtr(int layout, int locSize, int stride, int ptr);
 
-    char* loadShaderFile(cstr path);
-    std::vector<vertex> SetNDC();
-    void SetVertex();
+    void set_attrib_vertex_buffer(uint* vao, uint* vbo, int stride);
+    void set_attrib_format(uint *vao, int layout, int size, int offset);
+    void enable_array_attrib(uint* vao, int layout);
+    void bind_vertex_attrib(uint* vao, int attrib, int layout);
 
-    uint genShader(cstr src, GLenum type);
-    bool compileShader(uint shader);
-    void genShaderProg(uint* prog, uint vs, uint fs);
-    void deleteShaders(uint vs, uint fs);
+    char* loadShaderFile(cstr path);
+    void set_initial_vertex(vertex* data);
+
+    bool create_shader(uint* sh, cstr src, int target);
+    bool gen_shader_prog(uint* prog, uint vs, uint fs);
+    void delete_shaders(uint vs, uint fs);
     void setUniformMat(GLint loc, Matrix* mat);
     void clearScreen(Color color);
 
-    void deleteVertexArr(uint* obj);
-    void deleteBuffer(uint* obj);
-    void deleteProg(uint* obj);
+    void del_arr(uint* obj);
+    void del_buffer(uint* obj);
+    void del_prog(uint* obj);
 };

@@ -2,9 +2,10 @@
 #include "ios.hpp"
 #include "pwra.h"
 #include "mkr.hpp"
+#include "reg.hpp"
 #include "scene.hpp"
 #include "time.hpp"
-#include "stack.hpp"
+#include "reg.hpp"
 
 constexpr cstr VERSION = "0.15.5";
 

@@ -1,4 +1,6 @@
+#include "mkgl.hpp"
 #include "mkr.hpp"
+#include <cstdlib>
 
 bool mkr::createWindowContext(){
     glfwMakeContextCurrent(wmain.main);
@@ -38,18 +40,22 @@ void mkr::setWindowPosition(int width, int height){
 
 Shader mkr::DefaultShader() {
     Shader shader = {};
-    std::string vert_file = mkgl::loadShaderFile("eng/simple.vert");
-    std::string frag_file = mkgl::loadShaderFile("eng/simple.frag");
+    char* vert_file = mkgl::loadShaderFile("eng/simple.vert");
+    char* frag_file = mkgl::loadShaderFile("eng/simple.frag");
 
-    uint vs = mkgl::genShader(vert_file.c_str(), GL_VERTEX_SHADER);
-    mkgl::compileShader(vs);
+    uint vs, fs;
 
-    uint fs = mkgl::genShader(frag_file.c_str(), GL_FRAGMENT_SHADER);
-    mkgl::compileShader(fs);
+    mkgl::create_shader(&vs, vert_file, GL_VERTEX_SHADER);
+    free(vert_file);
+    vert_file = NULL;
 
-    mkgl::genShaderProg(&shader.id, vs, fs);
+    mkgl::create_shader(&fs, frag_file, GL_FRAGMENT_SHADER);
+    free(frag_file);
+    frag_file = NULL;
+
+    mkgl::gen_shader_prog(&shader.id, vs, fs);
     glGetUniformLocation(dstate->dshader.id, "uMvp");
-    mkgl::deleteShaders(vs, fs);
+    mkgl::delete_shaders(vs, fs);
 
     return shader;
 }
@@ -57,70 +63,76 @@ Shader mkr::DefaultShader() {
 Mesh mkr::DefaultQuad(){
     Mesh mesh = {};
 
-    mkgl::SetVertex();
-    mesh.vertices = mkgl::SetNDC();
+    mesh.vertices.reserve(4);
+    mkgl::set_initial_vertex(mesh.vertices.data());
     mesh.indices = {
         0, 1, 3,
         1, 2, 3
     };
 
-    mkgl::genArrayBuffer(&mesh.vao);
-    mkgl::genBuffer(&mesh.vbo);
-    mkgl::genBuffer(&mesh.ebo);
+    mkgl::gen_array(&mesh.vao);
+    mkgl::gen_buffer(&mesh.vbo);
+    mkgl::gen_buffer(&mesh.ebo);
 
-    mkgl::bindArrBuff(&mesh.vao);
+    mkgl::bind_arr_buf(&mesh.vao);
 
-    mkgl::bindBuff(&mesh.vbo, GL_ARRAY_BUFFER);
-    mkgl::bindDataStatic(GL_ARRAY_BUFFER, mesh.vertices.data(), mesh.vertices.size() * sizeof(vertex));
+    mkgl::bind_data_static(
+        &mesh.vbo,
+        mesh.vertices.data(),
+        mesh.vertices.size() * sizeof(vertex), GL_ARRAY_BUFFER
+    );
 
-    mkgl::bindBuff(&mesh.ebo, GL_ELEMENT_ARRAY_BUFFER);
-    mkgl::bindDataStatic(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.data(), mesh.indices.size() * sizeof(uint));
+    mkgl::bind_data_static(
+        &mesh.ebo,
+        mesh.indices.data(),
+        mesh.indices.size() * sizeof(uint), GL_ELEMENT_ARRAY_BUFFER
+    );
 
     mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
     mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    3, MKR_VERTEX_STRIDE, 3);
     mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 6);
 
-    mkgl::unbind();
+    mkgl::arr_unbind();
 
     return mesh;
 }
 
 void mkr::DefaultBatch(){
-    mkgl::genArrayBuffer(&dstate->dbatch.vao);
-    mkgl::genBuffer(&dstate->dbatch.vbo);
-    mkgl::genBuffer(&dstate->dbatch.ebo);
+    mkgl::create_array(&dstate->dbatch.vao);
+    mkgl::create_buffer(&dstate->dbatch.vbo);
+    mkgl::create_buffer(&dstate->dbatch.ebo);
 
-    mkgl::bindArrBuff(&dstate->dbatch.vao);
+    mkgl::element_connect(&dstate->dbatch.vao, &dstate->dbatch.ebo);
 
-    mkgl::bindBuff(&dstate->dbatch.vbo, GL_ARRAY_BUFFER);
-    mkgl::bindDataDynamic(GL_ARRAY_BUFFER, nullptr, VMAX * sizeof(vertex));
+    mkgl::buf_data_dynamic(&dstate->dbatch.vbo, nullptr, VMAX * sizeof(vertex));
+    mkgl::buf_data_dynamic(&dstate->dbatch.ebo, nullptr, IMAX * sizeof(uint));
 
-    mkgl::bindBuff(&dstate->dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
-    mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
-
+    mkgl::bind_arr_buf(&dstate->dbatch.vao);
+    mkgl::bind_buf(&dstate->dbatch.vbo);
     mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
     mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    3, MKR_VERTEX_STRIDE, 3);
     mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 6);
-    mkgl::unbind();
+    mkgl::buf_unbind();
+    mkgl::arr_unbind();
 
     dstate->dbatch.vertices.reserve(VMAX);
     dstate->dbatch.indices.reserve(IMAX);
 }
 
 void mkr::UnloadDefaultShader(){
-    mkgl::deleteProg(&dstate->dshader.id);
+    mkgl::del_prog(&dstate->dshader.id);
 }
 
 void mkr::UnloadDefaultQuad(){
-    mkgl::deleteVertexArr(&dstate->dmesh.vao);
-    mkgl::deleteBuffer(&dstate->dmesh.vbo);
-    mkgl::deleteBuffer(&dstate->dmesh.ebo);
+    mkgl::del_arr(&dstate->dmesh.vao);
+    mkgl::del_buffer(&dstate->dmesh.vbo);
+    mkgl::del_buffer(&dstate->dmesh.ebo);
 }
 
 void mkr::UnloadDefaultBatch(){
-    mkgl::deleteVertexArr(&dstate->dbatch.vao);
-    mkgl::deleteBuffer(&dstate->dbatch.vbo);
-    mkgl::deleteBuffer(&dstate->dbatch.ebo);
+    mkgl::del_arr(&dstate->dbatch.vao);
+    mkgl::del_buffer(&dstate->dbatch.vbo);
+    mkgl::del_buffer(&dstate->dbatch.ebo);
 
     dstate->dbatch.calls.clear();
     dstate->dbatch.indices.clear();
@@ -163,22 +175,17 @@ void mkr::limitFlush(){
 void mkr::flush(){
     if (dstate->dbatch.vertices.empty()) return;
 
-    mkgl::bindArrBuff(&dstate->dbatch.vao);
-
-    mkgl::bindBuff(&dstate->dbatch.vbo, GL_ARRAY_BUFFER);
-    mkgl::bindDataDynamic(GL_ARRAY_BUFFER, nullptr, VMAX * sizeof(vertex));
-    mkgl::bindSubData(
-        GL_ARRAY_BUFFER, dstate->dbatch.vertices.data(),
+    mkgl::buf_sub_data(
+        &dstate->dbatch.vbo, dstate->dbatch.vertices.data(),
         dstate->dbatch.vertices.size() * sizeof(vertex)
     );
 
-    mkgl::bindBuff(&dstate->dbatch.ebo, GL_ELEMENT_ARRAY_BUFFER);
-    mkgl::bindDataDynamic(GL_ELEMENT_ARRAY_BUFFER, nullptr, IMAX * sizeof(uint));
-    mkgl::bindSubData(
-        GL_ELEMENT_ARRAY_BUFFER, dstate->dbatch.indices.data(),
+    mkgl::buf_sub_data(
+        &dstate->dbatch.ebo, dstate->dbatch.indices.data(),
         dstate->dbatch.indices.size() * sizeof(uint)
     );
 
+    mkgl::bind_arr_buf(&dstate->dbatch.vao);
     for (const auto& d : dstate->dbatch.calls){
         glBindTexture(GL_TEXTURE_2D, d.texref->id);
 
@@ -187,8 +194,7 @@ void mkr::flush(){
             reinterpret_cast<void*>(d.start * sizeof(uint))
         );
     }
-
-    mkgl::unbind();
+    mkgl::arr_unbind();
 
     dstate->dbatch.calls.clear();
     dstate->dbatch.indices.clear();

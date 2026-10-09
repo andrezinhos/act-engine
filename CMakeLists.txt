@@ -43,9 +43,11 @@ target_precompile_headers(app PRIVATE
 
 target_compile_options(app PRIVATE
   -Wall
-  -O2
+  -Wextra
+  -O0
+  -g
   -march=x86-64-v2
-  -DNDEBUG
+  -DDEBUG
   -fno-rtti
 )
 

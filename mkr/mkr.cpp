@@ -68,7 +68,7 @@ bool mkr::startWindow(int width, int height, const char* title){
     glfwSetFramebufferSizeCallback(wmain.main, frameCallback);
     createWindowContext();
 
-    mkgl::enableBlend(true);
+    mkgl::enable_blend(true);
 
 	// this is for in case of wrong viewport
 	// on start of the window, specially in the maximized flag
@@ -120,15 +120,17 @@ Shader mkr::LoadShader(cstr vsPath, cstr fsPath) {
     char* vert_file = mkgl::loadShaderFile(vsPath);
     char* frag_file = mkgl::loadShaderFile(fsPath);
 
-    uint vs = mkgl::genShader(vert_file, GL_VERTEX_SHADER);
-    mkgl::compileShader(vs);
-    freeptr(vert_file);
+    uint vs, fs;
 
-    uint fs = mkgl::genShader(frag_file, GL_FRAGMENT_SHADER);
-    mkgl::compileShader(fs);
-    freeptr(frag_file);
+    mkgl::create_shader(&vs, vert_file, GL_VERTEX_SHADER);
+    free(vert_file);
+    vert_file = NULL;
 
-    mkgl::genShaderProg(&shader.id, vs, fs);
+    mkgl::create_shader(&fs, frag_file, GL_FRAGMENT_SHADER);
+    free(frag_file);
+    frag_file = NULL;
+
+    mkgl::gen_shader_prog(&shader.id, vs, fs);
 
     glDeleteShader(vs);
     glDeleteShader(fs);

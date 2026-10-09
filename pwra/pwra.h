@@ -8,13 +8,13 @@
 typedef ma_sound audio_src;
 typedef ma_decoder audio_decoder;
 
-typedef struct {
+typedef struct Sfx {
     audio_src source;
     audio_decoder decoder;
     unsigned char* data;
 } Sfx;
 
-typedef struct {
+typedef struct Stream {
     audio_src source;
     audio_decoder decoder;
 } Stream;

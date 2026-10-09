@@ -34,7 +34,6 @@ bool Time::Clock(){
     double newTime = glfwGetTime();
     double elapsed = newTime - lastTime;
     if (elapsed < 0.001) {
-        // WaitFor(FPS_TARGET - elapsed - 0.001);
         WaitTime();
         return false;
     }

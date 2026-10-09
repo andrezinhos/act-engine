@@ -11,7 +11,7 @@ typedef stbtt_bakedchar CharPack;
 #define FONT_ATLAS_WIDTH 512
 #define FONT_ATLAS_HEIGHT 512
 
-typedef struct{
+typedef struct Font{
     byte* data;
     CharPack cpack[96];
     float spacing;

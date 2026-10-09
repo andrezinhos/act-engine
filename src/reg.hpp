@@ -1,23 +1,23 @@
 #pragma once
-#include "mktypes.h"
-#include "mktxt.hpp"
-#include "pwra.h"
-#include <vector>
-#include <memory>
+#include <string_view>
 
-extern std::vector<std::unique_ptr<Texture>> texmap;
-extern std::vector<std::unique_ptr<Sfx>> soundmap;
-extern std::vector<std::unique_ptr<Stream>> musicmap;
-extern std::vector<std::unique_ptr<Font>> fontmap;
-
+struct Sfx;
+struct Stream;
+struct Texture;
+struct Font;
 
 namespace reg{
     void init();
 
-    int tex_register(const char* path);
-    int sfx_register(const char* path);
-    int stream_register(const char* path);
-    int font_register(const char* path);
+    int tex_register(std::string_view path);
+    int sfx_register(std::string_view path);
+    int stream_register(std::string_view path);
+    int font_register(std::string_view path);
+
+    Texture* getTex(int id);
+    Sfx* getSfx(int id);
+    Stream* getMusic(int id);
+    Font* getFont(int id);
 
     void clear_tex();
     void clear_sfx();

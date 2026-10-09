@@ -9,6 +9,7 @@
 #define SOL_NO_RTTI 1
 #define SOL_NOEXCEPT_FUNCTION_TYPE 1
 #include "sol.hpp"
+#include <string_view>
 
 sol::state state;
 sol::table scene_table;
@@ -184,8 +185,8 @@ void script::start_funcs(){
         core::setScene(std::make_unique<LuaScene>(path));
     };
 
-    core_table["start"] = [](int width, int height, const char* title){
-        core::MainWindow(width, height, title);
+    core_table["start"] = [](int width, int height, std::string_view title){
+        core::MainWindow(width, height, title.data());
     };
 
     state["eng"] = core_table;
