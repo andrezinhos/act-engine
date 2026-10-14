@@ -2,8 +2,6 @@
 #include "glad.h"
 #include "mkmath.hpp"
 #include "mktypes.h"
-#include <cstddef>
-#include <vector>
 
 #define MKR_POSITION_LAYOUT 0
 #define MKR_COLOR_LAYOUT 1
@@ -14,39 +12,7 @@
 #define IMAX 1506
 #define CMAX 512
 
-typedef struct {
-    uint start;
-    uint count;
-    Texture* texref;
-} DCall;
-
-typedef struct {
-    vertex* verts;
-    int count;
-    int cap;
-} ArenaV;
-
-typedef struct {
-    uint inds;
-    int count;
-    int cap;
-} ArenaI;
-
-typedef struct {
-    DCall* dc;
-    int count;
-    int cap;
-} ArenaDC;
-
-typedef struct {
-    std::vector<vertex> vertices;
-    std::vector<uint> indices;
-    std::vector<DCall> calls;
-    uint vao, vbo, ebo;
-} Batch;
-
 namespace mkgl{
-    byte* loadBytes(cstr path, size_t* size);
     void enable_blend(bool flag);
     void get_error(); // is useless actually
 

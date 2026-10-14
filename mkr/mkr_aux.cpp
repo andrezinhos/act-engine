@@ -1,12 +1,13 @@
 #include "mkgl.hpp"
 #include "mkr.hpp"
+#include <cstdio>
 #include <cstdlib>
 
 bool mkr::createWindowContext(){
     glfwMakeContextCurrent(wmain.main);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-        printf("Error to Load OpenGL Context");
+        printf("Error to Load OpenGL functions");
         glfwDestroyWindow(wmain.main);
         glfwTerminate();
         return false;
@@ -107,13 +108,19 @@ void mkr::DefaultBatch(){
     mkgl::buf_data_dynamic(&dstate->dbatch.vbo, nullptr, VMAX * sizeof(vertex));
     mkgl::buf_data_dynamic(&dstate->dbatch.ebo, nullptr, IMAX * sizeof(uint));
 
-    mkgl::bind_arr_buf(&dstate->dbatch.vao);
-    mkgl::bind_buf(&dstate->dbatch.vbo);
-    mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
-    mkgl::sendAttribPtr(MKR_COLOR_LAYOUT,    3, MKR_VERTEX_STRIDE, 3);
-    mkgl::sendAttribPtr(MKR_TEXTURE_LAYOUT,  2, MKR_VERTEX_STRIDE, 6);
-    mkgl::buf_unbind();
-    mkgl::arr_unbind();
+    mkgl::set_attrib_vertex_buffer(&dstate->dbatch.vao, &dstate->dbatch.vbo, MKR_VERTEX_STRIDE);
+
+    mkgl::set_attrib_format(&dstate->dbatch.vao, MKR_POSITION_LAYOUT, 3, 0);
+    mkgl::bind_vertex_attrib(&dstate->dbatch.vao, 0, MKR_POSITION_LAYOUT);
+    mkgl::enable_array_attrib(&dstate->dbatch.vao, MKR_POSITION_LAYOUT);
+
+    mkgl::set_attrib_format(&dstate->dbatch.vao, MKR_COLOR_LAYOUT, 3, 3);
+    mkgl::bind_vertex_attrib(&dstate->dbatch.vao, 0, MKR_COLOR_LAYOUT);
+    mkgl::enable_array_attrib(&dstate->dbatch.vao, MKR_COLOR_LAYOUT);
+
+    mkgl::set_attrib_format(&dstate->dbatch.vao, MKR_TEXTURE_LAYOUT, 2, 6);
+    mkgl::bind_vertex_attrib(&dstate->dbatch.vao, 0, MKR_TEXTURE_LAYOUT);
+    mkgl::enable_array_attrib(&dstate->dbatch.vao, MKR_TEXTURE_LAYOUT);
 
     dstate->dbatch.vertices.reserve(VMAX);
     dstate->dbatch.indices.reserve(IMAX);

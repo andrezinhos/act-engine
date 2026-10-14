@@ -1,49 +1,19 @@
-#include "mkr.hpp"
 #include "mktex.hpp"
-#define STB_IMAGE_IMPLEMENTATION
-#define STBI_NO_GIF
-#define STBI_NO_PNM
-#define STBI_NO_BMP
-#define STBI_NO_PIC
-#define STBI_NO_PSD
-#define STBI_NO_HDR
-#include "stb_image.h"
+#include "mkgl.hpp"
+#include "mkr.hpp"
 
-Image mktex::loadImage(const char* path){
-    Image image = {};
-
-    size_t imgsize = 0;
-    byte* imgbuf = mkgl::loadBytes(path, &imgsize);
-
-    image.data = stbi_load_from_memory(
-        imgbuf,
-        imgsize,
-        &image.width,
-        &image.height,
-        &image.channels,
-        4
-    );
-
-    freeptr(imgbuf);
-    return image;
-}
-
-void mktex::unloadImage(Image* image){
-    stbi_image_free(image->data);
-}
-
-uint mktex::genTex(GLenum type){
+uint mktex::genTex(int type){
     uint tex;
     glGenTextures(1, &tex);
     glBindTexture(type, tex);
     return tex;
 }
 
-void mktex::setTexParams(GLenum type, GLenum wrap, GLenum format){
+void mktex::setTexParams(int type, int wrap, int format){
     glTexParameteri(type, wrap, format);
 }
 
-void mktex::setTexImage2D(GLenum format, GLenum internal, int width, int height, const void* data){
+void mktex::setTexImage2D(int format, int internal, int width, int height, const void* data){
     glTexImage2D(GL_TEXTURE_2D, 0, internal, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 }
@@ -68,23 +38,18 @@ void mktex::UnloadDefaultTexture(){
     if (dstate->dtex.id != 0) glDeleteTextures(1, &dstate->dtex.id);
 }
 
-Texture mktex::LoadTextureSrc(const char* path){
-    Image image = mktex::loadImage(path);
+Texture mktex::LoadTextureSrc(void* data, int width, int height){
     Texture tex;
     tex.id = mktex::genTex(GL_TEXTURE_2D);
-    tex.width = image.width;
-    tex.height = image.height;
+    tex.width = width;
+    tex.height = height;
 
     setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    setTexImage2D(GL_RGBA, GL_RGBA8, image.width, image.height, image.data);
-    unloadImage(&image);
-
-    printf("[INFO] TEXTURE LOADED: %s\n", path);
-
+    setTexImage2D(GL_RGBA, GL_RGBA8, width, height, data);
     return tex;
 }
 

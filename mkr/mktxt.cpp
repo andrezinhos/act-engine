@@ -1,8 +1,38 @@
-#include "mkr.hpp"
 #include "mktex.hpp"
 #include "mktxt.hpp"
+#include "mkgl.hpp"
+#include "mkr.hpp"
+#include <cstdio>
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"
+
+byte* loadBytes(const char* path, size_t* size){
+    FILE* file = fopen(path, "rb");
+
+    if (!file) return nullptr;
+
+    fseek(file, 0, SEEK_END);
+    size_t fsize = ftell(file);
+    rewind(file);
+
+    byte* buffer = (byte*)malloc(fsize);
+    if (!buffer){
+        printf("ERROR: file couldn't be loaded\n");
+        fclose(file);
+        return nullptr;
+    }
+
+    size_t outsize = fread(buffer, 1, fsize, file);
+    fclose(file);
+
+    if (outsize != fsize){
+        freeptr(buffer);
+        return nullptr;
+    }
+
+    if (size) *size = outsize;
+    return buffer;
+}
 
 Texture GenTexture(const void* data, int width, int height){
     Texture tex = {};
@@ -44,7 +74,7 @@ Font mktxt::DefaultFont(){
 
     font.spacing = 1.0f;
     size_t size = 0;
-    font.data = mkgl::loadBytes("eng/Tiny5.ttf", &size);
+    font.data = loadBytes("eng/Tiny5.ttf", &size);
 
     byte* atlas = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT);
 
@@ -70,7 +100,7 @@ Font mktxt::LoadFont(const char* path){
 
     font.spacing = 1.0f;
     size_t size = 0;
-    font.data = mkgl::loadBytes(path, &size);
+    font.data = loadBytes(path, &size);
 
     byte* atlas = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT);
 

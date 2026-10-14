@@ -1,7 +1,8 @@
 #include "mktex.hpp"
 #include "mktxt.hpp"
-#include "mkr.hpp"
 #include "stb_image.h"
+#include "mkgl.hpp"
+#include "mkr.hpp"
 
 Window wmain;
 DState* dstate = nullptr;

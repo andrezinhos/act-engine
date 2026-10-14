@@ -1,8 +1,8 @@
 #include "reg.hpp"
-#include "mkgl.hpp"
 #include "mktex.hpp"
 #include "mktxt.hpp"
 #include "pwra.h"
+#include "ios.hpp"
 #include <string_view>
 
 static std::vector<std::unique_ptr<Texture>> texmap = {};
@@ -20,7 +20,10 @@ void reg::init(){
 int reg::tex_register(std::string_view path){
     auto tex = std::make_unique<Texture>();
 
-    *tex = mktex::LoadTextureSrc(path.data());
+    Image image = ios::LoadImage(path);
+    *tex = mktex::LoadTextureSrc(image.data, image.width, image.height);
+    ios::DeleteImage(image);
+
     texmap.push_back(std::move(tex));
 
     return texmap.size() - 1;
@@ -30,7 +33,7 @@ int reg::sfx_register(std::string_view path){
     auto sfx = std::make_unique<Sfx>();
 
     size_t size = 0;
-    sfx->data = mkgl::loadBytes(path.data(), &size);
+    sfx->data = ios::LoadBytes(path.data(), size);
 
     pwra_load_sfx(sfx->data, size, &sfx->decoder, &sfx->source);
 

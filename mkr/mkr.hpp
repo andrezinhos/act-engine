@@ -1,7 +1,7 @@
 #pragma once
-#include "mkgl.hpp"
 #include "glfw/glfw3.h"
 #include "mktxt.hpp"
+#include <vector>
 
 struct Mesh{
     uint vao, vbo, ebo;
@@ -17,6 +17,13 @@ typedef struct {
     GLFWwindow* main;
     int win_width, win_height;
 } Window;
+
+struct Batch{
+    std::vector<vertex> vertices;
+    std::vector<uint> indices;
+    std::vector<DCall> calls;
+    uint vao, vbo, ebo;
+};
 
 struct DState{
     Batch dbatch;

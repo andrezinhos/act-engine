@@ -1,4 +1,7 @@
 #pragma once
+#include <cstdint>
+
+class string_view;
 
 enum class Keys {
     W = 87,
@@ -21,9 +24,19 @@ enum class Keys {
     F5 = 294,
 };
 
+struct Image{
+    uint8_t* data;
+    int width, height, channels;
+};
+
 class ios{
 public:
+    static uint8_t* LoadBytes(std::string_view path, size_t& size);
+
 	static void InputUpdate();
     static bool KeyDown(Keys key);
     static bool KeyPressed(Keys key);
+
+    static Image LoadImage(std::string_view path);
+    static void DeleteImage(Image& image);
 };

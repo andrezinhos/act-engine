@@ -31,11 +31,6 @@ typedef struct {
     float uv[2];
 } vertex;
 
-typedef struct {
-    unsigned char* data;
-    int width, height, channels;
-} Image;
-
 typedef struct Texture {
     uint id;
     int width, height;
@@ -53,3 +48,28 @@ typedef struct Rectangle{
     float x, y;
     float width, height;
 } Rectangle;
+
+
+typedef struct {
+    uint start;
+    uint count;
+    Texture* texref;
+} DCall;
+
+typedef struct {
+    vertex* verts;
+    int count;
+    int cap;
+} ArenaV;
+
+typedef struct {
+    uint inds;
+    int count;
+    int cap;
+} ArenaI;
+
+typedef struct {
+    DCall* dc;
+    int count;
+    int cap;
+} ArenaDC;

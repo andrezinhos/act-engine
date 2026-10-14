@@ -2,34 +2,6 @@
 #include <cstdio>
 #include <cstdlib>
 
-byte* mkgl::loadBytes(const char* path, size_t* size){
-    FILE* file = fopen(path, "rb");
-
-    if (!file) return nullptr;
-
-    fseek(file, 0, SEEK_END);
-    size_t fsize = ftell(file);
-    rewind(file);
-
-    byte* buffer = (byte*)malloc(fsize);
-    if (!buffer){
-        printf("ERROR: file couldn't be loaded\n");
-        fclose(file);
-        return nullptr;
-    }
-
-    size_t outsize = fread(buffer, 1, fsize, file);
-    fclose(file);
-
-    if (outsize != fsize){
-        freeptr(buffer);
-        return nullptr;
-    }
-
-    if (size) *size = outsize;
-    return buffer;
-}
-
 char* mkgl::loadShaderFile(const char* path){
     FILE* file = fopen(path, "rb");
 

@@ -7,7 +7,7 @@
 #include "time.hpp"
 #include "reg.hpp"
 
-constexpr cstr VERSION = "0.15.5";
+constexpr cstr VERSION = "0.15.6";
 
 std::unique_ptr<Scene> core::currScene = nullptr;
 std::unique_ptr<Scene> core::nextScene = nullptr;
