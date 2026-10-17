@@ -25,12 +25,17 @@ function Menu.Init()
 
     anim:load("assets/sprites/rgb.png")
 
-    render.animation_frames(anim, {
-        { 0,  0, 64, 64 },
-        { 64, 0, 64, 64 },
-        { 0, 64, 64, 64 },
-        { 64, 64, 64, 64 },
-    })
+    anim:add_frame(0, 0, 64, 64)
+    anim:add_frame(64, 0, 64, 64)
+    anim:add_frame(0, 64, 64, 64)
+    anim:add_frame(64, 64, 64, 64)
+
+    -- render.animation_frames(anim, {
+    --     { 0,  0, 64, 64 },
+    --     { 64, 0, 64, 64 },
+    --     { 0, 64, 64, 64 },
+    --     { 64, 64, 64, 64 },
+    -- })
 
     anim:pos(100, 100)
 
@@ -39,16 +44,16 @@ function Menu.Init()
     anim:duration(2)
 end
 
-local playing = false
+anim.playing = false
 
 function Menu.Update(dt)
-    if (ios.key_pressed(key.e)) and not playing then
+    if (ios.key_pressed(key.e)) and not anim.playing then
         -- jump:play()
-        eng.change_scene("game.lua")
-        -- playing = true
+        -- eng.change_scene("game.lua")
+        anim.playing = true
     end
 
-    if (playing) then
+    if (anim.playing) then
         anim:play(true)
     end
 end

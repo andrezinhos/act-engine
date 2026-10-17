@@ -2,7 +2,7 @@
 #include "mktxt.hpp"
 #include "mkgl.hpp"
 #include "mkr.hpp"
-#include <cstdio>
+#include <iostream>
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"
 
@@ -17,7 +17,7 @@ byte* loadBytes(const char* path, size_t* size){
 
     byte* buffer = (byte*)malloc(fsize);
     if (!buffer){
-        printf("ERROR: file couldn't be loaded\n");
+        std::cout << "ERROR: file couldn't be loaded\n";
         fclose(file);
         return nullptr;
     }
@@ -63,7 +63,7 @@ bool GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack){
     );
 
     if (!result){
-        printf("[INFO] ERROR TO SETUP FONT (BITMAP)");
+        std::cout << "[INFO] ERROR TO SETUP FONT (BITMAP)\n";
         return false;
     }
     return true;
@@ -127,7 +127,7 @@ void mktxt::UnloadDefaultFont(){
 
 void mktxt::UnloadFont(Font* font){
     if (font->fontTex.id != 0) glDeleteTextures(1, &font->fontTex.id);
-    printf("[INFO] FONT UNLOADED\n");
+    std::cout << "[INFO] FONT UNLOADED\n";
 }
 
 void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minSize, Color color){

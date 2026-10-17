@@ -153,6 +153,9 @@ void script::load_conteiners(){
         "load", &Anim2D::load,
         "pos", &Anim2D::pos,
         "size", &Anim2D::size,
+        "playing", &Anim2D::playing,
+
+        "add_frame", &Anim2D::add_frame,
         "play", &Anim2D::play,
         "draw", &Anim2D::draw
     );
@@ -201,7 +204,6 @@ void script::start_funcs(){
 
     ios_table["err"] = [](const char* msg){
         printf("[ERROR] %s\n", msg);
-        std::abort();
     };
 
     ios_table["key_down"] = [](Keys key){ return ios::KeyDown(key); };

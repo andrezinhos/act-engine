@@ -1,5 +1,6 @@
 #pragma once
-#include <string_view>
+
+class string_view;
 
 struct Sfx;
 struct Stream;

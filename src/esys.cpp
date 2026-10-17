@@ -2,6 +2,7 @@
 #include "mkr.hpp"
 #include "pwra.h"
 #include "reg.hpp"
+#include <vector>
 
 void Rect::pos(float x, float y){
     source.x = x;
@@ -126,11 +127,15 @@ void Anim2D::load(cstr path){
     ref = reg::getTex(id);
 }
 
-void Anim2D::set_frames(const std::vector<std::vector<float>>& frames){
-    source.frames.reserve(frames.size());
-    for (auto& f : frames){
-        source.frames.push_back({f[0], f[1], f[2], f[3]});
-    }
+void Anim2D::add_frame(int x, int y, int w, int h){
+    Rectangle rect;
+
+    rect.x = x;
+    rect.y = y;
+    rect.width = w;
+    rect.height = h;
+
+    source.frames.push_back(rect);
 }
 
 void Anim2D::play(bool loop){

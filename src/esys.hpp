@@ -2,7 +2,6 @@
 #include "animation.hpp"
 #include "mktxt.hpp"
 #include "pwra.h"
-#include <vector>
 
 struct Sound{
     Sfx* data;
@@ -65,7 +64,7 @@ struct Anim2D{
 
     void duration(double dur);
     void load(cstr path);
-    void set_frames(const std::vector<std::vector<float>>& frames);
+    void add_frame(int x, int y, int w, int h);
     void pos(int x, int y);
     void size(double size);
     void play(bool loop);

@@ -12,7 +12,7 @@ static std::vector<std::unique_ptr<Font>> fontmap = {};
 
 void reg::init(){
     texmap.reserve(256);
-    soundmap.reserve(256);
+    soundmap.reserve(32);
     musicmap.reserve(20);
     fontmap.reserve(5);
 }
