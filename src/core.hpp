@@ -9,9 +9,6 @@ enum Flags{
 };
 
 class core {
-private:
-    static std::unique_ptr<Scene> currScene;
-    static std::unique_ptr<Scene> nextScene;
 public:
     static void setScene(std::unique_ptr<Scene> scene);
     static void InitialScene(std::unique_ptr<Scene> initial);

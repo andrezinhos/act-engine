@@ -9,8 +9,8 @@
 
 constexpr cstr VERSION = "0.15.7";
 
-std::unique_ptr<Scene> core::currScene = nullptr;
-std::unique_ptr<Scene> core::nextScene = nullptr;
+static std::unique_ptr<Scene> currScene = nullptr;
+static std::unique_ptr<Scene> nextScene = nullptr;
 
 void core::WindowFlag(Flags flag){
     if (flag == RESIZABLE) flags_active[0] = 1;
@@ -28,6 +28,7 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
 
     while(Loop()) {
         if (!Time::Clock()) continue;
+
         Time::CountFps();
         ios::InputUpdate();
 
@@ -57,6 +58,7 @@ void core::MainWindow(int width, int height, const char *title){
     bool win_started = mkr::startWindow(width, height, title);
 
     if (win_started){
+        Time::StartTime();
         mkr::Initialize();
         mkr::setWindowIcon("eng/w_icon.png");
         pwra_start_audio();

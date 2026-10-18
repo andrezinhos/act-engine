@@ -49,8 +49,8 @@ anim.playing = false
 function Menu.Update(dt)
     if (ios.key_pressed(key.e)) and not anim.playing then
         -- jump:play()
-        -- eng.change_scene("game.lua")
-        anim.playing = true
+        eng.change_scene("game.lua")
+        -- anim.playing = true
     end
 
     if (anim.playing) then
