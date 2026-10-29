@@ -8,7 +8,7 @@ namespace mktex{
     Texture LoadTextureSrc(void* data, int width, int height);
     void UnloadTexture(Texture* tex);
 
-    uint genTex(int format);
+    uint32_t genTex(int format);
     void setTexParams(int type, int wrap, int format);
     void setTexImage2D(int format, int internal, int width, int height, const void* data);
 };

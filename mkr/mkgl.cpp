@@ -1,4 +1,5 @@
 #include "mkgl.hpp"
+#include "tgt.h"
 #include <cstdio>
 #include <cstdlib>
 
@@ -29,17 +30,17 @@ char* mkgl::loadShaderFile(const char* path){
     return buffer;
 }
 
-void getShaderLogInfo(uint* shader, char* log){
+void getShaderLogInfo(uint32_t* shader, char* log){
     glGetShaderInfoLog(*shader, 512, nullptr, log);
     printf("ERROR ON COMPILING SHADER:\n %s", log);
 }
 
-void getProgramLogInfo(uint* prog, char* log){
+void getProgramLogInfo(uint32_t* prog, char* log){
     glGetProgramInfoLog(*prog, 512, nullptr, log);
     printf("ERROR ON LINKING PROGRAM:\n %s", log);
 }
 
-void linkProgram(uint* prog, uint vs, uint fs){
+void linkProgram(uint32_t* prog, uint32_t vs, uint32_t fs){
     glAttachShader(*prog, vs);
     glAttachShader(*prog, fs);
     glLinkProgram(*prog);
@@ -68,7 +69,7 @@ void mkgl::get_error(){
     }
 }
 
-bool mkgl::gen_array(uint* obj){
+bool mkgl::gen_array(uint32_t* obj){
     glGenVertexArrays(1, obj);
 
     if (*obj == 0){
@@ -79,7 +80,7 @@ bool mkgl::gen_array(uint* obj){
     return true;
 }
 
-bool mkgl::gen_buffer(uint* obj){
+bool mkgl::gen_buffer(uint32_t* obj){
     glGenBuffers(1, obj);
 
     if (!obj){
@@ -90,7 +91,7 @@ bool mkgl::gen_buffer(uint* obj){
     return true;
 }
 
-bool mkgl::create_array(uint *v){
+bool mkgl::create_array(uint32_t *v){
     glCreateVertexArrays(1, v);
 
     if (*v == 0) {
@@ -101,7 +102,7 @@ bool mkgl::create_array(uint *v){
     return true;
 }
 
-bool mkgl::create_buffer(uint *vo){
+bool mkgl::create_buffer(uint32_t *vo){
     glCreateBuffers(1, vo);
 
     if (*vo == 0) {
@@ -112,27 +113,27 @@ bool mkgl::create_buffer(uint *vo){
     return true;
 }
 
-void mkgl::element_connect(uint *vao, uint *vo){
+void mkgl::element_connect(uint32_t *vao, uint32_t *vo){
     glVertexArrayElementBuffer(*vao, *vo);
 }
 
-void mkgl::buf_data_static(uint* buffer, const void* data, size_t size){
+void mkgl::buf_data_static(uint32_t* buffer, const void* data, size_t size){
     glNamedBufferData(*buffer, size, data, GL_STATIC_DRAW);
 }
 
-void mkgl::buf_data_dynamic(uint* buffer, const void* data, size_t size){
+void mkgl::buf_data_dynamic(uint32_t* buffer, const void* data, size_t size){
     glNamedBufferData(*buffer, size, data, GL_DYNAMIC_DRAW);
 }
 
-void mkgl::buf_sub_data(uint *buffer, const void *data, size_t size){
+void mkgl::buf_sub_data(uint32_t *buffer, const void *data, size_t size){
     glNamedBufferSubData(*buffer, 0, size, data);
 }
 
-void mkgl::bind_arr_buf(uint* vo){
+void mkgl::bind_arr_buf(uint32_t* vo){
     glBindVertexArray(*vo);
 }
 
-void mkgl::bind_buf(uint* vo){
+void mkgl::bind_buf(uint32_t* vo){
     glBindBuffer(GL_ARRAY_BUFFER, *vo);
 }
 
@@ -154,17 +155,17 @@ void mkgl::buf_unbind(){
 
 //GL_ARRAY_BUFFER
 //GL_ELEMENT_ARRAY_BUFFER
-void mkgl::bind_data_static(uint* buffer, const void* data, size_t size, int target){
+void mkgl::bind_data_static(uint32_t* buffer, const void* data, size_t size, int target){
     glBindBuffer(target, *buffer);
     glBufferData(target, size, data, GL_STATIC_DRAW);
 }
 
-void mkgl::bind_data_dynamic(uint* buffer, const void* data, size_t size, int target){
+void mkgl::bind_data_dynamic(uint32_t* buffer, const void* data, size_t size, int target){
     glBindBuffer(target, *buffer);
     glBufferData(target, size, data, GL_DYNAMIC_DRAW);
 }
 
-void mkgl::bind_sub_data(uint* buffer, const void* data, size_t size, int target){
+void mkgl::bind_sub_data(uint32_t* buffer, const void* data, size_t size, int target){
     glBindBuffer(target, *buffer);
     glBufferSubData(target, 0, size, data);
 }
@@ -179,11 +180,11 @@ void mkgl::sendAttribPtr(int layout, int size, int stride, int ptr){
     glEnableVertexAttribArray(layout);
 }
 
-void mkgl::set_attrib_vertex_buffer(uint *vao, uint *vbo, int stride){
+void mkgl::set_attrib_vertex_buffer(uint32_t *vao, uint32_t *vbo, int stride){
     glVertexArrayVertexBuffer(*vao, 0, *vbo, 0, stride * sizeof(float));
 }
 
-void mkgl::set_attrib_format(uint *vao, int layout, int size, int offset){
+void mkgl::set_attrib_format(uint32_t *vao, int layout, int size, int offset){
     glVertexArrayAttribFormat(
         *vao, layout, size,
         GL_FLOAT, GL_FALSE,
@@ -191,11 +192,11 @@ void mkgl::set_attrib_format(uint *vao, int layout, int size, int offset){
     );
 }
 
-void mkgl::enable_array_attrib(uint *vao, int layout){
+void mkgl::enable_array_attrib(uint32_t *vao, int layout){
     glEnableVertexArrayAttrib(*vao, layout);
 }
 
-void mkgl::bind_vertex_attrib(uint *vao, int attrib, int layout){
+void mkgl::bind_vertex_attrib(uint32_t *vao, int attrib, int layout){
     glVertexArrayAttribBinding(*vao, layout, attrib);
 }
 
@@ -215,7 +216,7 @@ void mkgl::set_initial_vertex(vertex* data){
     data[3] = {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}};
 }
 
-bool getShaderError(uint* shader){
+bool getShaderError(uint32_t* shader){
     int pass;
     char log[512];
     glGetShaderiv(*shader, GL_COMPILE_STATUS, &pass);
@@ -228,7 +229,7 @@ bool getShaderError(uint* shader){
     return true;
 }
 
-bool getShaderProgError(uint* prog){
+bool getShaderProgError(uint32_t* prog){
     int pass;
     char log[512];
     glGetProgramiv(*prog, GL_LINK_STATUS, &pass);
@@ -241,20 +242,20 @@ bool getShaderProgError(uint* prog){
     return true;
 }
 
-bool mkgl::create_shader(uint* sh, const char* src, int target){
+bool mkgl::create_shader(uint32_t* sh, const char* src, int target){
     *sh = glCreateShader(target);
     glShaderSource(*sh, 1, &src, nullptr);
     glCompileShader(*sh);
     return getShaderError(sh);
 }
 
-bool mkgl::gen_shader_prog(uint* prog, uint vs, uint fs){
+bool mkgl::gen_shader_prog(uint32_t* prog, uint32_t vs, uint32_t fs){
     *prog = glCreateProgram();
     linkProgram(prog, vs, fs);
     return getShaderProgError(prog);
 }
 
-void mkgl::delete_shaders(uint vs, uint fs){
+void mkgl::delete_shaders(uint32_t vs, uint32_t fs){
     if (vs != 0) glDeleteShader(vs);
     if (fs != 0) glDeleteShader(fs);
 }
@@ -263,19 +264,19 @@ void mkgl::setUniformMat(GLint loc, Matrix* mat){
     glUniformMatrix4fv(loc, 1, GL_FALSE, &mat->v[0][0]);
 }
 
-void mkgl::clearScreen(Color color){
+void mkgl::clearScreen(color color){
     glClearColor(color.r, color.g, color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void mkgl::del_prog(uint* obj){
+void mkgl::del_prog(uint32_t* obj){
     if (obj != 0) glDeleteProgram(*obj);
 }
 
-void mkgl::del_arr(uint* obj){
+void mkgl::del_arr(uint32_t* obj){
     if (obj != 0) glDeleteVertexArrays(1, obj);
 }
 
-void mkgl::del_buffer(uint* obj){
+void mkgl::del_buffer(uint32_t* obj){
     if (obj != 0) glDeleteBuffers(1, obj);
 }

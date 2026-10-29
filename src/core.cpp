@@ -6,8 +6,9 @@
 #include "scene.hpp"
 #include "time.hpp"
 #include "reg.hpp"
+#include <iostream>
 
-constexpr cstr VERSION = "0.15.7";
+constexpr const char* VERSION = "0.15.7";
 
 static std::unique_ptr<Scene> currScene = nullptr;
 static std::unique_ptr<Scene> nextScene = nullptr;
@@ -51,7 +52,9 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
 
 void core::MainWindow(int width, int height, const char *title){
 
-    if (mkr::configInit()) printf("ACT ENGINE v%s\n", VERSION);
+    if (mkr::configInit()) {
+        std::cout << "ACT ENGINE v" << VERSION << "\n";
+    }
 
     wmain.win_width = width;
     wmain.win_height = height;
@@ -63,9 +66,11 @@ void core::MainWindow(int width, int height, const char *title){
         mkr::setWindowIcon("eng/w_icon.png");
         pwra_start_audio();
         reg::init();
-        printf("[INFO] ENGINE INITIALIZED\n");
+        std::cout << "[INFO] ENGINE INITIALIZED\n";
     }
-    else printf("[ERROR] ENGINE COULD NOT INITIALIZE\n");
+    else{
+        std::cout << "[ERROR] ENGINE COULD NOT INITIALIZE\n";
+    }
 }
 
 bool special_esc(){

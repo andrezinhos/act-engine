@@ -1,9 +1,9 @@
 #include "mktex.hpp"
-#include "mkgl.hpp"
+#include "fgl.h"
 #include "mkr.hpp"
 
-uint mktex::genTex(int type){
-    uint tex;
+uint32_t mktex::genTex(int type){
+    uint32_t tex;
     glGenTextures(1, &tex);
     glBindTexture(type, tex);
     return tex;
@@ -20,36 +20,31 @@ void mktex::setTexImage2D(int format, int internal, int width, int height, const
 
 Texture mktex::DefaultTexture(){
     Texture tex;
-    tex.id = genTex(GL_TEXTURE_2D);
 
-    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    uint color = 0xFFFFFFFF;
-    setTexImage2D(GL_RGBA, GL_RGBA, 1, 1, &color);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    uint32_t color = 0xFFFFFFFF;
+    fgl_create_texture(&tex.id, GL_TEXTURE_2D, 1, 1, &color);
+    
+    fgl_texture_repeat(tex.id);
+    fgl_texture_filter(tex.id, GL_NEAREST);
 
     return tex;
 }
 
 void mktex::UnloadDefaultTexture(){
-    if (dstate->dtex.id != 0) glDeleteTextures(1, &dstate->dtex.id);
+    if (dstate->dtex.id != 0) {
+        glDeleteTextures(1, &dstate->dtex.id);
+    }
 }
 
 Texture mktex::LoadTextureSrc(void* data, int width, int height){
     Texture tex;
-    tex.id = mktex::genTex(GL_TEXTURE_2D);
     tex.width = width;
     tex.height = height;
 
-    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    fgl_create_texture(&tex.id, GL_TEXTURE_2D, width, height, data);
+    fgl_texture_repeat(tex.id);
+    fgl_texture_filter(tex.id, GL_NEAREST);
 
-    setTexImage2D(GL_RGBA, GL_RGBA8, width, height, data);
     return tex;
 }
 
@@ -58,7 +53,7 @@ void mktex::UnloadTexture(Texture* tex){
     printf("[INFO] TEXTURE UNLOADED\n");
 }
 
-void mkr::RenderRectangle(Vec2 position, Vec2 size, Color color){
+void mkr::RenderRectangle(Vec2 position, Vec2 size, color color){
     limitFlush();
     uint32_t base = dstate->dbatch.vertices.size();
     uint32_t indexStart = dstate->dbatch.indices.size();
@@ -72,10 +67,10 @@ void mkr::RenderRectangle(Vec2 position, Vec2 size, Color color){
     else dstate->dbatch.calls.back().count += 6;
 }
 
-void mkr::RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec2 size, Color color){
+void mkr::RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec2 size, color color){
     limitFlush();
-    uint base = dstate->dbatch.vertices.size();
-    uint indexStart = dstate->dbatch.indices.size();
+    uint32_t base = dstate->dbatch.vertices.size();
+    uint32_t indexStart = dstate->dbatch.indices.size();
 
     float u0 = rectangle.x / (float)tex->width;
     float v0 = rectangle.y / (float)tex->height;
@@ -92,10 +87,10 @@ void mkr::RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec
     else dstate->dbatch.calls.back().count += 6;
 }
 
-void mkr::RenderTexture(Texture *tex, Vec2 position, Vec2 size, Color color){
+void mkr::RenderTexture(Texture *tex, Vec2 position, Vec2 size, color color){
     limitFlush();
-    uint base = dstate->dbatch.vertices.size();
-    uint indexStart = dstate->dbatch.indices.size();
+    uint32_t base = dstate->dbatch.vertices.size();
+    uint32_t indexStart = dstate->dbatch.indices.size();
 
     sendVertex(position, size, color, {0.0f, 1.0f});
     sendIndices(base);

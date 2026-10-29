@@ -8,12 +8,18 @@ typedef struct Texture {
     int width, height;
 } Texture;
 
+typedef enum Cursor{
+    NORMAL,
+    HIDDEN,
+    DISABLED,
+} Cursor;
+
 typedef struct{
     uint32_t id;
 
-    int uview;
-    int umodel;
-    int utex;
+    uint32_t uview;
+    uint32_t umodel;
+    uint32_t utex;
 } Shader;
 
 typedef struct Rectangle{

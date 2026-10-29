@@ -54,16 +54,22 @@ int reg::stream_register(std::string_view path){
 
 int reg::font_register(std::string_view path){
     auto font = std::make_unique<Font>();
-    *font = mktxt::LoadFont(path.data());
+    *font = mktxt::load_font(path.data());
 
     fontmap.push_back(std::move(font));
 
     return fontmap.size() - 1;
 }
 
-Texture* reg::getTex(int id) { return texmap[id].get(); };
-Sfx* reg::getSfx(int id) { return soundmap[id].get(); };
-Stream* reg::getMusic(int id) { return musicmap[id].get(); };
+Texture* reg::getTex(int id) { 
+    return texmap[id].get(); 
+};
+Sfx* reg::getSfx(int id) { 
+    return soundmap[id].get(); 
+};
+Stream* reg::getMusic(int id) { 
+    return musicmap[id].get();
+};
 Font* reg::getFont(int id) { return fontmap[id].get(); };
 
 void reg::clear_tex(){
@@ -89,7 +95,7 @@ void reg::clear_stream(){
 
 void reg::clear_font(){
     for (auto& font : fontmap){
-        if (font) mktxt::UnloadFont(font.get());
+        if (font) mktxt::unload_font(font.get());
     }
     fontmap.clear();
 }

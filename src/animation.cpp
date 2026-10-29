@@ -22,7 +22,7 @@ void anim::PlayAnimation(Sheet& sheet, bool loop){
     }
 }
 
-void anim::RenderAnimation(Sheet& sheet, Texture* tex, Vec2 position, float size, Color color){
+void anim::RenderAnimation(Sheet& sheet, Texture* tex, Vec2 position, float size, color color){
     mkr::RenderTextureRec(
         tex,
         sheet.frames[sheet.currFrame],

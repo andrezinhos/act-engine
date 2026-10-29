@@ -33,6 +33,10 @@ extern "C" {
 FGLDEF size_t buffer_size(size_t data);
 FGLDEF size_t element_size(size_t data);
 
+FGLDEF void fgl_enable_blend(bool flag);
+
+FGLDEF void fgl_clear_screen(color color);
+
 FGLDEF void fgl_hardware_info();
 FGLDEF int fgl_create_array(fgl_buffer* _buf);
 FGLDEF int fgl_create_buffer(fgl_buffer* _buf);
@@ -50,7 +54,8 @@ FGLDEF int fgl_sub_data(fgl_buffer* _buf, size_t size, const void* data);
 FGLDEF void fgl_arr_attrib(fgl_buffer* _buf, int size, int layout, int offset);
 
 FGLDEF int fgl_create_shader(uint32_t* shader, int target);
-FGLDEF int fgl_get_shader_source(uint32_t shader, const char* fs_path);
+FGLDEF char* fgl_load_shader_source(const char* s_path);
+FGLDEF int fgl_compile_shader_source(uint32_t shader, const char* s_path);
 FGLDEF int fgl_create_shader_prog(uint32_t* shader);
 FGLDEF int fgl_attach_shader(uint32_t prog, uint32_t vs, uint32_t fs);
 
@@ -72,9 +77,9 @@ FGLDEF void fgl_delete_prog(uint32_t prog);
 FGLDEF void fgl_delete_shader(uint32_t shader);
 FGLDEF void fgl_delete_texture(uint32_t* texture);
 
-#ifdef fgl_IMPL
+#ifdef FGL_IMPL
 
-static inline char* load_file(const char* path, size_t* size){
+static inline char* load_file(const char* path){
     FILE* file = fopen(path, "rb");
 
     if (!file){
@@ -103,7 +108,6 @@ static inline char* load_file(const char* path, size_t* size){
         return NULL;
     }
 
-    *size = fsize;
     return buffer;
 }
 
@@ -112,6 +116,18 @@ FGLDEF size_t buffer_size(size_t data){
 }
 FGLDEF size_t element_size(size_t data){
     return sizeof(uint32_t) * data;
+}
+
+FGLDEF void fgl_enable_blend(bool flag){
+    if (flag){
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+}
+
+FGLDEF void fgl_clear_screen(color color){
+    glClearColor(color.r, color.g, color.b, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 FGLDEF void fgl_hardware_info(){
@@ -230,7 +246,7 @@ FGLDEF void fgl_arr_attrib(fgl_buffer *_buf, int layout, int size, int offset){
 FGLDEF int fgl_create_shader(uint32_t* shader, int target){
     *shader = glCreateShader(target);
 
-    if (shader == 0){
+    if (*shader == 0){
         printf("error: cannot create shader\n");
         return 1;
     }
@@ -241,7 +257,7 @@ FGLDEF int fgl_create_shader(uint32_t* shader, int target){
 FGLDEF int fgl_create_shader_prog(uint32_t* shader){
     *shader = glCreateProgram();
 
-    if (shader == 0){
+    if (*shader == 0){
         printf("error: cannot create program\n");
         return 1;
     }
@@ -249,7 +265,11 @@ FGLDEF int fgl_create_shader_prog(uint32_t* shader){
     return 0;
 }
 
-FGLDEF int fgl_get_shader_source(uint32_t shader, const char* path){
+FGLDEF char* fgl_load_shader_source(const char* s_path){
+    return load_file(s_path);
+}
+
+FGLDEF int fgl_compile_shader_source(uint32_t shader, const char* path){
     glShaderSource(shader, 1, &path, NULL);
     glCompileShader(shader);
 
@@ -307,7 +327,7 @@ FGLDEF int fgl_create_texture(uint32_t* id, int target, int width, int height, v
     glTextureStorage2D(*id, 1, GL_RGBA8, width, height);
 
     glTextureSubImage2D(*id,
-        1, 0, 0, width, height,
+        0, 0, 0, width, height,
         GL_RGBA, GL_UNSIGNED_BYTE, pixels
     );
 

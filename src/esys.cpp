@@ -14,7 +14,7 @@ void Rect::size(int x, int y){
     source.height = y;
 }
 
-void Rect::draw(Color color){
+void Rect::draw(color color){
     mkr::RenderRectangle(
         {(float)source.x, (float)source.y},
         {(float)source.width, (float)source.height},
@@ -22,7 +22,7 @@ void Rect::draw(Color color){
     );
 }
 
-void Sprite::load(cstr path){
+void Sprite::load(const char* path){
     id = reg::tex_register(path);
     source = reg::getTex(id);
 }
@@ -59,7 +59,7 @@ void Sprite::draw_area(Rect& rec){
     }
 }
 
-void Sound::load(cstr path){
+void Sound::load(const char* path){
     id = reg::sfx_register(path);
     data = reg::getSfx(id);
 }
@@ -72,7 +72,7 @@ void Sound::pitch(double amount){
     if (data) pwra_set_pitch(data, amount);
 }
 
-void Music::load(cstr path){
+void Music::load(const char* path){
     id = reg::stream_register(path);
     data = reg::getMusic(id);
 }
@@ -93,7 +93,7 @@ void Music::resume(){
     if (data) pwra_resume_stream(data);
 }
 
-void Text::load(cstr path){
+void Text::load(const char* path){
     id = reg::font_register(path);
     source = reg::getFont(id);
 }
@@ -104,25 +104,28 @@ void Text::pos(int x, int y){
 }
 
 void Text::spacing(double space){
-    if (source)
+    if (source) {
         source->spacing = static_cast<float>(space);
-    else
-        dstate->dfont.spacing = static_cast<float>(space);
-}
-
-void Text::draw(cstr text, float size, Color color){
-    if (source){
-        mktxt::RenderTextEx(source, text, position, size, color);
     }
-    else mktxt::RenderText(text, position, size, color);
+    else {
+        dstate->dfont.spacing = static_cast<float>(space);
+    }
 }
 
+void Text::draw(const char* text, float size, color color){
+    if (source){
+        mktxt::render_text_extended(source, text, position, size, color);
+    }
+    else {
+        mktxt::render_text(text, position, size, color);
+    }
+}
 
 void Anim2D::duration(double dur){
     source.duration = dur / 12.0;
 }
 
-void Anim2D::load(cstr path){
+void Anim2D::load(const char* path){
     id = reg::tex_register(path);
     ref = reg::getTex(id);
 }
@@ -152,5 +155,7 @@ void Anim2D::size(double size){
 }
 
 void Anim2D::draw(){
-    if (ref) anim::RenderAnimation(source, ref, position, size_val, White);
+    if (ref) {
+        anim::RenderAnimation(source, ref, position, size_val, White);
+    }
 }

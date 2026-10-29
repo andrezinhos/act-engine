@@ -1,6 +1,7 @@
 #pragma once
 #include "mktypes.h"
 #include "mkmath.hpp"
+#include "tgt.h"
 #include <vector>
 
 struct Sheet{
@@ -14,5 +15,5 @@ struct Sheet{
 class anim{
 public:
     static void PlayAnimation(Sheet& sheet, bool loop);
-    static void RenderAnimation(Sheet& sheet, Texture* tex, Vec2 position, float size, Color color);
+    static void RenderAnimation(Sheet& sheet, Texture* tex, Vec2 position, float size, color color);
 };

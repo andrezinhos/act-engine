@@ -1,7 +1,8 @@
+#define FGL_IMPL
+#include "fgl.h"
 #include "mktex.hpp"
 #include "mktxt.hpp"
 #include "stb_image.h"
-#include "mkgl.hpp"
 #include "mkr.hpp"
 
 Window wmain;
@@ -69,7 +70,7 @@ bool mkr::startWindow(int width, int height, const char* title){
     glfwSetFramebufferSizeCallback(wmain.main, frameCallback);
     createWindowContext();
 
-    mkgl::enable_blend(true);
+    fgl_enable_blend(true);
 
 	// this is for in case of wrong viewport
 	// on start of the window, specially in the maximized flag
@@ -116,30 +117,34 @@ void mkr::Shutdown(){
     glfwTerminate();
 }
 
-Shader mkr::LoadShader(cstr vsPath, cstr fsPath) {
+Shader mkr::LoadShader(const char* vsPath, const char* fsPath) {
     Shader shader = {};
-    char* vert_file = mkgl::loadShaderFile(vsPath);
-    char* frag_file = mkgl::loadShaderFile(fsPath);
+    char* vert_file = fgl_load_shader_source(vsPath);
+    char* frag_file = fgl_load_shader_source(fsPath);
 
-    uint vs, fs;
+    uint32_t vs, fs;
 
-    mkgl::create_shader(&vs, vert_file, GL_VERTEX_SHADER);
+    fgl_create_shader(&vs, GL_VERTEX_SHADER);
+    fgl_create_shader(&fs, GL_FRAGMENT_SHADER);
+
+    fgl_compile_shader_source(vs, vert_file);
     free(vert_file);
     vert_file = NULL;
 
-    mkgl::create_shader(&fs, frag_file, GL_FRAGMENT_SHADER);
+    fgl_compile_shader_source(fs, frag_file);
     free(frag_file);
     frag_file = NULL;
 
-    mkgl::gen_shader_prog(&shader.id, vs, fs);
+    fgl_create_shader_prog(&shader.id);
+    fgl_attach_shader(shader.id, vs, fs);
 
-    glDeleteShader(vs);
-    glDeleteShader(fs);
+    fgl_delete_shader(vs);
+    fgl_delete_shader(fs);
     return shader;
 }
 
-void mkr::ScreenClear(Color color){
-    mkgl::clearScreen(color);
+void mkr::ScreenClear(color color){
+    fgl_clear_screen(color);
 }
 
 void mkr::RenderBegin(){
@@ -160,11 +165,11 @@ void mkr::CameraBegin(Camera2D& camera){
     Matrix model = MatrixIdentity();
 
     Matrix mvp = mkmath::MultiplyMatrix(mkmath::MultiplyMatrix(proj, view), model);
-    mkgl::setUniformMat(dstate->dshader.umodel, &mvp);
+    fgl_uniform_mat(&dstate->dshader.id, &dstate->dshader.umodel, &mvp.v[0][0]);
 }
 
 void mkr::CameraEnd(){
     flush();
     Matrix view = MatrixIdentity();
-    mkgl::setUniformMat(dstate->dshader.uview, &view);
+    fgl_uniform_mat(&dstate->dshader.id, &dstate->dshader.umodel, &view.v[0][0]);
 }

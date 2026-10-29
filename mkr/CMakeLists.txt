@@ -15,7 +15,7 @@ set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3.a)
 # executable files
 add_library(mkr STATIC
   glad.cpp
-  # mkgl.cpp
+  mkgl.cpp
   mktxt.cpp
   mktex.cpp
   mkr_aux.cpp

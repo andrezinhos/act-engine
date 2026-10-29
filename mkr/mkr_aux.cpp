@@ -1,4 +1,4 @@
-#include "mkgl.hpp"
+#include "fgl.h"
 #include "mkr.hpp"
 #include <cstdio>
 #include <cstdlib>
@@ -13,13 +13,7 @@ bool mkr::createWindowContext(){
         return false;
     }
 
-    const byte* vendor = glGetString(GL_VENDOR);
-    const byte* renderer = glGetString(GL_RENDERER);
-    const byte* glver = glGetString(GL_VERSION);
-
-    printf("[INFO] GPU: %s\n", renderer);
-    printf("[INFO] VENDOR: %s\n", vendor);
-    printf("[INFO] OPENGL VERSION: %s\n", glver);
+    fgl_hardware_info();
 
     return true;
 }
@@ -41,22 +35,31 @@ void mkr::setWindowPosition(int width, int height){
 
 Shader mkr::DefaultShader() {
     Shader shader = {};
-    char* vert_file = mkgl::loadShaderFile("eng/simple.vert");
-    char* frag_file = mkgl::loadShaderFile("eng/simple.frag");
 
-    uint vs, fs;
+    char* vert_file = fgl_load_shader_source("eng/simple.vert");
+    char* frag_file = fgl_load_shader_source("eng/simple.frag");
 
-    mkgl::create_shader(&vs, vert_file, GL_VERTEX_SHADER);
+    uint32_t vs = 0;
+    uint32_t fs = 0;
+
+    fgl_create_shader(&vs, GL_VERTEX_SHADER);
+    fgl_create_shader(&fs, GL_FRAGMENT_SHADER);
+
+    fgl_compile_shader_source(vs, vert_file);
     free(vert_file);
     vert_file = NULL;
 
-    mkgl::create_shader(&fs, frag_file, GL_FRAGMENT_SHADER);
+    fgl_compile_shader_source(fs, frag_file);
     free(frag_file);
     frag_file = NULL;
 
-    mkgl::gen_shader_prog(&shader.id, vs, fs);
-    glGetUniformLocation(dstate->dshader.id, "uMvp");
-    mkgl::delete_shaders(vs, fs);
+    fgl_create_shader_prog(&shader.id);
+    fgl_attach_shader(shader.id, vs, fs);
+    
+    fgl_uniform_location(shader.id, &shader.umodel, "uMvp");
+
+    fgl_delete_shader(vs);
+    fgl_delete_shader(fs);
 
     return shader;
 }
@@ -65,28 +68,30 @@ Mesh mkr::DefaultQuad(){
     Mesh mesh = {};
 
     mesh.vertices.reserve(4);
+
+
     mkgl::set_initial_vertex(mesh.vertices.data());
     mesh.indices = {
         0, 1, 3,
         1, 2, 3
     };
 
-    mkgl::gen_array(&mesh.vao);
-    mkgl::gen_buffer(&mesh.vbo);
-    mkgl::gen_buffer(&mesh.ebo);
+    mkgl::gen_array(&mesh.buffer.vao);
+    mkgl::gen_buffer(&mesh.buffer.vbo);
+    mkgl::gen_buffer(&mesh.buffer.ebo);
 
-    mkgl::bind_arr_buf(&mesh.vao);
+    mkgl::bind_arr_buf(&mesh.buffer.vao);
 
     mkgl::bind_data_static(
-        &mesh.vbo,
+        &mesh.buffer.vbo,
         mesh.vertices.data(),
         mesh.vertices.size() * sizeof(vertex), GL_ARRAY_BUFFER
     );
 
     mkgl::bind_data_static(
-        &mesh.ebo,
+        &mesh.buffer.ebo,
         mesh.indices.data(),
-        mesh.indices.size() * sizeof(uint), GL_ELEMENT_ARRAY_BUFFER
+        mesh.indices.size() * sizeof(uint32_t), GL_ELEMENT_ARRAY_BUFFER
     );
 
     mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
@@ -106,7 +111,7 @@ void mkr::DefaultBatch(){
     mkgl::element_connect(&dstate->dbatch.vao, &dstate->dbatch.ebo);
 
     mkgl::buf_data_dynamic(&dstate->dbatch.vbo, nullptr, VMAX * sizeof(vertex));
-    mkgl::buf_data_dynamic(&dstate->dbatch.ebo, nullptr, IMAX * sizeof(uint));
+    mkgl::buf_data_dynamic(&dstate->dbatch.ebo, nullptr, IMAX * sizeof(uint32_t));
 
     mkgl::set_attrib_vertex_buffer(&dstate->dbatch.vao, &dstate->dbatch.vbo, MKR_VERTEX_STRIDE);
 
@@ -131,9 +136,9 @@ void mkr::UnloadDefaultShader(){
 }
 
 void mkr::UnloadDefaultQuad(){
-    mkgl::del_arr(&dstate->dmesh.vao);
-    mkgl::del_buffer(&dstate->dmesh.vbo);
-    mkgl::del_buffer(&dstate->dmesh.ebo);
+    mkgl::del_arr(&dstate->dmesh.buffer.vao);
+    mkgl::del_buffer(&dstate->dmesh.buffer.vbo);
+    mkgl::del_buffer(&dstate->dmesh.buffer.ebo);
 }
 
 void mkr::UnloadDefaultBatch(){
@@ -146,21 +151,21 @@ void mkr::UnloadDefaultBatch(){
     dstate->dbatch.vertices.clear();
 }
 
-void mkr::sendVertex(Vec2 position, Vec2 size, Color color, Vec2 uv){
+void mkr::sendVertex(Vec2 position, Vec2 size, color color, Vec2 uv){
     dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { uv.x, uv.x }});
     dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { uv.y, uv.x }});
     dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.y, uv.y }});
     dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.x, uv.y }});
 }
 
-void mkr::sendVertex(Vec2 position, Vec2 size, Color color, float u0, float v0, float u1, float v1){
+void mkr::sendVertex(Vec2 position, Vec2 size, color color, float u0, float v0, float u1, float v1){
     dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { u0, v0 }});
     dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { u1, v0 }});
     dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u1, v1 }});
     dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u0, v1 }});
 }
 
-void mkr::sendIndices(uint base){
+void mkr::sendIndices(uint32_t base){
     dstate->dbatch.indices.push_back(base + 0);
     dstate->dbatch.indices.push_back(base + 1);
     dstate->dbatch.indices.push_back(base + 3);
@@ -189,7 +194,7 @@ void mkr::flush(){
 
     mkgl::buf_sub_data(
         &dstate->dbatch.ebo, dstate->dbatch.indices.data(),
-        dstate->dbatch.indices.size() * sizeof(uint)
+        dstate->dbatch.indices.size() * sizeof(uint32_t)
     );
 
     mkgl::bind_arr_buf(&dstate->dbatch.vao);
@@ -198,7 +203,7 @@ void mkr::flush(){
 
         drawElements(
             d.count,
-            reinterpret_cast<void*>(d.start * sizeof(uint))
+            reinterpret_cast<void*>(d.start * sizeof(uint32_t))
         );
     }
     mkgl::arr_unbind();

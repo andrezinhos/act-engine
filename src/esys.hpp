@@ -7,7 +7,7 @@ struct Sound{
     Sfx* data;
     int id;
 
-    void load(cstr path);
+    void load(const char*  path);
     void play();
     void pitch(double amount);
 };
@@ -16,7 +16,7 @@ struct Music{
     Stream* data;
     int id;
 
-    void load(cstr path);
+    void load(const char*  path);
     void play();
     void stop();
     void pause();
@@ -28,7 +28,7 @@ struct Rect{
 
     void pos(float x, float y);
     void size(int x, int y);
-    void draw(Color color);
+    void draw(color color);
 };
 
 struct Sprite{
@@ -36,7 +36,7 @@ struct Sprite{
     Vec2 position;
     int id;
 
-    void load(cstr path);
+    void load(const char*  path);
     void pos(float x, float y);
     void size(int x, int y);
     void draw();
@@ -48,10 +48,10 @@ struct Text{
     Vec2 position;
     int id;
 
-    void load(cstr path);
+    void load(const char*  path);
     void pos(int x, int y);
     void spacing(double space);
-    void draw(cstr text, float size, Color color);
+    void draw(const char*  text, float size, color color);
 };
 
 struct Anim2D{
@@ -63,7 +63,7 @@ struct Anim2D{
     bool playing;
 
     void duration(double dur);
-    void load(cstr path);
+    void load(const char*  path);
     void add_frame(int x, int y, int w, int h);
     void pos(int x, int y);
     void size(double size);

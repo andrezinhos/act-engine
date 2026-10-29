@@ -38,9 +38,7 @@ function Menu.Init()
     -- })
 
     anim:pos(100, 100)
-
     anim:size(128)
-
     anim:duration(2)
 end
 

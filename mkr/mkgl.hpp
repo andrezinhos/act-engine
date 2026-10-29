@@ -1,6 +1,7 @@
 #pragma once
 #include "glad.h"
 #include "mkmath.hpp"
+#include "tgt.h"
 #include "mktypes.h"
 #include <stdint.h>
 
@@ -49,13 +50,13 @@ namespace mkgl{
     void bind_vertex_attrib(uint32_t* vao, int attrib, int layout);
 
     char* loadShaderFile(const char* path);
-    // void set_initial_vertex(vertex* data);
+    void set_initial_vertex(vertex* data);
 
     bool create_shader(uint32_t* sh, const char* src, int target);
     bool gen_shader_prog(uint32_t* prog, uint32_t vs, uint32_t fs);
     void delete_shaders(uint32_t vs, uint32_t fs);
     void setUniformMat(int loc, Matrix* mat);
-    // void clearScreen(Color color);
+    void clearScreen(color color);
 
     void del_arr(uint32_t* obj);
     void del_buffer(uint32_t* obj);

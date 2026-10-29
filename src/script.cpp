@@ -174,7 +174,7 @@ void script::start_funcs(){
     core_table["win_flag"] = [](Flags flag){ core::WindowFlag(flag); };
     core_table["get_fps"] = [](){
         std::string fps_string = "FPS: " + std::to_string(Time::GetFrames());
-        mktxt::RenderText(fps_string.c_str(), {10, 50}, 30, White);
+        mktxt::render_text(fps_string.c_str(), {10, 50}, 30, White);
     };
     core_table["delta"] = Time::GetDelta;
 

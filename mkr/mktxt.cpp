@@ -5,23 +5,7 @@
 #include "mktex.hpp"
 #include "mkr.hpp"
 #include <cstddef>
-#include <iostream>
 #include <stdio.h>
-
-int font_init(const char* path, Font* font){
-    int load = tfb_load(path, &font->data, &font->base.info);
-
-    if (!load) {
-        return 1;
-    }
-
-    return 0;
-}
-
-void font_free(Font* font){
-    free(font->data);
-    font->data = NULL;
-}
 
 Texture GenTexture(const void* data, int width, int height){
     Texture tex = {};
@@ -100,7 +84,9 @@ Font mktxt::DefaultFont(){
 };
 
 void mktxt::UnloadDefaultFont(){
-    if(dstate->dfont.fontTex.id != 0) glDeleteTextures(1, &dstate->dfont.fontTex.id);
+    if(dstate->dfont.fontTex.id != 0) {
+        glDeleteTextures(1, &dstate->dfont.fontTex.id);
+    }
 }
 
 Font mktxt::load_font(const char* path){
@@ -109,7 +95,7 @@ Font mktxt::load_font(const char* path){
     font.spacing = 1.0f;
 
     if (tfb_load(path, &font.data, &font.base.info) != 0){
-        return {};
+        return font;
     }
 
     tfb_set_atlas(&font.base, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
@@ -160,12 +146,14 @@ Font mktxt::load_font(const char* path){
     return font;
 };
 
-void mktxt::UnloadFont(Font* font){
-    if (font->fontTex.id != 0) glDeleteTextures(1, &font->fontTex.id);
-    std::cout << "[INFO] FONT UNLOADED\n";
+void mktxt::unload_font(Font* font){
+    if (font->fontTex.id != 0) {
+        glDeleteTextures(1, &font->fontTex.id);
+        printf("[INFO] FONT UNLOADED\n");
+    }
 }
 
-void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minSize, color color){
+void mktxt::render_text_extended(Font *font, const char* text, Vec2 position, float minSize, color color){
     float scale = minSize / FONT_SIZE_DEFAULT;
     float lineHeight = FONT_SIZE_DEFAULT * scale * font->spacing;
     float startX = position.x;
@@ -178,9 +166,13 @@ void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minS
             continue;
         }
 
-        if (c == '\r') continue;
+        if (c == '\r') {
+            continue;
+        }
 
-        if (c < 32 || c >= 96) continue;
+        if (c < 32 || c >= 127) {
+            continue;
+        }
         glyph* ch = &font->pack[c - 32];
 
         Rectangle src = {
@@ -190,7 +182,7 @@ void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minS
             (float)(ch->y1 - ch->y0)
         };
 
-        Vec2 pos  = {
+        Vec2 pos = {
             position.x + (ch->xoff * scale),
             position.y + (ch->yoff * scale)
         };
@@ -212,6 +204,6 @@ void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minS
     }
 }
 
-void mktxt::RenderText(const char* text, Vec2 position, float minSize, color color){
-    RenderTextEx(&dstate->dfont, text, position, minSize, color);
+void mktxt::render_text(const char* text, Vec2 position, float minSize, color color){
+    render_text_extended(&dstate->dfont, text, position, minSize, color);
 }

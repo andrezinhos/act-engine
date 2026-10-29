@@ -23,8 +23,8 @@ namespace mktxt{
     void UnloadDefaultFont();
 
     Font load_font(const char* path);
-    void UnloadFont(Font* font);
+    void unload_font(Font* font);
 
-    void RenderTextEx(Font* font, const char* text, Vec2 position, float size, color color);
-    void RenderText(const char* text, Vec2 position, float size, color color);
+    void render_text_extended(Font* font, const char* text, Vec2 position, float size, color color);
+    void render_text(const char* text, Vec2 position, float size, color color);
 };
