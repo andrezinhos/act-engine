@@ -24,6 +24,7 @@ void pwra_audio_quality(int quality){
 }
 
 bool pwra_start_audio(){
+    printf("[INFO] STARTING AUDIO...\n");
     ma_engine_config e_config = ma_engine_config_init();
 
     master.format = ma_format_f32;

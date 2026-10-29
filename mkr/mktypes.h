@@ -1,43 +1,15 @@
 #pragma once
-
-typedef unsigned int uint;
-typedef unsigned char byte;
-typedef const char* cstr;
+#include <stdint.h>
 
 #define freeptr(p) do {free(p); p = nullptr;} while(0)
 
-typedef struct {
-    float r;
-    float g;
-    float b;
-} Color;
-
-#define White (Color){1.0f, 1.0f, 1.0f}
-#define Black (Color){0.0f, 0.0f, 0.0f}
-#define Red (Color){1.0f, 0.0f, 0.0f}
-#define Green (Color){0.0f, 1.0f, 0.0f}
-#define Blue (Color){0.0f, 0.0f, 1.0f}
-#define Yellow (Color){1.0f, 1.0f, 0.0f}
-
-typedef enum{
-    NORMAL,
-    HIDDEN,
-    DISABLED
-} Cursor;
-
-typedef struct {
-    float position[3];
-    float color[3];
-    float uv[2];
-} vertex;
-
 typedef struct Texture {
-    uint id;
+    uint32_t id;
     int width, height;
 } Texture;
 
 typedef struct{
-    uint id;
+    uint32_t id;
 
     int uview;
     int umodel;
@@ -49,27 +21,8 @@ typedef struct Rectangle{
     float width, height;
 } Rectangle;
 
-
 typedef struct {
-    uint start;
-    uint count;
+    uint32_t start;
+    uint32_t count;
     Texture* texref;
 } DCall;
-
-typedef struct {
-    vertex* verts;
-    int count;
-    int cap;
-} ArenaV;
-
-typedef struct {
-    uint inds;
-    int count;
-    int cap;
-} ArenaI;
-
-typedef struct {
-    DCall* dc;
-    int count;
-    int cap;
-} ArenaDC;

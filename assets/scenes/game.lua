@@ -9,8 +9,8 @@ function Game.Init()
     smile:load("assets/sprites/smile.png")
     smile:size(100, 100)
 
-    local posX = (render.win_width() / 2) - (smile.source.width / 2)
-    local posY = (render.win_height() / 2) - (smile.source.height / 2)
+    local posX = (eng.win_width() / 2) - (smile.source.width / 2)
+    local posY = (eng.win_height() / 2) - (smile.source.height / 2)
 
     theme:load("assets/audio/t1.ogg")
     smile:pos(posX, posY);

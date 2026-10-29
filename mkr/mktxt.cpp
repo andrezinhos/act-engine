@@ -1,37 +1,26 @@
-#include "mktex.hpp"
-#include "mktxt.hpp"
-#include "mkgl.hpp"
-#include "mkr.hpp"
-#include <iostream>
 #define STB_TRUETYPE_IMPLEMENTATION
-#include "stb_truetype.h"
+#define TFB_IMPL
 
-byte* loadBytes(const char* path, size_t* size){
-    FILE* file = fopen(path, "rb");
+#include "mktxt.hpp"
+#include "mktex.hpp"
+#include "mkr.hpp"
+#include <cstddef>
+#include <iostream>
+#include <stdio.h>
 
-    if (!file) return nullptr;
+int font_init(const char* path, Font* font){
+    int load = tfb_load(path, &font->data, &font->base.info);
 
-    fseek(file, 0, SEEK_END);
-    size_t fsize = ftell(file);
-    rewind(file);
-
-    byte* buffer = (byte*)malloc(fsize);
-    if (!buffer){
-        std::cout << "ERROR: file couldn't be loaded\n";
-        fclose(file);
-        return nullptr;
+    if (!load) {
+        return 1;
     }
 
-    size_t outsize = fread(buffer, 1, fsize, file);
-    fclose(file);
+    return 0;
+}
 
-    if (outsize != fsize){
-        freeptr(buffer);
-        return nullptr;
-    }
-
-    if (size) *size = outsize;
-    return buffer;
+void font_free(Font* font){
+    free(font->data);
+    font->data = NULL;
 }
 
 Texture GenTexture(const void* data, int width, int height){
@@ -50,74 +39,63 @@ Texture GenTexture(const void* data, int width, int height){
     return tex;
 }
 
-bool GetFontAtlas(const byte* data, byte* atlas_data, CharPack* pack){
-    bool result = stbtt_BakeFontBitmap(
-        data, 0,
-        FONT_SIZE_DEFAULT,
-        atlas_data,
-        FONT_ATLAS_WIDTH,
-        FONT_ATLAS_HEIGHT,
-        32,
-        FONT_TOTAL_CHARS,
-        pack
-    );
-
-    if (!result){
-        std::cout << "[INFO] ERROR TO SETUP FONT (BITMAP)\n";
-        return false;
-    }
-    return true;
-}
-
 Font mktxt::DefaultFont(){
     Font font = {};
 
     font.spacing = 1.0f;
-    size_t size = 0;
-    font.data = loadBytes("eng/Tiny5.ttf", &size);
 
-    byte* atlas = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT);
+    if (tfb_load("eng/Tiny5.ttf", &font.data, &font.base.info) != 0){
+        return font;
+    }
+    else {
+        printf("[INFO] FONT DEFAULT FOUNDED\n");
+    }
 
-    GetFontAtlas(font.data, atlas, font.cpack);
+    tfb_set_atlas(&font.base, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
+    tfb_font_metrics(&font.base);
 
-    byte* rgba = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT * 4);
+    int pen_x = 0;
+    int pen_y = 0;
+    int row_h = 0;
+
+    for (int i = 0; i < 96; i++){
+        int codep = i + 32;
+        int gw, gh;
+
+        tfb_glyph_metrics(&font.base, font.pack, i, codep, &gw, &gh);
+
+        if (gw <= 0 || gh <= 0) {
+            continue;
+        }
+
+        if (pen_x + gw + 1 > font.base.atlas.width){
+            pen_x = 0;
+            pen_y += row_h + 1;
+            row_h = 0;
+        }
+
+        tfb_make_glyph(&font.base, codep, pen_x, pen_y, gw, gh);
+        tfb_glyph_set(font.pack, i, gw, gh, pen_x, pen_y);
+
+        // prepare next glyph
+        pen_x += gw + 1;
+        if (gh > row_h) row_h = gh;
+    }
+
+    // stbi_write_png("baking.png", font.base.atlas.width, font.base.atlas.height, 1, font.base.atlas.data, font.base.atlas.width);
+
+    uint8_t* rgba = (uint8_t*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT * 4);
     for(int i = 0; i < 512*512; i++){
         rgba[i*4 + 0] = 255;
         rgba[i*4 + 1] = 255;
         rgba[i*4 + 2] = 255;
-        rgba[i*4 + 3] = atlas[i];
+        rgba[i*4 + 3] = font.base.atlas.data[i];
     }
     font.fontTex = GenTexture(rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
 
-    freeptr(font.data);
-    freeptr(atlas);
-    freeptr(rgba);
-    return font;
-};
-
-Font mktxt::LoadFont(const char* path){
-    Font font = {};
-
-    font.spacing = 1.0f;
-    size_t size = 0;
-    font.data = loadBytes(path, &size);
-
-    byte* atlas = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT);
-
-    GetFontAtlas(font.data, atlas, font.cpack);
-
-    byte* rgba = (byte*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT * 4);
-    for(int i = 0; i < 512*512; i++){
-        rgba[i*4 + 0] = 255;
-        rgba[i*4 + 1] = 255;
-        rgba[i*4 + 2] = 255;
-        rgba[i*4 + 3] = atlas[i];
-    }
-    font.fontTex = GenTexture(rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
-
-    freeptr(font.data);
-    freeptr(atlas);
-    freeptr(rgba);
+    free(font.data);
+    free(font.base.atlas.data);
+    free(rgba);
     return font;
 };
 
@@ -125,17 +103,74 @@ void mktxt::UnloadDefaultFont(){
     if(dstate->dfont.fontTex.id != 0) glDeleteTextures(1, &dstate->dfont.fontTex.id);
 }
 
+Font mktxt::load_font(const char* path){
+    Font font = {};
+
+    font.spacing = 1.0f;
+
+    if (tfb_load(path, &font.data, &font.base.info) != 0){
+        return {};
+    }
+
+    tfb_set_atlas(&font.base, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
+    tfb_font_metrics(&font.base);
+
+    int pen_x = 0;
+    int pen_y = 0;
+    int row_h = 0;
+
+    for (int i = 0; i < 96; i++){
+        int codep = i + 32;
+        int gw, gh;
+
+        tfb_glyph_metrics(&font.base, font.pack, i, codep, &gw, &gh);
+
+        if (gw <= 0 || gh <= 0) {
+            continue;
+        }
+
+        if (pen_x + gw + 1 > font.base.atlas.width){
+            pen_x = 0;
+            pen_y += row_h + 1;
+            row_h = 0;
+        }
+
+        tfb_make_glyph(&font.base, codep, pen_x, pen_y, gw, gh);
+        tfb_glyph_set(font.pack, i, gw, gh, pen_x, pen_y);
+
+        // prepare next glyph
+        pen_x += gw + 1;
+        if (gh > row_h) row_h = gh;
+    }
+
+    // stbi_write_png("baking.png", font.base.atlas.width, font.base.atlas.height, 1, font.base.atlas.data, font.base.atlas.width);
+
+    uint8_t* rgba = (uint8_t*)malloc(FONT_ATLAS_WIDTH * FONT_ATLAS_HEIGHT * 4);
+    for(int i = 0; i < 512*512; i++){
+        rgba[i*4 + 0] = 255;
+        rgba[i*4 + 1] = 255;
+        rgba[i*4 + 2] = 255;
+        rgba[i*4 + 3] = font.base.atlas.data[i];
+    }
+    font.fontTex = GenTexture(rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
+
+    free(font.data);
+    free(font.base.atlas.data);
+    free(rgba);
+    return font;
+};
+
 void mktxt::UnloadFont(Font* font){
     if (font->fontTex.id != 0) glDeleteTextures(1, &font->fontTex.id);
     std::cout << "[INFO] FONT UNLOADED\n";
 }
 
-void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minSize, Color color){
+void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minSize, color color){
     float scale = minSize / FONT_SIZE_DEFAULT;
     float lineHeight = FONT_SIZE_DEFAULT * scale * font->spacing;
     float startX = position.x;
 
-    for(int i = 0; i < text[i]; i++){
+    for(int i = 0; text[i] != '\0'; i++){
         char c = text[i];
         if (c == '\n'){
             position.x = startX;
@@ -145,8 +180,8 @@ void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minS
 
         if (c == '\r') continue;
 
-        if (c < 32 || c >= 127) continue;
-        stbtt_bakedchar* ch = &font->cpack[c - 32];
+        if (c < 32 || c >= 96) continue;
+        glyph* ch = &font->pack[c - 32];
 
         Rectangle src = {
             (float)ch->x0,
@@ -177,6 +212,6 @@ void mktxt::RenderTextEx(Font *font, const char* text, Vec2 position, float minS
     }
 }
 
-void mktxt::RenderText(const char* text, Vec2 position, float minSize, Color color){
+void mktxt::RenderText(const char* text, Vec2 position, float minSize, color color){
     RenderTextEx(&dstate->dfont, text, position, minSize, color);
 }
