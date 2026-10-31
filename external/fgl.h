@@ -30,7 +30,7 @@ typedef struct fgl_buffer{
 extern "C" {
 #endif
 
-FGLDEF size_t buffer_size(size_t data);
+FGLDEF size_t vertex_size(size_t data);
 FGLDEF size_t element_size(size_t data);
 
 FGLDEF void fgl_enable_blend(bool flag);
@@ -61,9 +61,10 @@ FGLDEF int fgl_attach_shader(uint32_t prog, uint32_t vs, uint32_t fs);
 
 FGLDEF void fgl_uniform_location(uint32_t shader, uint32_t* uniform, const char* loc);
 FGLDEF void fgl_uniform_mat(uint32_t* shader, uint32_t* loc, const float* value);
-FGLDEF void fgl_use_prog(uint32_t* prog, uint32_t* uniform);
+FGLDEF void fgl_uniform_prog(uint32_t* prog, uint32_t* uniform);
 
 FGLDEF int fgl_create_texture(uint32_t* id, int target, int width, int height, void* pixels);
+FGLDEF void fgl_texture_param(uint32_t id, int param_name, int param);
 FGLDEF void fgl_texture_filter(uint32_t id, int filter);
 FGLDEF void fgl_texture_repeat(uint32_t id);
 
@@ -111,7 +112,7 @@ static inline char* load_file(const char* path){
     return buffer;
 }
 
-FGLDEF size_t buffer_size(size_t data){
+FGLDEF size_t vertex_size(size_t data){
     return sizeof(vertex) * data;
 }
 FGLDEF size_t element_size(size_t data){
@@ -312,14 +313,14 @@ FGLDEF void fgl_uniform_mat(uint32_t *shader, uint32_t *loc, const float* value)
     glProgramUniformMatrix4fv(*shader, *loc, 1, GL_FALSE, value);
 }
 
-FGLDEF void fgl_use_prog(uint32_t *shader, uint32_t *uniform){
+FGLDEF void fgl_uniform_prog(uint32_t *shader, uint32_t *uniform){
     glProgramUniform1i(*shader, *uniform, 0);
 }
 
 FGLDEF int fgl_create_texture(uint32_t* id, int target, int width, int height, void* pixels){
 	glCreateTextures(target, 1, id);
 
-	if (id == 0){
+	if (*id == 0){
 	    printf("error: failed to create texture\n");
 		return 1;
 	}
@@ -334,14 +335,18 @@ FGLDEF int fgl_create_texture(uint32_t* id, int target, int width, int height, v
 	return 0;
 }
 
+FGLDEF void fgl_texture_param(uint32_t id, int param_name, int param){
+    glTextureParameteri(id, param_name, param);
+}
+
 FGLDEF void fgl_texture_filter(uint32_t id, int filter){
-    glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, filter);
-    glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, filter);
+    fgl_texture_param(id, GL_TEXTURE_MIN_FILTER, filter);
+    fgl_texture_param(id, GL_TEXTURE_MAG_FILTER, filter);
 }
 
 FGLDEF void fgl_texture_repeat(uint32_t id){
-    glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    fgl_texture_param(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    fgl_texture_param(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
 FGLDEF void fgl_texture_bind(int unit, uint32_t id){

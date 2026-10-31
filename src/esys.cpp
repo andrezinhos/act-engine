@@ -1,5 +1,6 @@
 #include "esys.hpp"
 #include "mkr.hpp"
+#include "mktex.hpp"
 #include "pwra.h"
 #include "reg.hpp"
 #include <vector>
@@ -45,7 +46,7 @@ void Sprite::draw(){
             static_cast<float>(source->width),
             static_cast<float>(source->height)
         };
-        mkr::RenderTexture(source, position, size, White);
+        mktex::render_tex(source, position, size, White);
     }
 }
 
@@ -55,7 +56,7 @@ void Sprite::draw_area(Rect& rec){
             static_cast<float>(source->width),
             static_cast<float>(source->height)
         };
-        mkr::RenderTextureRec(source, rec.source, position, size, White);
+        mktex::render_tex_rect(source, rec.source, position, size, White);
     }
 }
 

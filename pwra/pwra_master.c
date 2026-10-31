@@ -13,25 +13,13 @@ void audio_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_ui
     (void)pInput;
 }
 
-void pwra_audio_channels(int amount){
-    master.custom_opts = true;
-    master.channels = amount;
-}
-
-void pwra_audio_quality(int quality){
-    master.custom_opts = true;
-    master.sampleRate = quality;
-}
-
-bool pwra_start_audio(){
+int pwra_start_audio(){
     printf("[INFO] STARTING AUDIO...\n");
     ma_engine_config e_config = ma_engine_config_init();
 
-    master.format = ma_format_f32;
-
     if (!master.custom_opts){
-        master.channels = 1;
-        master.sampleRate = 44100;
+        master.channels = 2;
+        master.sampleRate = 48000;
     }
 
     e_config.channels = master.channels;
@@ -41,32 +29,31 @@ bool pwra_start_audio(){
     ma_result einit = ma_engine_init(&e_config, &master.engine);
     if (einit != MA_SUCCESS){
         printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", einit);
-        return false;
+        return 1;
     }
 
     ma_result sginit = ma_sound_group_init(&master.engine, 0, NULL, &master.sound_group);
     if (sginit != MA_SUCCESS){
         printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", sginit);
-        return false;
+        return 1;
     }
 
     ma_result estart = ma_engine_start(&master.engine);
     if (estart != MA_SUCCESS){
         printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", estart);
         ma_engine_uninit(&master.engine);
-        return false;
+        return 1;
     }
 
+    ma_device* pDevice = ma_engine_get_device(&master.engine);
+    printf("[INFO] BACKEND: %s | ", ma_get_backend_name(pDevice->pContext->backend));
+    
+    if (master.channels == 2){
+        printf("STEREO CHANNEL : %d Hz\n", master.sampleRate);
+    }
+    
     printf("[INFO] AUDIO INITIALIZED\n");
-
-#ifdef _WIN32
-    printf("[INFO] AUDIO BACKEND (WINDOWS): %s\n", ma_get_backend_name(master.backend));
-#elif __linux__
-    printf("[INFO] AUDIO BACKEND (LINUX): %s\n", ma_get_backend_name(master.backend));
-#elif __APPLE__
-    printf("[INFO] AUDIO BACKEND (MAC): %s\n", ma_get_backend_name(master.backend));
-#endif
-    return true;
+    return 0;
 }
 
 void pwra_end_audio(){
@@ -77,7 +64,6 @@ void pwra_end_audio(){
 
     printf("[INFO] AUDIO UNINITIALIZED\n");
 }
-
 
 void check_error(const char *msg, ma_result res){
     printf("%s: ", msg);
@@ -97,7 +83,7 @@ void check_error(const char *msg, ma_result res){
 }
 
 void pwra_set_master_volume(double vol){
-    ma_sound_group_set_volume(&master.sound_group, vol);
+    ma_engine_set_volume(&master.engine, vol);
 }
 
 void pwra_play_sfx(Sfx* sfx){

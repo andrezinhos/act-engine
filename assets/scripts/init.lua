@@ -1,9 +1,6 @@
 eng.win_flag(resizable)
 eng.start(800, 600, "Window")
 
-audio.quality(high)
-audio.channels(stereo)
-
 eng.initial_scene("menu.lua")
 
 -- render.cursor(hidden);

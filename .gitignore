@@ -2,6 +2,8 @@ compile_commands.json
 
 __cmake_systeminformation/
 
+*.exe
+
 bll/
 
 audio/

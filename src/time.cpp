@@ -1,49 +1,51 @@
-#include "time.hpp"
+#include "core.hpp"
 #include "glfw/glfw3.h"
 #include <thread>
 #include <chrono>
 
 constexpr double FPS_TARGET = 1.0 / 72.0;
 
-double Time::lastTime = 0.0;
-float Time::delta = 0.0f;
+double engine::time::lastTime = 0.0;
+float engine::time::delta = 0.0f;
 
-int Time::fps = 0;
-int Time::frameCount = 0;
-float Time::fpsTimer = 0.0f;
+int engine::time::fps = 0;
+int engine::time::frameCount = 0;
+float engine::time::fpsTimer = 0.0f;
 
-void Time::StartTime(){
+void engine::time::start_time(){
     lastTime = glfwGetTime();
 }
 
-float Time::GetDelta(){
+float engine::time::get_delta(){
     return delta;
 }
 
-int Time::GetFrames() {
+int engine::time::get_frames() {
     return fps;
 }
 
-void Time::WaitTime(){
+void engine::time::wait(){
     std::this_thread::sleep_for(
         std::chrono::milliseconds(1)
     );
 }
 
-void Time::WaitFor(double value){
+void engine::time::wait_for(double value){
     std::this_thread::sleep_for(
         std::chrono::duration<double>(value)
     );
 }
 
-bool Time::Clock(){
+bool engine::time::clock(){
     double newTime = glfwGetTime();
     double elapsed = newTime - lastTime;
 
     if (elapsed < FPS_TARGET){
         return false;
     }
-    else if (elapsed >= FPS_TARGET) WaitTime();
+    else if (elapsed >= FPS_TARGET) {
+        wait();
+    }
 
     delta = elapsed;
     lastTime = newTime;
@@ -51,7 +53,7 @@ bool Time::Clock(){
     return true;
 }
 
-void Time::CountFps(){
+void engine::time::count_fps(){
     frameCount += 1;
     fpsTimer += delta;
 

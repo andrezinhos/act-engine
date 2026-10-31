@@ -3,6 +3,7 @@
 #include "mktxt.hpp"
 #include "pwra.h"
 #include "ios.hpp"
+#include <stdio.h>
 #include <string_view>
 
 static std::vector<std::unique_ptr<Texture>> texmap = {};
@@ -21,7 +22,7 @@ int reg::tex_register(std::string_view path){
     auto tex = std::make_unique<Texture>();
 
     Image image = ios::LoadImage(path);
-    *tex = mktex::LoadTextureSrc(image.data, image.width, image.height);
+    *tex = mktex::load_tex_src(image.data, image.width, image.height);
     ios::DeleteImage(image);
 
     texmap.push_back(std::move(tex));
@@ -32,11 +33,7 @@ int reg::tex_register(std::string_view path){
 int reg::sfx_register(std::string_view path){
     auto sfx = std::make_unique<Sfx>();
 
-    size_t size = 0;
-    sfx->data = ios::LoadBytes(path.data(), size);
-
-    pwra_load_sfx(sfx->data, size, &sfx->decoder, &sfx->source);
-
+    pwra_load_sfx(path.data(), sfx.get());
     soundmap.push_back(std::move(sfx));
 
     return soundmap.size() - 1;
@@ -45,8 +42,7 @@ int reg::sfx_register(std::string_view path){
 int reg::stream_register(std::string_view path){
     auto music = std::make_unique<Stream>();
 
-    pwra_load_stream(path.data(), &music->decoder, &music->source);
-
+    pwra_load_stream(path.data(), music.get());
     musicmap.push_back(std::move(music));
 
     return musicmap.size() - 1;
@@ -61,20 +57,25 @@ int reg::font_register(std::string_view path){
     return fontmap.size() - 1;
 }
 
-Texture* reg::getTex(int id) { 
-    return texmap[id].get(); 
+Texture* reg::getTex(int id) {
+    return texmap[id].get();
 };
-Sfx* reg::getSfx(int id) { 
-    return soundmap[id].get(); 
+
+Sfx* reg::getSfx(int id) {
+    return soundmap[id].get();
 };
-Stream* reg::getMusic(int id) { 
+
+Stream* reg::getMusic(int id) {
     return musicmap[id].get();
 };
-Font* reg::getFont(int id) { return fontmap[id].get(); };
+
+Font* reg::getFont(int id) {
+    return fontmap[id].get();
+};
 
 void reg::clear_tex(){
     for (auto& tex : texmap){
-        if (tex) mktex::UnloadTexture(tex.get());
+        if (tex) mktex::unload_tex(tex.get());
     }
     texmap.clear();
 }

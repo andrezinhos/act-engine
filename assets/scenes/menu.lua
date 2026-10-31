@@ -7,7 +7,6 @@ local jump = Sound.new()
 local cam = Cam2D.new(Vec2.zero(), 0, 1)
 
 local txt = Text.new()
-
 local anim = Anim2D.new()
 
 function Menu.Init()
@@ -45,10 +44,14 @@ end
 anim.playing = false
 
 function Menu.Update(dt)
+
+    if (ios.key_pressed(key.q)) then
+        jump:play()
+    end
+
     if (ios.key_pressed(key.e)) and not anim.playing then
-        -- jump:play()
-        eng.change_scene("game.lua")
-        -- anim.playing = true
+        -- eng.change_scene("game.lua")
+        anim.playing = true
     end
 
     if (anim.playing) then

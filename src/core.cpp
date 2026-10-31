@@ -4,33 +4,34 @@
 #include "mkr.hpp"
 #include "reg.hpp"
 #include "scene.hpp"
-#include "time.hpp"
 #include "reg.hpp"
 #include <iostream>
 
-constexpr const char* VERSION = "0.15.7";
+constexpr const char* VERSION = "0.15.9";
 
 static std::unique_ptr<Scene> currScene = nullptr;
 static std::unique_ptr<Scene> nextScene = nullptr;
 
-void core::WindowFlag(Flags flag){
-    if (flag == RESIZABLE) flags_active[0] = 1;
-    if (flag == MAXIMIZED) flags_active[1] = 1;
-    if (flag == FULLSCREEN) flags_active[2] = 1;
+void engine::core::win_flag(flags flag){
+    if (flag == flags::resizable) flags_active[0] = 1;
+    if (flag == flags::maximized) flags_active[1] = 1;
+    if (flag == flags::fullscreen) flags_active[2] = 1;
 }
 
-void core::setScene(std::unique_ptr<Scene> scene){
+void engine::core::set_scene(std::unique_ptr<Scene> scene){
     nextScene = std::move(scene);
 }
 
-void core::InitialScene(std::unique_ptr<Scene> initial){
+void engine::core::initial_scene(std::unique_ptr<Scene> initial){
     currScene = std::move(initial);
     currScene->Init();
 
-    while(Loop()) {
-        if (!Time::Clock()) continue;
+    while(loop()) {
+        if (!time::clock()) {
+            continue;
+        }
 
-        Time::CountFps();
+        time::count_fps();
         ios::InputUpdate();
 
         if (nextScene){
@@ -40,17 +41,17 @@ void core::InitialScene(std::unique_ptr<Scene> initial){
         }
 
         mkr::ScreenClear(Black);
-        currScene->Update(Time::GetDelta());
+        currScene->Update(time::get_delta());
 
         mkr::RenderBegin();
         currScene->Draw();
         mkr::RenderEnd();
     }
 
-    Finish();
+    finish();
 }
 
-void core::MainWindow(int width, int height, const char *title){
+void engine::core::main_window(int width, int height, const char *title){
 
     if (mkr::configInit()) {
         std::cout << "ACT ENGINE v" << VERSION << "\n";
@@ -61,7 +62,7 @@ void core::MainWindow(int width, int height, const char *title){
     bool win_started = mkr::startWindow(width, height, title);
 
     if (win_started){
-        Time::StartTime();
+        time::start_time();
         mkr::Initialize();
         mkr::setWindowIcon("eng/w_icon.png");
         pwra_start_audio();
@@ -77,16 +78,17 @@ bool special_esc(){
 	return glfwGetKey(wmain.main, 256) == 1;
 }
 
-bool core::Loop(){
-    if (glfwWindowShouldClose(wmain.main) ||
-        special_esc()) return false;
+bool engine::core::loop(){
+    if (glfwWindowShouldClose(wmain.main) || special_esc()) {
+        return false;
+    }
     return true;
 }
 
-void core::Finish(){
-    reg::clear();
+void engine::core::finish(){
     currScene.reset();
     nextScene.reset();
+    reg::clear();
     pwra_end_audio();
     mkr::Shutdown();
 }

@@ -12,8 +12,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 # executable files
 add_library(pwra SHARED
   pwra_ma.c
-  pwra_aux.c
-  pwra.c
+  pwra_cfg.c
+  pwra_master.c
 )
 
 set_target_properties(pwra PROPERTIES
@@ -28,7 +28,7 @@ target_compile_options(pwra PRIVATE
   -DNDEBUG
 )
 
-set_target_properties(pwra PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+# set_target_properties(pwra PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
 # general headers
 target_include_directories(pwra PUBLIC

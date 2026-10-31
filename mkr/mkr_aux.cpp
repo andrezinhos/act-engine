@@ -55,8 +55,12 @@ Shader mkr::DefaultShader() {
 
     fgl_create_shader_prog(&shader.id);
     fgl_attach_shader(shader.id, vs, fs);
-    
+
     fgl_uniform_location(shader.id, &shader.umodel, "uMvp");
+    fgl_uniform_location(shader.id, &shader.utex, "uTexture");
+
+    fgl_uniform_prog(&shader.id, &shader.umodel);
+    fgl_uniform_prog(&shader.id, &shader.utex);
 
     fgl_delete_shader(vs);
     fgl_delete_shader(fs);
@@ -68,7 +72,6 @@ Mesh mkr::DefaultQuad(){
     Mesh mesh = {};
 
     mesh.vertices.reserve(4);
-
 
     mkgl::set_initial_vertex(mesh.vertices.data());
     mesh.indices = {
@@ -85,13 +88,13 @@ Mesh mkr::DefaultQuad(){
     mkgl::bind_data_static(
         &mesh.buffer.vbo,
         mesh.vertices.data(),
-        mesh.vertices.size() * sizeof(vertex), GL_ARRAY_BUFFER
+        vertex_size(mesh.vertices.size()), GL_ARRAY_BUFFER
     );
 
     mkgl::bind_data_static(
         &mesh.buffer.ebo,
         mesh.indices.data(),
-        mesh.indices.size() * sizeof(uint32_t), GL_ELEMENT_ARRAY_BUFFER
+        element_size(mesh.indices.size()), GL_ELEMENT_ARRAY_BUFFER
     );
 
     mkgl::sendAttribPtr(MKR_POSITION_LAYOUT, 3, MKR_VERTEX_STRIDE, 0);
@@ -151,14 +154,7 @@ void mkr::UnloadDefaultBatch(){
     dstate->dbatch.vertices.clear();
 }
 
-void mkr::sendVertex(Vec2 position, Vec2 size, color color, Vec2 uv){
-    dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { uv.x, uv.x }});
-    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { uv.y, uv.x }});
-    dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.y, uv.y }});
-    dstate->dbatch.vertices.push_back({{ position.x,          position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { uv.x, uv.y }});
-}
-
-void mkr::sendVertex(Vec2 position, Vec2 size, color color, float u0, float v0, float u1, float v1){
+void mkr::send_vertex(Vec2 position, Vec2 size, color color, float u0, float v0, float u1, float v1){
     dstate->dbatch.vertices.push_back({{ position.x,          position.y,          0.0f },{ color.r, color.g, color.b }, { u0, v0 }});
     dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y,          0.0f },{ color.r, color.g, color.b }, { u1, v0 }});
     dstate->dbatch.vertices.push_back({{ position.x + size.x, position.y + size.y, 0.0f },{ color.r, color.g, color.b }, { u1, v1 }});

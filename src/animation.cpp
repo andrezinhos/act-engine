@@ -1,11 +1,12 @@
 #include "animation.hpp"
 #include "mkr.hpp"
-#include "time.hpp"
+#include "core.hpp"
+#include "mktex.hpp"
 
 void anim::PlayAnimation(Sheet& sheet, bool loop){
     if (sheet.end && !loop) return;
 
-    sheet.counter += Time::GetDelta();
+    sheet.counter += engine::time::get_delta();
 
     if (sheet.counter >= sheet.duration){
         sheet.counter -= sheet.duration;
@@ -23,7 +24,7 @@ void anim::PlayAnimation(Sheet& sheet, bool loop){
 }
 
 void anim::RenderAnimation(Sheet& sheet, Texture* tex, Vec2 position, float size, color color){
-    mkr::RenderTextureRec(
+    mktex::render_tex_rect(
         tex,
         sheet.frames[sheet.currFrame],
         position,

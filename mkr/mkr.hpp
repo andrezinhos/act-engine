@@ -47,13 +47,12 @@ class mkr{
 private:
     static bool createWindowContext();
     static void setWindowPosition(int width, int height);
-    static void sendVertex(Vec2 position, Vec2 size, color color, Vec2 uv);
-    static void sendVertex(Vec2 position, Vec2 size, color color, float u0, float u1, float v0, float v1);
-    static void sendIndices(uint32_t base);
     static void drawElements(size_t count, void* offset);
+public:
+    static void send_vertex(Vec2 position, Vec2 size, color color, float u0, float v0, float u1, float v1);
+    static void sendIndices(uint32_t base);
     static void limitFlush();
     static void flush();
-public:
     static bool configInit();
 
     static void setWindowIcon(const char* path);
@@ -75,13 +74,10 @@ public:
     static void UnloadDefaultBatch();
 
     static Shader LoadShader(const char* vs, const char* fs);
-    static Font LoadFontSrc(const char* path);
     static void UnloadShader(const Shader& shader);
     static void ScreenClear(color color);
 
     static void RenderRectangle(Vec2 position, Vec2 size, color color);
-    static void RenderTextureRec(Texture* tex, Rectangle rectangle, Vec2 position, Vec2 size, color color);
-    static void RenderTexture(Texture* tex, Vec2 position, Vec2 size, color color);
 
     static void RenderBegin();
     static void RenderEnd();

@@ -1,38 +1,32 @@
+#include "fgl.h"
 #define STB_TRUETYPE_IMPLEMENTATION
 #define TFB_IMPL
 
 #include "mktxt.hpp"
 #include "mktex.hpp"
 #include "mkr.hpp"
-#include <cstddef>
+#include <stddef.h>
 #include <stdio.h>
 
-Texture GenTexture(const void* data, int width, int height){
+Texture GenTexture(void* data, int width, int height){
     Texture tex = {};
-    tex.id = mktex::genTex(GL_TEXTURE_2D);
     tex.width = width;
     tex.height = height;
 
-    mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    mktex::setTexParams(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    mktex::setTexImage2D(GL_RGBA, GL_RGBA8, width, height, data);
+    mktex::create_tex(&tex.id, GL_TEXTURE_2D, width, height, data);
+    fgl_texture_repeat(tex.id);
+    fgl_texture_filter(tex.id, GL_NEAREST);
 
     return tex;
 }
 
-Font mktxt::DefaultFont(){
+Font mktxt::default_font(){
     Font font = {};
 
     font.spacing = 1.0f;
 
     if (tfb_load("eng/Tiny5.ttf", &font.data, &font.base.info) != 0){
         return font;
-    }
-    else {
-        printf("[INFO] FONT DEFAULT FOUNDED\n");
     }
 
     tfb_set_atlas(&font.base, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
@@ -77,13 +71,15 @@ Font mktxt::DefaultFont(){
     }
     font.fontTex = GenTexture(rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
 
+    // mktex::tex_valid(&font.fontTex.id);
+
     free(font.data);
     free(font.base.atlas.data);
     free(rgba);
     return font;
 };
 
-void mktxt::UnloadDefaultFont(){
+void mktxt::unload_default_font(){
     if(dstate->dfont.fontTex.id != 0) {
         glDeleteTextures(1, &dstate->dfont.fontTex.id);
     }
@@ -140,6 +136,8 @@ Font mktxt::load_font(const char* path){
     }
     font.fontTex = GenTexture(rgba, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
 
+    // mktex::tex_valid(&font.fontTex.id);
+
     free(font.data);
     free(font.base.atlas.data);
     free(rgba);
@@ -192,7 +190,7 @@ void mktxt::render_text_extended(Font *font, const char* text, Vec2 position, fl
             src.height * scale
         };
 
-        mkr::RenderTextureRec(
+        mktex::render_tex_rect(
             &font->fontTex,
             src,
             pos,

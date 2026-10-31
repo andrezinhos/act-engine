@@ -1,7 +1,6 @@
 #include "esys.hpp"
 #include "mkr.hpp"
 #include "core.hpp"
-#include "time.hpp"
 #include "ios.hpp"
 #include "script.hpp"
 #include "pwra.h"
@@ -84,18 +83,13 @@ void script::start_types(){
         "f5", Keys::F5
 	);
 
-	state["resizable"] = Flags::RESIZABLE;
-	state["max"] = Flags::MAXIMIZED;
-	state["full"] = Flags::FULLSCREEN;
+	state["resizable"] = engine::flags::resizable;
+	state["max"] = engine::flags::maximized;
+	state["full"] = engine::flags::fullscreen;
 
 	state["normal"] = Cursor::NORMAL;
 	state["hidden"] = Cursor::HIDDEN;
 	state["disabled"] = Cursor::DISABLED;
-
-	state["high"] = HIGH;
-	state["low"] = LOW;
-	state["mono"] = MONO;
-	state["stereo"] = STEREO;
 
 	state["red"] = Red;
 	state["green"] = Green;
@@ -171,25 +165,25 @@ void script::start_funcs(){
     /* CORE FUNCS */
     sol::table core_table = state.create_table();
 
-    core_table["win_flag"] = [](Flags flag){ core::WindowFlag(flag); };
+    core_table["win_flag"] = [](engine::flags flag){ engine::core::win_flag(flag); };
     core_table["get_fps"] = [](){
-        std::string fps_string = "FPS: " + std::to_string(Time::GetFrames());
+        std::string fps_string = "FPS: " + std::to_string(engine::time::get_frames());
         mktxt::render_text(fps_string.c_str(), {10, 50}, 30, White);
     };
-    core_table["delta"] = Time::GetDelta;
+    core_table["delta"] = engine::time::get_delta;
 
     core_table["initial_scene"] = [](const std::string& file){
         std::string path = "assets/scenes/"+file;
-        core::InitialScene(std::make_unique<LuaScene>(path));
+        engine::core::initial_scene(std::make_unique<LuaScene>(path));
     };
 
     core_table["change_scene"] = [](const std::string& file){
         std::string path = "assets/scenes/"+file;
-        core::setScene(std::make_unique<LuaScene>(path));
+        engine::core::set_scene(std::make_unique<LuaScene>(path));
     };
 
     core_table["start"] = [](int width, int height, std::string_view title){
-        core::MainWindow(width, height, title.data());
+        engine::core::main_window(width, height, title.data());
     };
 
     state["eng"] = core_table;
@@ -216,8 +210,6 @@ void script::start_funcs(){
     sol::table audio_table = state.create_table();
 
     audio_table["master_vol"] = [](double vol){ pwra_set_master_volume(vol); };
-    audio_table["channels"] = [](int amount){ pwra_audio_channels(amount); };
-    audio_table["quality"] = [](int qua){ pwra_audio_quality(qua); };
 
     state["audio"] = audio_table;
 

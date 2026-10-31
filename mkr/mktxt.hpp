@@ -19,8 +19,8 @@ typedef struct Font{
 } Font;
 
 namespace mktxt{
-    Font DefaultFont();
-    void UnloadDefaultFont();
+    Font default_font();
+    void unload_default_font();
 
     Font load_font(const char* path);
     void unload_font(Font* font);

@@ -36,7 +36,9 @@ bool mkr::configInit(){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    if (!result) return false;
+    if (!result) {
+        return false;
+    }
 
     return true;
 }
@@ -61,7 +63,7 @@ bool mkr::startWindow(int width, int height, const char* title){
     wmain.main = glfwCreateWindow(width, height, title, wmain.moni, nullptr);
     if (flags_active[1] == 1) glfwMaximizeWindow(wmain.main);
     if (!wmain.main){
-        printf("Error to Create Window");
+        printf("error: failed to create window\n");
         glfwTerminate();
         return false;
     }
@@ -94,17 +96,21 @@ int mkr::GetWindowHeight(){
 void mkr::Initialize(){
     dstate = new DState();
 
+    printf("[INFO] SHADER LOADING...\n");
     dstate->dshader = DefaultShader();
+    printf("[INFO] MESH LOADING...\n");
     dstate->dmesh = DefaultQuad();
+    printf("[INFO] TEXTURE LOADING...\n");
     dstate->dtex = mktex::DefaultTexture();
-    dstate->dfont = mktxt::DefaultFont();
+    printf("[INFO] FONT LOADING...\n");
+    dstate->dfont = mktxt::default_font();
     DefaultBatch();
     printf("[INFO] DEFAULT STATE LOADED\n");
 }
 
 void mkr::Shutdown(){
     mkr::UnloadDefaultBatch();
-    mktxt::UnloadDefaultFont();
+    mktxt::unload_default_font();
     mktex::UnloadDefaultTexture();
     mkr::UnloadDefaultQuad();
     mkr::UnloadDefaultShader();
@@ -150,7 +156,6 @@ void mkr::ScreenClear(color color){
 void mkr::RenderBegin(){
     glActiveTexture(GL_TEXTURE0);
     glUseProgram(dstate->dshader.id);
-    glUniform1i(dstate->dshader.utex, 0);
 }
 
 void mkr::RenderEnd(){
