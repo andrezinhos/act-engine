@@ -1,6 +1,8 @@
 #pragma once
 #include "scene.hpp"
 #include <memory>
+#include <string_view>
+#include <cstdint>
 
 namespace engine {
     enum class flags{
@@ -8,6 +10,46 @@ namespace engine {
         maximized,
         fullscreen,
     };
+
+    enum class keys {
+        W = 87,
+        A = 65,
+        S = 83,
+        D = 68,
+
+        Q = 81,
+        E = 69,
+
+        LEFT = 263,
+        RIGHT = 262,
+        UP = 265,
+        DOWN = 264,
+
+        F1 = 290,
+        F2 = 291,
+        F3 = 292,
+        F4 = 293,
+        F5 = 294,
+    };
+
+
+    class image{
+    private:
+        uint8_t* _data = nullptr;
+        int _width = 0;
+        int _height = 0;
+        int _ch = 0;
+    public:
+        image() = default;
+        ~image();
+
+        bool load(std::string_view);
+        int width() const;
+        int height() const;
+        int channels() const;
+        uint8_t* data() const;
+    };
+
 };
 
 namespace engine{
@@ -41,5 +83,14 @@ namespace engine{
 
         static bool clock();
         static void count_fps();
+    };
+
+    class io{
+    public:
+        static uint8_t* load_bytes(std::string_view path, size_t& size);
+
+    	static void input_update();
+        static bool key_down(engine::keys key);
+        static bool key_pressed(engine::keys key);
     };
 };

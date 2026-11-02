@@ -32,7 +32,7 @@ void engine::core::initial_scene(std::unique_ptr<Scene> initial){
         }
 
         time::count_fps();
-        ios::InputUpdate();
+        io::input_update();
 
         if (nextScene){
             if (currScene) currScene->Exit();

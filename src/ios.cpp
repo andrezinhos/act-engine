@@ -1,7 +1,6 @@
-#include "ios.hpp"
+#include "core.hpp"
 #include "mkr.hpp"
 #include <array>
-#include <string_view>
 #include <fstream>
 #include <iostream>
 #define STBI_NO_GIF
@@ -18,7 +17,7 @@ constexpr int MAXKEY = 350;
 std::array<int, MAXKEY> prev = {};
 std::array<int, MAXKEY> curr = {};
 
-uint8_t* ios::LoadBytes(std::string_view path, size_t& size){
+uint8_t* engine::io::load_bytes(std::string_view path, size_t& size){
     std::ifstream file;
     file.open(path.data(), std::ios::binary);
     if (!file.is_open()) return nullptr;
@@ -37,54 +36,72 @@ uint8_t* ios::LoadBytes(std::string_view path, size_t& size){
     return buffer;
 }
 
-void ios::InputUpdate(){
+void engine::io::input_update(){
     prev = curr;
 
-	for (int key = 0; key < MAXKEY; key++)
+	for (int key = 0; key < MAXKEY; key++){
 		curr.at(key) = glfwGetKey(wmain.main, key) == 1;
+	}
 }
 
-bool ios::KeyDown(Keys key){
+bool engine::io::key_down(engine::keys key){
 	return curr[static_cast<int>(key)];
 }
 
-bool ios::KeyPressed(Keys key){
+bool engine::io::key_pressed(engine::keys key){
 	return curr[static_cast<int>(key)] && !prev[static_cast<int>(key)];
 }
 
-Image ios::LoadImage(std::string_view path){
-    Image image = {};
-
+bool engine::image::load(std::string_view path){
     size_t size = 0;
-    uint8_t* file = LoadBytes(path, size);
+    uint8_t* file = io::load_bytes(path, size);
 
     if (!file) {
-        std::cout << "Image Not Founded\n";
-        return image;
+        std::cout << "error: image do not exist\n";
+        return false;
     }
 
-    image.data = stbi_load_from_memory(
+    _data = stbi_load_from_memory(
         file,
         static_cast<int>(size),
-        &image.width,
-        &image.height,
-        &image.channels,
+        &_width,
+        &_height,
+        &_ch,
         4
     );
 
-    if (!image.data){
-        std::cout << "Image Not Loaded: " << stbi_failure_reason() << "\n";
+    if (!_data){
+        std::cout << "error: failed to load image: " << stbi_failure_reason() << "\n";
         delete[] file;
         file = nullptr;
-        return image;
+        return false;
     }
 
     delete[] file;
     file = nullptr;
 
-    return image;
+    return true;
 }
 
-void ios::DeleteImage(Image &image){
-    if (image.data) stbi_image_free(image.data);
+engine::image::~image(){
+    stbi_image_free(_data);
+    _data = nullptr;
+    _width = 0;
+    _height = 0;
+}
+
+int engine::image::width() const {
+    return _width;
+}
+
+int engine::image::height() const {
+    return _height;
+}
+
+int engine::image::channels() const {
+    return _ch;
+}
+
+uint8_t* engine::image::data() const {
+    return _data;
 }

@@ -13,7 +13,7 @@ typedef struct color{
     float b;
 } color;
 
-// typedef enum{
+// typedef enum cursor {
 //     NORMAL,
 //     HIDDEN,
 //     DISABLED

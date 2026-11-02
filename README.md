@@ -16,16 +16,3 @@ useful for all the cases
 
 I decided to make a engine, mostly because I like coding,
 and I tought that I could make my own engine
-
- 
-# IMAGE SUPPORT
- - **PNG**
- - **JPEG**
- - **TGA**
-
-# AUDIO SUPPORT
-  - **WAV**
-  - **OGG**
-
-# FONT SUPPORT
-  - **TTF**

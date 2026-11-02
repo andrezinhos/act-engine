@@ -1,7 +1,6 @@
 #include "esys.hpp"
 #include "mkr.hpp"
 #include "core.hpp"
-#include "ios.hpp"
 #include "script.hpp"
 #include "pwra.h"
 #define SOL_NO_EXCEPTIONS 1
@@ -64,23 +63,23 @@ void script::start_types(){
     );
 
 	state.new_enum("key",
-		"w", Keys::W,
-		"a", Keys::A,
-		"s", Keys::S,
-		"d", Keys::D,
-		"q", Keys::Q,
-		"e", Keys::E,
+		"w", engine::keys::W,
+		"a", engine::keys::A,
+		"s", engine::keys::S,
+		"d", engine::keys::D,
+		"q", engine::keys::Q,
+		"e", engine::keys::E,
 
-        "left", Keys::LEFT,
-        "right", Keys::RIGHT,
-        "up", Keys::UP,
-        "down", Keys::DOWN,
+        "left", engine::keys::LEFT,
+        "right", engine::keys::RIGHT,
+        "up", engine::keys::UP,
+        "down", engine::keys::DOWN,
 
-        "f1", Keys::F1,
-        "f2", Keys::F2,
-        "f3", Keys::F3,
-        "f4", Keys::F4,
-        "f5", Keys::F5
+        "f1", engine::keys::F1,
+        "f2", engine::keys::F2,
+        "f3", engine::keys::F3,
+        "f4", engine::keys::F4,
+        "f5", engine::keys::F5
 	);
 
 	state["resizable"] = engine::flags::resizable;
@@ -200,8 +199,8 @@ void script::start_funcs(){
         printf("[ERROR] %s\n", msg);
     };
 
-    ios_table["key_down"] = [](Keys key){ return ios::KeyDown(key); };
-    ios_table["key_pressed"] = [](Keys key){ return ios::KeyPressed(key); };
+    ios_table["key_down"] = [](engine::keys key){ return engine::io::key_down(key); };
+    ios_table["key_pressed"] = [](engine::keys key){ return engine::io::key_pressed(key); };
 
     state["ios"] = ios_table;
 

@@ -2,7 +2,7 @@
 #include "mktex.hpp"
 #include "mktxt.hpp"
 #include "pwra.h"
-#include "ios.hpp"
+#include "core.hpp"
 #include <stdio.h>
 #include <string_view>
 
@@ -21,10 +21,10 @@ void reg::init(){
 int reg::tex_register(std::string_view path){
     auto tex = std::make_unique<Texture>();
 
-    Image image = ios::LoadImage(path);
-    *tex = mktex::load_tex_src(image.data, image.width, image.height);
-    ios::DeleteImage(image);
+    engine::image image;
+    image.load(path);
 
+    *tex = mktex::load_tex_src(image.data(), image.width(), image.height());
     texmap.push_back(std::move(tex));
 
     return texmap.size() - 1;

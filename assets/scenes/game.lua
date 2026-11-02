@@ -14,7 +14,7 @@ function Game.Init()
 
     theme:load("assets/audio/t1.ogg")
     smile:pos(posX, posY);
-    theme:play()
+    -- theme:play()
 end
 
 function Game.Update(dt)
