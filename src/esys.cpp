@@ -2,7 +2,7 @@
 #include "mkr.hpp"
 #include "mktex.hpp"
 #include "pwra.h"
-#include "reg.hpp"
+#include "core.hpp"
 #include <vector>
 
 void Rect::pos(float x, float y){
@@ -24,8 +24,8 @@ void Rect::draw(color color){
 }
 
 void Sprite::load(const char* path){
-    id = reg::tex_register(path);
-    source = reg::getTex(id);
+    id = engine::reg::tex_register(path);
+    source = engine::reg::get_tex(id);
 }
 
 void Sprite::pos(float x, float y){
@@ -61,8 +61,8 @@ void Sprite::draw_area(Rect& rec){
 }
 
 void Sound::load(const char* path){
-    id = reg::sfx_register(path);
-    data = reg::getSfx(id);
+    id = engine::reg::sfx_register(path);
+    data = engine::reg::get_sfx(id);
 }
 
 void Sound::play(){
@@ -74,8 +74,8 @@ void Sound::pitch(double amount){
 }
 
 void Music::load(const char* path){
-    id = reg::stream_register(path);
-    data = reg::getMusic(id);
+    id = engine::reg::stream_register(path);
+    data = engine::reg::get_music(id);
 }
 
 void Music::play(){
@@ -95,8 +95,8 @@ void Music::resume(){
 }
 
 void Text::load(const char* path){
-    id = reg::font_register(path);
-    source = reg::getFont(id);
+    id = engine::reg::font_register(path);
+    source = engine::reg::get_font(id);
 }
 
 void Text::pos(int x, int y){
@@ -127,8 +127,8 @@ void Anim2D::duration(double dur){
 }
 
 void Anim2D::load(const char* path){
-    id = reg::tex_register(path);
-    ref = reg::getTex(id);
+    id = engine::reg::tex_register(path);
+    ref = engine::reg::get_tex(id);
 }
 
 void Anim2D::add_frame(int x, int y, int w, int h){

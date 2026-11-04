@@ -2,9 +2,7 @@
 #include "mkr.h"
 #include "pwra.h"
 #include "mkr.hpp"
-#include "reg.hpp"
 #include "scene.hpp"
-#include "reg.hpp"
 #include <iostream>
 
 constexpr const char* VERSION = "0.15.10";

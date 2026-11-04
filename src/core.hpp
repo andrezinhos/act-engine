@@ -58,45 +58,61 @@ namespace engine {
 
 };
 
+struct Sfx;
+struct Stream;
+struct Texture;
+struct Font;
+
 namespace engine{
-    class core {
-    private:
-        static bool loop();
-        static void finish();
-    public:
-        static void set_scene(std::unique_ptr<Scene> scene);
-        static void initial_scene(std::unique_ptr<Scene> initial);
+    namespace core {
+        bool loop();
+        void finish();
+        void set_scene(std::unique_ptr<Scene> scene);
+        void initial_scene(std::unique_ptr<Scene> initial);
 
-        static void win_flag(flags flag);
-        static void main_window(int width, int height, const char* title);
+        void win_flag(flags flag);
+        void main_window(int width, int height, const char* title);
     };
 
-    class time{
-    private:
-        static double lastTime;
-        static float delta;
+    namespace time{
+        void start_time();
+        float get_delta();
+        int get_frames();
 
-        static int fps;
-        static int frameCount;
-        static float fpsTimer;
-    public:
-        static void start_time();
-        static float get_delta();
-        static int get_frames();
+        void wait();
+        void wait_for(double value);
 
-        static void wait();
-        static void wait_for(double value);
-
-        static bool clock();
-        static void count_fps();
+        bool clock();
+        void count_fps();
     };
 
-    class io{
-    public:
-        static uint8_t* load_bytes(std::string_view path, size_t& size);
+    namespace io{
+        uint8_t* load_bytes(std::string_view path, size_t& size);
 
-    	static void input_update();
-        static bool key_down(engine::keys key);
-        static bool key_pressed(engine::keys key);
+    	void input_update();
+        bool key_down(engine::keys key);
+        bool key_pressed(engine::keys key);
     };
+
+    namespace reg{
+        void init();
+
+        int tex_register(std::string_view path);
+        int sfx_register(std::string_view path);
+        int stream_register(std::string_view path);
+        int font_register(std::string_view path);
+
+        Texture* get_tex(int id);
+        Sfx* get_sfx(int id);
+        Stream* get_music(int id);
+        Font* get_font(int id);
+
+        void clear_tex();
+        void clear_sfx();
+        void clear_stream();
+        void clear_font();
+
+        void clear();
+    };
+
 };

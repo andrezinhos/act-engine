@@ -5,12 +5,13 @@
 
 constexpr double FPS_TARGET = 1.0 / 72.0;
 
-double engine::time::lastTime = 0.0;
-float engine::time::delta = 0.0f;
-
-int engine::time::fps = 0;
-int engine::time::frameCount = 0;
-float engine::time::fpsTimer = 0.0f;
+namespace {
+    double lastTime = 0.0;
+    float delta = 0.0f;
+    int fps = 0;
+    int frameCount = 0;
+    float fpsTimer = 0.0f;
+};
 
 void engine::time::start_time(){
     lastTime = glfwGetTime();
