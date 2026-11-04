@@ -59,11 +59,11 @@ FGLDEF void fgl_buffer_connect(fgl_buffer* _buf);
 FGLDEF void fgl_bind_arr(fgl_buffer* _buf);
 FGLDEF void fgl_unbind_arr();
 
-FGLDEF bool fgl_data_static(fgl_buffer* _buf, size_t size, const void* data);
-FGLDEF bool fgl_data_dynamic(fgl_buffer* _buf, size_t size, const void* data);
-FGLDEF bool fgl_sub_data(fgl_buffer* _buf, size_t size, const void* data);
+FGLDEF bool fgl_data_static(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata);
+FGLDEF bool fgl_data_dynamic(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata);
+FGLDEF bool fgl_sub_data(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata);
 
-FGLDEF void fgl_arr_attrib(fgl_buffer* _buf, int size, int layout, int offset);
+FGLDEF void fgl_arr_attrib(fgl_buffer* _buf, int attrib_sz, int layout, int offset);
 
 FGLDEF bool fgl_create_shader(uint32_t* shader, int target);
 FGLDEF char* fgl_load_shader_source(const char* s_path);
@@ -185,7 +185,7 @@ FGLDEF void fgl_element_connect(fgl_buffer* _buf){
 }
 
 FGLDEF void fgl_buffer_connect(fgl_buffer* _buf){
-    glVertexArrayVertexBuffer(_buf->vao, 0, _buf->vbo, 0, sizeof(vertex));
+    glVertexArrayVertexBuffer(_buf->vao, 0, _buf->vbo, 0, 8 * sizeof(float));
 }
 
 FGLDEF void fgl_bind_arr(fgl_buffer *_buf){
@@ -196,7 +196,7 @@ FGLDEF void fgl_unbind_arr(){
     glBindVertexArray(0);
 }
 
-FGLDEF bool fgl_data_static(fgl_buffer* _buf, size_t size, const void* data){
+FGLDEF bool fgl_data_static(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata){
     if (_buf->vbo == 0){
         printf("error: vertex buffer is not valid\n");
         return false;
@@ -206,13 +206,13 @@ FGLDEF bool fgl_data_static(fgl_buffer* _buf, size_t size, const void* data){
         return false;
     }
 
-    glNamedBufferData(_buf->vbo, size, data, GL_STATIC_DRAW);
-    glNamedBufferData(_buf->ebo, size, data, GL_STATIC_DRAW);
+    glNamedBufferData(_buf->vbo, vsize, vdata, GL_STATIC_DRAW);
+    glNamedBufferData(_buf->ebo, isize, idata, GL_STATIC_DRAW);
 
     return true;
 }
 
-FGLDEF bool fgl_data_dynamic(fgl_buffer* _buf, size_t size, const void* data){
+FGLDEF bool fgl_data_dynamic(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata){
     if (_buf->vbo == 0){
         printf("error: vertex buffer is not valid\n");
         return false;
@@ -222,13 +222,13 @@ FGLDEF bool fgl_data_dynamic(fgl_buffer* _buf, size_t size, const void* data){
         return false;
     }
 
-    glNamedBufferData(_buf->vbo, size, data, GL_DYNAMIC_DRAW);
-    glNamedBufferData(_buf->ebo, size, data, GL_DYNAMIC_DRAW);
+    glNamedBufferData(_buf->vbo, vsize, vdata, GL_DYNAMIC_DRAW);
+    glNamedBufferData(_buf->ebo, isize, idata, GL_DYNAMIC_DRAW);
 
     return true;
 }
 
-FGLDEF bool fgl_sub_data(fgl_buffer* _buf, size_t size, const void* data){
+FGLDEF bool fgl_sub_data(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata){
     if (_buf->vbo == 0){
         printf("error: vertex buffer is not valid\n");
         return false;
@@ -238,22 +238,22 @@ FGLDEF bool fgl_sub_data(fgl_buffer* _buf, size_t size, const void* data){
         return false;
     }
 
-    glNamedBufferSubData(_buf->vbo, 0, size, data);
-    glNamedBufferSubData(_buf->ebo, 0, size, data);
+    glNamedBufferSubData(_buf->vbo, 0, vsize, vdata);
+    glNamedBufferSubData(_buf->ebo, 0, isize, idata);
 
     return true;
 }
 
-FGLDEF void fgl_arr_attrib(fgl_buffer *_buf, int layout, int size, int offset){
-    glEnableVertexArrayAttrib(_buf->vao, layout);
+FGLDEF void fgl_arr_attrib(fgl_buffer *_buf, int layout, int attrib_sz, int offset){
     glVertexArrayAttribFormat(
         _buf->vao,
         layout,
-        size,
+        attrib_sz,
         GL_FLOAT, GL_FALSE,
         offset * sizeof(float)
     );
     glVertexArrayAttribBinding(_buf->vao, layout, 0);
+    glEnableVertexArrayAttrib(_buf->vao, layout);
 }
 
 FGLDEF bool fgl_create_shader(uint32_t* shader, int target){
@@ -291,7 +291,7 @@ FGLDEF bool fgl_compile_shader_source(uint32_t shader, const char* path){
 
     if (!success){
         char log[512] = {};
-        glGetShaderInfoLog(shader, sizeof(log), nullptr, log);
+        glGetShaderInfoLog(shader, sizeof(log), NULL, log);
         printf("shader log: %s", log);
         return false;
     }
@@ -309,7 +309,7 @@ FGLDEF bool fgl_attach_shader(uint32_t prog, uint32_t vs, uint32_t fs){
 
     if (!success){
         char log[512] = {};
-        glGetProgramInfoLog(prog, sizeof(log), nullptr, log);
+        glGetProgramInfoLog(prog, sizeof(log), NULL, log);
         printf("program log: %s", log);
         return false;
     }

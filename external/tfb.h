@@ -1,8 +1,8 @@
 #pragma once
 #include "stb_truetype.h"
-#include <cstdint>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -36,8 +36,8 @@ typedef struct tfb_base{
 extern "C" {
 #endif
 
-TFBDEF int tfb_load(const char* path, uint8_t** data, stbtt_fontinfo* info);
-TFBDEF int tfb_set_atlas(tfb_base* atlas, int w, int h);
+TFBDEF bool tfb_load(const char* path, uint8_t** data, stbtt_fontinfo* info);
+TFBDEF bool tfb_set_atlas(tfb_base* atlas, int w, int h);
 TFBDEF void tfb_font_metrics(tfb_base* base);
 TFBDEF void tfb_glyph_metrics(tfb_base* base, glyph* g, int index, int codep, int* gw, int* gh);
 TFBDEF void tfb_make_glyph(tfb_base* base, int codep, int pen_x, int pen_y, int gw, int gh);
@@ -77,31 +77,31 @@ static inline uint8_t* load_file(const char* path, size_t* size){
     return buffer;
 }
 
-TFBDEF int tfb_load(const char* path, uint8_t** data, stbtt_fontinfo* info){
+TFBDEF bool tfb_load(const char* path, uint8_t** data, stbtt_fontinfo* info){
     size_t fsize = 0;
     *data = load_file(path, &fsize);
 
     if (!*data){
-        return 1;
+        return false;
     }
 
     stbtt_InitFont(info, *data, 0);
 
-    return 0;
+    return true;
 }
 
-TFBDEF int tfb_set_atlas(tfb_base* base, int w, int h){
+TFBDEF bool tfb_set_atlas(tfb_base* base, int w, int h){
     base->atlas.data = (uint8_t*)calloc(w * h, 1);
 
     if (!base->atlas.data){
         printf("error: failed to create font atlas\n");
-        return 1;
+        return false;
     }
 
     base->atlas.width = w;
     base->atlas.height = h;
 
-    return 0;
+    return true;
 }
 
 TFBDEF void tfb_font_metrics(tfb_base* base){

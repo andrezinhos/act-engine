@@ -25,11 +25,13 @@ Font mktxt::default_font(){
 
     font.spacing = 1.0f;
 
-    if (tfb_load("eng/Tiny5.ttf", &font.data, &font.base.info) != 0){
+    if (!tfb_load("eng/Tiny5.ttf", &font.data, &font.base.info)){
         return font;
     }
 
-    tfb_set_atlas(&font.base, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT);
+    if (!tfb_set_atlas(&font.base, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT)){
+        return font;
+    }
     tfb_font_metrics(&font.base);
 
     int pen_x = 0;

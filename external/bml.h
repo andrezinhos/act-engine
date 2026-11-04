@@ -20,94 +20,94 @@ typedef struct matrix{
     float m[4][4];
 } matrix;
 
-#ifdef TML_STATIC
-    #define TMLDEF static inline
+#ifdef BML_STATIC
+    #define BMLDEF static inline
 #else
-    #define TMLDEF extern
+    #define BMLDEF extern
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-TMLDEF float tml_deg2rad(float angle);
+BMLDEF float bml_deg2rad(float angle);
 
-TMLDEF vec2 tml_vec2_zero();
-TMLDEF vec2 tml_vec2_add(vec2 a, vec2 b);
-TMLDEF vec2 tml_vec2_sub(vec2 a, vec2 b);
-TMLDEF vec2 tml_vec2_mul(vec2 a, vec2 b);
-TMLDEF vec2 tml_vec2_div(vec2 a, vec2 b);
-TMLDEF float tml_vec2_magnitude(vec2 v);
-TMLDEF vec2 tml_vec2_normalize(vec2 v);
-TMLDEF float tml_vec2_dot(vec2 a, vec2 b);
+BMLDEF vec2 bml_vec2_zero();
+BMLDEF vec2 bml_vec2_add(vec2 a, vec2 b);
+BMLDEF vec2 bml_vec2_sub(vec2 a, vec2 b);
+BMLDEF vec2 bml_vec2_mul(vec2 a, vec2 b);
+BMLDEF vec2 bml_vec2_div(vec2 a, vec2 b);
+BMLDEF float bml_vec2_magnitude(vec2 v);
+BMLDEF vec2 bml_vec2_normalize(vec2 v);
+BMLDEF float bml_vec2_dot(vec2 a, vec2 b);
 
-TMLDEF vec3 tml_vec3_zero();
-TMLDEF vec3 tml_vec3_add(vec3 a, vec3 b);
-TMLDEF vec3 tml_vec3_sub(vec3 a, vec3 b);
-TMLDEF vec3 tml_vec3_mul(vec3 a, vec3 b);
-TMLDEF vec3 tml_vec3_div(vec3 a, vec3 b);
-TMLDEF float tml_vec3_magnitude(vec3 v);
-TMLDEF vec3 tml_vec3_normalize(vec3 v);
-TMLDEF float tml_vec3_dot(vec3 a, vec3 b);
+BMLDEF vec3 bml_vec3_zero();
+BMLDEF vec3 bml_vec3_add(vec3 a, vec3 b);
+BMLDEF vec3 bml_vec3_sub(vec3 a, vec3 b);
+BMLDEF vec3 bml_vec3_mul(vec3 a, vec3 b);
+BMLDEF vec3 bml_vec3_div(vec3 a, vec3 b);
+BMLDEF float bml_vec3_magnitude(vec3 v);
+BMLDEF vec3 bml_vec3_normalize(vec3 v);
+BMLDEF float bml_vec3_dot(vec3 a, vec3 b);
 
-TMLDEF const matrix tml_mat_identity();
+BMLDEF matrix bml_mat_identity();
 
-TMLDEF matrix tml_mat_translate(vec3 position);
-TMLDEF matrix tml_mat_rotatex(float angle);
-TMLDEF matrix tml_mat_rotatey(float angle);
-TMLDEF matrix tml_mat_rotatez(float angle);
-TMLDEF matrix tml_mat_scale(vec3 amount);
+BMLDEF matrix bml_mat_translate(vec3 position);
+BMLDEF matrix bml_mat_rotatex(float angle);
+BMLDEF matrix bml_mat_rotatey(float angle);
+BMLDEF matrix bml_mat_rotatez(float angle);
+BMLDEF matrix bml_mat_scale(vec3 amount);
 
-TMLDEF matrix tml_mat_mul(matrix left, matrix right);
-TMLDEF matrix tml_mat_model(vec3 pos, vec3 rotation, vec3 scale);
-TMLDEF matrix tml_mat_view(vec3 position, float rotation, float zoom);
+BMLDEF matrix bml_mat_mul(matrix left, matrix right);
+BMLDEF matrix bml_mat_model(vec3 pos, vec3 rotation, vec3 scale);
+BMLDEF matrix bml_mat_view(vec3 position, float rotation, float zoom);
 
-TMLDEF matrix tml_mat_ortho(float left, float right, float top, float bottom, float far, float near);
+BMLDEF matrix bml_mat_ortho(float left, float right, float top, float bottom, float far, float near);
 
-#ifdef TML_IMPL
+#ifdef BML_IMPL
 
-TMLDEF float tml_deg2rad(float angle){
+BMLDEF float bml_deg2rad(float angle){
     return angle * (PI / 180.0f);
 }
 
-TMLDEF vec2 tml_vec2_zero(){
+BMLDEF vec2 bml_vec2_zero(){
     return (vec2){0.0f, 0.0f};
 }
 
-TMLDEF vec2 tml_vec2_add(vec2 a, vec2 b){
+BMLDEF vec2 bml_vec2_add(vec2 a, vec2 b){
     return (vec2){
         a.x+b.x,
         a.y+b.y
     };
 }
 
-TMLDEF vec2 tml_vec2_sub(vec2 a, vec2 b){
+BMLDEF vec2 bml_vec2_sub(vec2 a, vec2 b){
     return (vec2){
         a.x-b.x,
         a.y-b.y
     };
 }
-TMLDEF vec2 tml_vec2_mul(vec2 a, vec2 b){
+BMLDEF vec2 bml_vec2_mul(vec2 a, vec2 b){
     return (vec2){
         a.x*b.x,
         a.y*b.y
     };
 }
-TMLDEF vec2 tml_vec2_div(vec2 a, vec2 b){
+BMLDEF vec2 bml_vec2_div(vec2 a, vec2 b){
     return (vec2){
         a.x/b.x,
         a.y/b.y
     };
 }
 
-TMLDEF float tml_vec2_magnitude(vec2 v){
+BMLDEF float bml_vec2_magnitude(vec2 v){
     return hypot(v.x, v.y);
 }
-TMLDEF vec2 tml_vec2_normalize(vec2 v){
-    float len = tml_vec2_magnitude(v);
+BMLDEF vec2 bml_vec2_normalize(vec2 v){
+    float len = bml_vec2_magnitude(v);
 
     if (len == 0) {
-        return tml_vec2_zero();
+        return bml_vec2_zero();
     }
 
     return (vec2){
@@ -116,15 +116,15 @@ TMLDEF vec2 tml_vec2_normalize(vec2 v){
     };
 }
 
-TMLDEF float tml_vec2_dot(vec2 a, vec2 b){
+BMLDEF float bml_vec2_dot(vec2 a, vec2 b){
     return (a.x*b.x) + (a.y*b.y);
 }
 
-TMLDEF vec3 tml_vec3_zero(){
+BMLDEF vec3 bml_vec3_zero(){
     return (vec3){0.0f, 0.0f, 0.0f};
 }
 
-TMLDEF vec3 tml_vec3_add(vec3 a, vec3 b){
+BMLDEF vec3 bml_vec3_add(vec3 a, vec3 b){
     return (vec3){
         a.x+b.x,
         a.y+b.y,
@@ -132,7 +132,7 @@ TMLDEF vec3 tml_vec3_add(vec3 a, vec3 b){
     };
 }
 
-TMLDEF vec3 tml_vec3_sub(vec3 a, vec3 b){
+BMLDEF vec3 bml_vec3_sub(vec3 a, vec3 b){
     return (vec3){
         a.x-b.x,
         a.y-b.y,
@@ -140,7 +140,7 @@ TMLDEF vec3 tml_vec3_sub(vec3 a, vec3 b){
     };
 }
 
-TMLDEF vec3 tml_vec3_mul(vec3 a, vec3 b){
+BMLDEF vec3 bml_vec3_mul(vec3 a, vec3 b){
     return (vec3){
         a.x*b.x,
         a.y*b.y,
@@ -148,7 +148,7 @@ TMLDEF vec3 tml_vec3_mul(vec3 a, vec3 b){
     };
 }
 
-TMLDEF vec3 tml_vec3_div(vec3 a, vec3 b){
+BMLDEF vec3 bml_vec3_div(vec3 a, vec3 b){
     return (vec3){
         a.x/b.x,
         a.y/b.y,
@@ -156,15 +156,15 @@ TMLDEF vec3 tml_vec3_div(vec3 a, vec3 b){
     };
 }
 
-TMLDEF float tml_vec3_magnitude(vec3 v){
+BMLDEF float bml_vec3_magnitude(vec3 v){
     return hypot(hypot(v.x, v.y), v.z);
 }
 
-TMLDEF vec3 tml_vec3_normalize(vec3 v){
-    float len = tml_vec3_magnitude(v);
+BMLDEF vec3 bml_vec3_normalize(vec3 v){
+    float len = bml_vec3_magnitude(v);
 
     if (len == 0) {
-        return tml_vec3_zero();
+        return bml_vec3_zero();
     }
 
     return (vec3){
@@ -174,11 +174,11 @@ TMLDEF vec3 tml_vec3_normalize(vec3 v){
     };
 }
 
-TMLDEF float tml_vec3_dot(vec3 a, vec3 b){
+BMLDEF float bml_vec3_dot(vec3 a, vec3 b){
     return (a.x*b.x) + (a.y*b.y) + (a.z*b.z);
 }
 
-TMLDEF const matrix tml_mat_identity(){
+BMLDEF matrix bml_mat_identity(){
     matrix result;
 
     result.m[0][0] = 1; result.m[1][0] = 0; result.m[2][0] = 0; result.m[3][0] = 0;
@@ -190,8 +190,8 @@ TMLDEF const matrix tml_mat_identity(){
 }
 
 
-TMLDEF matrix tml_mat_translate(vec3 position) {
-    matrix result = tml_mat_identity();
+BMLDEF matrix bml_mat_translate(vec3 position) {
+    matrix result = bml_mat_identity();
 
     result.m[3][0] = position.x;
     result.m[3][1] = position.y;
@@ -200,10 +200,10 @@ TMLDEF matrix tml_mat_translate(vec3 position) {
     return result;
 }
 
-TMLDEF matrix tml_mat_rotatex(float angle){
-    matrix result = tml_mat_identity();
+BMLDEF matrix bml_mat_rotatex(float angle){
+    matrix result = bml_mat_identity();
 
-    float rads = tml_deg2rad(angle);
+    float rads = bml_deg2rad(angle);
 
     float cosv = cosf(rads);
     float sinv = sinf(rads);
@@ -217,10 +217,10 @@ TMLDEF matrix tml_mat_rotatex(float angle){
     return result;
 }
 
-TMLDEF matrix tml_mat_rotatey(float angle){
-    matrix result = tml_mat_identity();
+BMLDEF matrix bml_mat_rotatey(float angle){
+    matrix result = bml_mat_identity();
 
-    float rads = tml_deg2rad(angle);
+    float rads = bml_deg2rad(angle);
 
     float cosv = cosf(rads);
     float sinv = sinf(rads);
@@ -234,10 +234,10 @@ TMLDEF matrix tml_mat_rotatey(float angle){
     return result;
 }
 
-TMLDEF matrix tml_mat_rotatez(float angle){
-    matrix result = tml_mat_identity();
+BMLDEF matrix bml_mat_rotatez(float angle){
+    matrix result = bml_mat_identity();
 
-    float rads = tml_deg2rad(angle);
+    float rads = bml_deg2rad(angle);
 
     float cosv = cosf(rads);
     float sinv = sinf(rads);
@@ -252,8 +252,8 @@ TMLDEF matrix tml_mat_rotatez(float angle){
     return result;
 }
 
-TMLDEF matrix tml_mat_scale(vec3 amount){
-    matrix result = tml_mat_identity();
+BMLDEF matrix bml_mat_scale(vec3 amount){
+    matrix result = bml_mat_identity();
 
     result.m[0][0] = amount.x;
     result.m[1][1] = amount.y;
@@ -262,8 +262,8 @@ TMLDEF matrix tml_mat_scale(vec3 amount){
     return result;
 }
 
-TMLDEF matrix tml_mat_mul(matrix left, matrix right){
-    matrix result = tml_mat_identity();
+BMLDEF matrix bml_mat_mul(matrix left, matrix right){
+    matrix result = bml_mat_identity();
 
     result.m[0][0] =
         left.m[0][0]*right.m[0][0] +
@@ -365,43 +365,43 @@ TMLDEF matrix tml_mat_mul(matrix left, matrix right){
     return result;
 }
 
-TMLDEF matrix tml_mat_model(vec3 pos, vec3 rotation, vec3 scale){
-    matrix result = tml_mat_identity();
+BMLDEF matrix bml_mat_model(vec3 pos, vec3 rotation, vec3 scale){
+    matrix result = bml_mat_identity();
 
-    matrix t = tml_mat_identity();
-    matrix rx = tml_mat_identity();
-    matrix ry = tml_mat_identity();
-    matrix rz = tml_mat_identity();
-    matrix s = tml_mat_identity();
+    matrix t = bml_mat_identity();
+    matrix rx = bml_mat_identity();
+    matrix ry = bml_mat_identity();
+    matrix rz = bml_mat_identity();
+    matrix s = bml_mat_identity();
 
-    t = tml_mat_translate(pos);
-    rx = tml_mat_rotatex(rotation.x);
-    ry = tml_mat_rotatey(rotation.y);
-    rz = tml_mat_rotatez(rotation.z);
+    t = bml_mat_translate(pos);
+    rx = bml_mat_rotatex(rotation.x);
+    ry = bml_mat_rotatey(rotation.y);
+    rz = bml_mat_rotatez(rotation.z);
 
-    matrix r = tml_mat_mul(tml_mat_mul(rx, ry), rz);
+    matrix r = bml_mat_mul(bml_mat_mul(rx, ry), rz);
 
-    s = tml_mat_scale(scale);
+    s = bml_mat_scale(scale);
 
-    result = tml_mat_mul(tml_mat_mul(t, r), s);
+    result = bml_mat_mul(bml_mat_mul(t, r), s);
 
     return result;
 }
 
-TMLDEF matrix tml_mat_view(vec3 position, float rotation, float zoom){
-    matrix t = tml_mat_translate((vec3){
+BMLDEF matrix bml_mat_view(vec3 position, float rotation, float zoom){
+    matrix t = bml_mat_translate((vec3){
         -position.x,
         -position.y,
         -position.z
     });
-    matrix r = tml_mat_rotatez(-rotation);
-    matrix s = tml_mat_scale((vec3){zoom, zoom, zoom});
+    matrix r = bml_mat_rotatez(-rotation);
+    matrix s = bml_mat_scale((vec3){zoom, zoom, zoom});
 
-    return tml_mat_mul(tml_mat_mul(t, r), s);
+    return bml_mat_mul(bml_mat_mul(t, r), s);
 }
 
-TMLDEF matrix tml_mat_ortho(float left, float right, float top, float bottom, float far, float near){
-    matrix result = tml_mat_identity();
+BMLDEF matrix bml_mat_ortho(float left, float right, float top, float bottom, float far, float near){
+    matrix result = bml_mat_identity();
 
     result.m[0][0] = 2.0f / (left-right);
     result.m[1][1] = 2.0f / (top-bottom);

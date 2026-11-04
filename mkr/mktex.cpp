@@ -63,8 +63,8 @@ void mktex::render_tex_rect(Texture* tex, Rectangle rectangle, Vec2 position, Ve
     float u0 = rectangle.x / (float)tex->width;
     float v0 = rectangle.y / (float)tex->height;
 
-    float u1 = (rectangle.x + (float)rectangle.width) / (float)tex->width;
-    float v1 = (rectangle.y + (float)rectangle.height) / (float)tex->height;
+    float u1 = (rectangle.x + rectangle.width) / (float)tex->width;
+    float v1 = (rectangle.y + rectangle.height) / (float)tex->height;
 
     mkr::send_vertex(position, size, color, u0, v0, u1, v1);
     mkr::sendIndices(base);

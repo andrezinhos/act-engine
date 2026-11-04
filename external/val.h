@@ -30,6 +30,12 @@ typedef struct arena_i{
     size_t count;
 } arena_i;
 
+typedef struct arena_dc{
+    dcall* data;
+    size_t cap;
+    size_t count;
+} arena_dc;
+
 #ifdef VAL_STATIC
     #define VALDEF static inline
 #else
@@ -54,19 +60,33 @@ VALDEF void val_arenav_check_uv(arena_v* arena, int size);
 VALDEF void val_arenav_inc_count(arena_v* arena);
 VALDEF void val_arenav_reset(arena_v* arena);
 
+VALDEF bool val_arenav_empty(arena_v* arena);
+
 VALDEF size_t val_arenav_size(arena_v* arena);
-VALDEF bool val_arenav_limit(arena_v* arena, int value);
+VALDEF bool val_arenav_limit(arena_v* arena, size_t value);
 
 
 VALDEF bool val_arenai_init(arena_i* arena, size_t amount);
 VALDEF void val_arenai_free(arena_i* arena);
 VALDEF void val_arenai_add_idx(arena_i* arena, int idx);
-
-VALDEF void val_arenai_inc_count(arena_i* arena);
 VALDEF void val_arenai_reset(arena_i* arena);
 
+VALDEF bool val_arenai_empty(arena_i* arena);
+
 VALDEF size_t val_arenai_size(arena_i* arena);
-VALDEF bool val_arenai_limit(arena_i* arena, int value);
+VALDEF bool val_arenai_limit(arena_i* arena, size_t value);
+
+VALDEF bool val_arenad_init(arena_dc* arena, size_t amount);
+VALDEF void val_arenad_free(arena_dc* arena);
+VALDEF void val_arenad_add_call(arena_dc* arena, uint32_t count, uint32_t start, uint32_t* texref);
+VALDEF void val_arenad_add_count(arena_dc* arena, uint32_t count);
+VALDEF void val_arenad_reset(arena_dc* arena);
+
+VALDEF bool val_arenad_empty(arena_dc* arena);
+VALDEF uint32_t* val_arenad_back_tex(arena_dc* arena);
+
+VALDEF size_t val_arenad_size(arena_dc* arena);
+VALDEF bool val_arenad_limit(arena_dc* arena, size_t value);
 
 #ifdef VAL_IMPL
 
@@ -117,7 +137,7 @@ VALDEF void val_arenav_add_uv(arena_v* arena, float p1, float p2){
 
 VALDEF void val_arenav_check_position(arena_v* arena, int size){
     for (int i = 0; i < size; i++){
-        printf("arena position value : index %d : %.1f | %.1f | %.1f\n", 
+        printf("arena position value : index %d : %.1f | %.1f | %.1f\n",
             i,
             arena->data[i].position[0],
             arena->data[i].position[1],
@@ -128,7 +148,7 @@ VALDEF void val_arenav_check_position(arena_v* arena, int size){
 
 VALDEF void val_arenav_check_color(arena_v* arena, int size){
     for (int i = 0; i < size; i++){
-        printf("arena color value : index %d : %.1f | %.1f | %.1f\n", 
+        printf("arena color value : index %d : %.1f | %.1f | %.1f\n",
             i,
             arena->data[i].color[0],
             arena->data[i].color[1],
@@ -139,7 +159,7 @@ VALDEF void val_arenav_check_color(arena_v* arena, int size){
 
 VALDEF void val_arenav_check_uv(arena_v* arena, int size){
     for (int i = 0; i < size; i++){
-        printf("arena uv value : index %d : %.1f | %.1f\n", 
+        printf("arena uv value : index %d : %.1f | %.1f\n",
             i,
             arena->data[i].uv[0],
             arena->data[i].uv[1]
@@ -157,35 +177,48 @@ VALDEF void val_arenav_reset(arena_v* arena){
     }
 }
 
+VALDEF bool val_arenav_empty(arena_v* arena){
+    bool result;
+
+    if (arena->count == 0){
+        result = true;
+    }
+    else {
+        result = false;
+    }
+
+    return result;
+}
+
 VALDEF size_t val_arenav_size(arena_v* arena){
     return arena->count;
 }
 
-VALDEF bool val_arenav_limit(arena_v* arena, int value){
+VALDEF bool val_arenav_limit(arena_v* arena, size_t value){
     bool result;
-    
+
     if (arena->cap >= value){
         result = true;
     }
     else {
         result = false;
     }
-    
+
     return result;
 }
 
 
 VALDEF bool val_arenai_init(arena_i* arena, size_t amount){
     arena->data = (uint32_t*)malloc(sizeof(uint32_t) * amount);
-    
+
     if (arena->data == NULL){
         printf("error: failed to init indices arena\n");
         return false;
     }
-    
+
     arena->cap = amount;
     arena->count = 0;
-    
+
     return true;
 }
 
@@ -198,9 +231,6 @@ VALDEF void val_arenai_free(arena_i* arena){
 
 VALDEF void val_arenai_add_idx(arena_i* arena, int idx){
     arena->data[arena->count] = idx;
-}
-
-VALDEF void val_arenai_inc_count(arena_i* arena){
     arena->count += 1;
 }
 
@@ -210,20 +240,105 @@ VALDEF void val_arenai_reset(arena_i* arena){
     }
 }
 
+VALDEF bool val_arenai_empty(arena_i* arena){
+    bool result;
+
+    if (arena->count == 0){
+        result = true;
+    }
+    else {
+        result = false;
+    }
+
+    return result;
+}
+
 VALDEF size_t val_arenai_size(arena_i* arena){
     return arena->count;
 }
 
-VALDEF bool val_arenai_limit(arena_i* arena, int value){
+VALDEF bool val_arenai_limit(arena_i* arena, size_t value){
     bool result;
-    
+
     if (arena->cap >= value){
         result = true;
     }
     else {
         result = false;
     }
-    
+
+    return result;
+}
+
+VALDEF bool val_arenad_init(arena_dc* arena, size_t amount){
+    arena->data = (dcall*)malloc(sizeof(dcall) * amount);
+
+    if (arena->data == NULL){
+        printf("error: failed to create draw call arena\n");
+        return false;
+    }
+
+    arena->cap = amount;
+    arena->count = 0;
+
+    return true;
+}
+
+VALDEF void val_arenad_free(arena_dc* arena){
+    free(arena->data);
+    arena->data = NULL;
+    arena->cap = 0;
+    arena->count = 0;
+}
+
+VALDEF void val_arenad_add_call(arena_dc* arena, uint32_t count, uint32_t start, uint32_t* texref){
+    arena->data[arena->count].count = count;
+    arena->data[arena->count].start = start;
+    arena->data[arena->count].texid = texref;
+
+    arena->count += 1;
+}
+
+VALDEF void val_arenad_add_count(arena_dc* arena, uint32_t count){
+    arena->data[arena->count].count += count;
+    arena->count += 1;
+}
+
+VALDEF void val_arenad_reset(arena_dc* arena){
+    arena->count = 0;
+}
+
+VALDEF bool val_arenad_empty(arena_dc* arena){
+    bool result;
+
+    if (arena->count == 0){
+        result = true;
+    }
+    else {
+        result = false;
+    }
+
+    return result;
+}
+
+VALDEF size_t val_arenad_size(arena_dc* arena){
+    return arena->count;
+}
+
+VALDEF uint32_t* val_arenad_back_tex(arena_dc* arena){
+    return arena->data[arena->count - 1].texid;
+}
+
+VALDEF bool val_arenad_limit(arena_dc* arena, size_t value){
+    bool result;
+
+    if (arena->cap >= value){
+        result = true;
+    }
+    else {
+        result = false;
+    }
+
     return result;
 }
 

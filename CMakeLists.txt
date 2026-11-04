@@ -16,6 +16,7 @@ set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3dll.a)
 
 set(MKR_HEADERS ${CMAKE_SOURCE_DIR}/mkr)
 set(MKR_LIB ${CMAKE_SOURCE_DIR}/mkr/lib/libmkr.a)
+set(MKR_LIB_NEW ${CMAKE_SOURCE_DIR}/mkr/lib/libmkr_c.a)
 
 set(PWRA_HEADERS ${CMAKE_SOURCE_DIR}/pwra)
 set(PWRA_LIB ${CMAKE_SOURCE_DIR}/pwra/lib/libpwra.dll.a)
@@ -70,6 +71,7 @@ target_link_libraries(app PRIVATE
   ${GLFW_LIB}
   ${LUA_LIB}
   ${MKR_LIB}
+  ${MKR_LIB_NEW}
   ${PWRA_LIB}
 )
 

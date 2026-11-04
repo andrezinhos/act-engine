@@ -15,13 +15,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(GLFW_HEADERS ${CMAKE_SOURCE_DIR}/external/glfw)
 set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3.a)
 
-# add_library(mkr STATIC
-  # glad.c
-  # mktxt.c
-  # mktex.c
-  # mkr_aux.c
-  # mkr.c
-# )
+add_library(mkr_c STATIC
+  glad.c
+  mktext.c
+  mktex.c
+  mkgeo.c
+  mkr.c
+)
 
 # executable files
 add_library(mkr STATIC
@@ -31,6 +31,15 @@ add_library(mkr STATIC
   mktex.cpp
   mkr_aux.cpp
   mkr.cpp
+)
+
+target_compile_options(mkr_c PRIVATE
+  -Wall
+  -Wextra
+  -O0
+  -g
+  # -march=x86-64-v2
+  -DDEBUG
 )
 
 target_compile_options(mkr PRIVATE
@@ -44,6 +53,12 @@ target_compile_options(mkr PRIVATE
 
 set_target_properties(mkr PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
+target_include_directories(mkr_c PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../external
+  # ${GLFW_HEADERS}
+)
+
 # general headers
 target_include_directories(mkr PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -51,11 +66,12 @@ target_include_directories(mkr PUBLIC
   ${GLFW_HEADERS}
 )
 
-target_compile_definitions(mkr PRIVATE MKR_SL=0)
+# target_compile_definitions(mkr PRIVATE MKR_SL=0)
 
 target_link_libraries(mkr PUBLIC ${GLFW_LIB})
 
 # OS libs
 if(WIN32)
   target_link_libraries(mkr PUBLIC gdi32 opengl32)
+  # target_link_libraries(mkr_c PUBLIC gdi32 opengl32)
 endif()

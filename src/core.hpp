@@ -43,6 +43,12 @@ namespace engine {
         image() = default;
         ~image();
 
+        image(const image&) = delete;
+        image& operator=(const image&) = delete;
+
+        image(image&&) = delete;
+        image& operator=(image&&) = delete;
+
         bool load(std::string_view);
         int width() const;
         int height() const;

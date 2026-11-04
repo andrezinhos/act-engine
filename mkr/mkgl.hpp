@@ -10,8 +10,8 @@
 #define MKR_TEXTURE_LAYOUT 2
 #define MKR_VERTEX_STRIDE 8
 
-#define VMAX 1004
-#define IMAX 1506
+#define VMAX 1024
+#define IMAX 1536
 #define CMAX 512
 
 namespace mkgl{

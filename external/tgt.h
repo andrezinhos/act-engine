@@ -25,6 +25,12 @@ typedef struct texture {
     int height;
 } texture;
 
+typedef struct dcall{
+    uint32_t count;
+    uint32_t start;
+    uint32_t* texid;
+} dcall;
+
 typedef struct rectangle{
     float x;
     float y;
