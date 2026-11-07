@@ -7,7 +7,10 @@ bool mk_load_default_texture(){
     dtex.width = 1;
     dtex.height = 1;
 
-    uint32_t color = 0xFFFFFFFF;
+    uint32_t color[] = {
+        0xFFFFFF, 0x000000,
+        0x000000, 0xFFFFFF
+    };
     fgl_create_texture(&dtex.id, GL_TEXTURE_2D, dtex.width, dtex.height, &color);
 
     if (dtex.id == 0){
@@ -76,6 +79,23 @@ void mk_render_tex_region(texture* tex, rectangle source, vec2 position, vec2 si
 
     val_arenav_inc_count(&dbat.verts);
 
+    mk_push_indices(base);
+
+    if (val_arenad_empty(&dbat.calls) || val_arenad_back_tex(&dbat.calls) != &tex->id){
+        mk_push_call(index_start, 6, &tex->id);
+    }
+    else {
+        val_arenad_add_count(&dbat.calls, 6);
+    }
+}
+
+void mk_render_tex(texture *tex, vec2 position, vec2 size){
+    flush_limit();
+
+    uint32_t index_start = val_arenav_size(&dbat.verts);
+    uint32_t base = val_arenai_size(&dbat.indices);
+
+    mk_std_vertex_size(position, size, White, 0.0f, 0.0f, 1.0f, 1.0f);
     mk_push_indices(base);
 
     if (val_arenad_empty(&dbat.calls) || val_arenad_back_tex(&dbat.calls) != &tex->id){

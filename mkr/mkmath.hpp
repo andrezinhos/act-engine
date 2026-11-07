@@ -65,11 +65,11 @@ inline const Matrix MatrixIdentity(){
     return result;
 }
 
-struct Transform {
-    Vec3 position;
-    Vec3 rotation;
-    Vec3 scale;
-};
+// struct Transform {
+//     Vec3 position;
+//     Vec3 rotation;
+//     Vec3 scale;
+// };
 
 struct Camera2D{
     Vec2 position;

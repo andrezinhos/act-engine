@@ -68,8 +68,7 @@ bool mk_load_default_shader(){
     fgl_uniform_location(dshader.id, &dshader.umodel, "uMvp");
     fgl_uniform_location(dshader.id, &dshader.utex, "uTexture");
 
-    fgl_uniform_prog(&dshader.id, &dshader.umodel);
-    fgl_uniform_prog(&dshader.id, &dshader.utex);
+    
 
     fgl_delete_shader(vs);
     fgl_delete_shader(fs);
@@ -82,19 +81,26 @@ void mk_unload_default_shader(){
 }
 
 bool mk_init(){
+    if (mk_load_default_shader()){
+        printf("\t[INFO] DEFAULT SHADER - OK\n");
+    }
 
-    printf("\t[INFO] DEFAULT SHADER LOADING...\n");
-    mk_load_default_shader();
-    printf("\t[INFO] DEFAULT TEXTURE LOADING...\n");
-    mk_load_default_texture();
-    printf("\t[INFO] DEFAULT SHAPES LOADING...\n");
-    mk_load_default_quad();
-    printf("\t[INFO] DEFAULT FONT LOADING...\n");
-    mk_load_default_font();
+    if (mk_load_default_texture()){
+        printf("\t[INFO] DEFAULT TEXTURE - OK\n");
+    }
+
+    if (mk_load_default_quad()){
+        printf("\t[INFO] DEFAULT SHAPES - OK\n");
+    }
+
+    if (mk_load_default_font()){
+        printf("\t[INFO] DEFAULT FONT - OK\n");
+    }
+
     printf("\t[INFO] SOLVING INTERNALS...\n");
     mk_load_gbatch();
 
-    printf("[INFO] DEFAULT STATE - OK\n");
+    printf("\t[INFO] DEFAULT STATE - OK\n");
     return true;
 }
 
@@ -106,6 +112,32 @@ void mk_shutdown(){
     mk_unload_default_shader();
 
     printf("\t[INFO] DEFAULT STATE UNLOADED\n");
+}
+
+void mk_std_vertex_size(vec2 position, vec2 size, color color, float u0, float v0, float u1, float v1){
+    mk_push_vertex_position((vec3){position.x, position.y, 0.0f});
+    mk_push_vertex_color(color);
+    mk_push_vertex_uv(u0, v0);
+
+    val_arenav_inc_count(&dbat.verts);
+
+    mk_push_vertex_position((vec3){position.x + size.x, position.y, 0.0f});
+    mk_push_vertex_color(color);
+    mk_push_vertex_uv(u1, v0);
+
+    val_arenav_inc_count(&dbat.verts);
+
+    mk_push_vertex_position((vec3){position.x + size.x, position.y + size.y, 0.0f});
+    mk_push_vertex_color(color);
+    mk_push_vertex_uv(u1, v1);
+
+    val_arenav_inc_count(&dbat.verts);
+
+    mk_push_vertex_position((vec3){position.x, position.y + size.y, 0.0f});
+    mk_push_vertex_color(color);
+    mk_push_vertex_uv(u0, v1);
+
+    val_arenav_inc_count(&dbat.verts);
 }
 
 void mk_push_vertex_position(vec3 position){
@@ -141,7 +173,9 @@ void flush_limit(){
 }
 
 void flush(){
-    if (dbat.verts.count == 0) return;
+    if (val_arenav_empty(&dbat.verts)){
+        return;
+    }
 
     fgl_sub_data(
         &dbat.buffer,
@@ -157,8 +191,10 @@ void flush(){
 
         fgl_texture_bind(0, *d->texid);
 
-        //TODO: add draw by calls
-        fgl_draw_elements(d->count, (void*)(d->start * sizeof(uint32_t)));
+        fgl_draw_elements(
+            d->count,
+            (void*)(d->start * sizeof(uint32_t))
+        );
     }
 
     fgl_unbind_arr();
@@ -166,4 +202,41 @@ void flush(){
     val_arenav_reset(&dbat.verts);
     val_arenai_reset(&dbat.indices);
     val_arenad_reset(&dbat.calls);
+}
+
+void mk_render_begin(){
+    fgl_uniform_prog(&dshader.id, &dshader.umodel);
+    fgl_uniform_prog(&dshader.id, &dshader.utex);
+    fgl_prog_use(dshader.id);
+}
+
+void mk_render_end(){
+    flush();
+    matrix view = bml_mat_identity();
+    fgl_uniform_mat(&dshader.id, &dshader.umodel, &view.m[0][0]);
+}
+
+void mk_ortho_start(camera_data_2d cam_data, int width, int height){
+    matrix proj = bml_mat_ortho(
+        0.0f, width,
+        0.0f, height,
+        1000.0, 0.0f
+    );
+
+    vec3 cam_position = {
+        cam_data.position.x,
+        cam_data.position.y,
+        0.0f
+    };
+
+    matrix view = bml_mat_view(
+        cam_position,
+        cam_data.rotation,
+        cam_data.zoom
+    );
+
+    matrix model = bml_mat_identity();
+
+    matrix mvp = bml_mat_mul(bml_mat_mul(proj, view), model);
+    fgl_uniform_mat(&dshader.id, &dshader.umodel, &mvp.m[0][0]);
 }

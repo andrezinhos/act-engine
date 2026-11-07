@@ -36,6 +36,12 @@ typedef struct {
     fgl_buffer buffer;
 } gbatch;
 
+typedef struct camera_data_2d{
+    vec2 position;
+    float rotation;
+    float zoom;
+} camera_data_2d;
+
 extern shader dshader;
 extern texture dtex;
 extern mesh dquad;
@@ -64,14 +70,18 @@ extern void mk_unload_gbatch();
 extern bool mk_init();
 extern void mk_shutdown();
 
-extern texture mk_load_tex_memory(void* path, int width, int height);
+extern void mk_std_vertex_size(vec2 position, vec2 size, color color, float u0, float v0, float u1, float v1);
+
+extern texture mk_load_tex_memory(void* data, int width, int height);
 extern void mk_delete_tex(texture* tex);
 
 extern void mk_render_tex_region(texture* tex, rectangle source, vec2 position, vec2 size, color color);
-extern void mk_render_tex();
+extern void mk_render_tex(texture* tex, vec2 position, vec2 size);
+extern void mk_render_rectangle(vec2 position, vec2 size, color color);
 
-extern mesh mk_gen_mesh(size_t verts, size_t indices);
+extern mesh mk_gen_mesh_data(size_t verts, size_t indices);
 extern void mk_push_mesh(mesh* mesh, bool dynamic);
+extern mesh mk_gen_quad(int width, int height);
 
 extern void mk_delete_mesh(mesh* mesh);
 
@@ -83,8 +93,14 @@ extern void mk_push_call(uint32_t count, uint32_t start, uint32_t* tex);
 
 extern void mk_push_indices(uint32_t base);
 
+extern void mk_clear_screen(color color);
+
 extern void flush_limit();
 extern void flush();
+
+extern void mk_render_begin();
+extern void mk_render_end();
+extern void mk_ortho_start(camera_data_2d cam_data, int width, int height);
 
 #ifdef __cplusplus
 }

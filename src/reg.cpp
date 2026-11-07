@@ -20,10 +20,10 @@ void engine::reg::init(){
 int engine::reg::tex_register(std::string_view path){
     auto tex = std::make_unique<Texture>();
 
-    engine::image image;
+    image image;
     image.load(path);
 
-    *tex = mktex::load_tex_src(image.data(), image.width(), image.height());
+    *tex = mktex::load_tex_src(image.data, image.width, image.height);
     texmap.push_back(std::move(tex));
 
     return texmap.size() - 1;

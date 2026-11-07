@@ -44,7 +44,7 @@ bool engine::time::clock(){
     if (elapsed < FPS_TARGET){
         return false;
     }
-    else if (elapsed >= FPS_TARGET) {
+    else {
         wait();
     }
 

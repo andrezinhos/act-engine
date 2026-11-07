@@ -6,11 +6,11 @@ struct Entity{
     bool active;
 };
 
-struct Transform {
-    Vec3 position;
-    Vec3 rotation;
-    Vec3 scale;
-};
+// struct Transform {
+//     Vec3 position;
+//     Vec3 rotation;
+//     Vec3 scale;
+// };
 
 namespace lecs{
 

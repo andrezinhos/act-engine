@@ -5,10 +5,12 @@
 #include "scene.hpp"
 #include <iostream>
 
-constexpr const char* VERSION = "0.15.10";
+constexpr std::string_view VERSION = "0.15.10";
 
 static std::unique_ptr<Scene> currScene = nullptr;
 static std::unique_ptr<Scene> nextScene = nullptr;
+
+window engine::core::mainw = {};
 
 void engine::core::win_flag(flags flag){
     if (flag == flags::resizable) flags_active[0] = 1;
@@ -44,12 +46,13 @@ void engine::core::initial_scene(std::unique_ptr<Scene> initial){
         mkr::RenderBegin();
         currScene->Draw();
         mkr::RenderEnd();
+        mainw.swap();
     }
 
     finish();
 }
 
-void engine::core::main_window(int width, int height, const char *title){
+void engine::core::main_window(int width, int height, std::string_view title){
 
     if (mkr::configInit()) {
         std::cout << "ACT ENGINE v" << VERSION << "\n";
@@ -57,9 +60,16 @@ void engine::core::main_window(int width, int height, const char *title){
 
     wmain.win_width = width;
     wmain.win_height = height;
-    bool win_started = mkr::startWindow(width, height, title);
+    bool win_started = mkr::startWindow(width, height, title.data());
+
+    mainw.init(width, height, title);
+    mainw.width = width;
+    mainw.height = height;
 
     if (win_started){
+
+        mainw.context();
+
         time::start_time();
         mkr::Initialize();
         mkr::setWindowIcon("eng/w_icon.png");
@@ -80,6 +90,11 @@ bool engine::core::loop(){
     if (glfwWindowShouldClose(wmain.main) || special_esc()) {
         return false;
     }
+
+    if (mainw.should_close() || special_esc()){
+        return false;
+    }
+
     return true;
 }
 
@@ -88,5 +103,6 @@ void engine::core::finish(){
     nextScene.reset();
     reg::clear();
     pwra_end_audio();
+    mainw.destroy();
     mkr::Shutdown();
 }

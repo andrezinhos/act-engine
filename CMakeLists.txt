@@ -32,6 +32,7 @@ set(ENGINE_SYS
   src/script.cpp
   src/animation.cpp
   src/esys.cpp
+  # src/lecs.cpp
 )
 
 # executable files

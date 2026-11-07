@@ -74,6 +74,7 @@ FGLDEF bool fgl_attach_shader(uint32_t prog, uint32_t vs, uint32_t fs);
 FGLDEF void fgl_uniform_location(uint32_t shader, uint32_t* uniform, const char* loc);
 FGLDEF void fgl_uniform_mat(uint32_t* shader, uint32_t* loc, const float* value);
 FGLDEF void fgl_uniform_prog(uint32_t* prog, uint32_t* uniform);
+FGLDEF void fgl_prog_use(uint32_t prog);
 
 FGLDEF bool fgl_create_texture(uint32_t* id, int target, int width, int height, void* pixels);
 FGLDEF void fgl_texture_param(uint32_t id, int param_name, int param);
@@ -327,6 +328,10 @@ FGLDEF void fgl_uniform_mat(uint32_t *shader, uint32_t *loc, const float* value)
 
 FGLDEF void fgl_uniform_prog(uint32_t *shader, uint32_t *uniform){
     glProgramUniform1i(*shader, *uniform, 0);
+}
+
+FGLDEF void fgl_prog_use(uint32_t prog){
+    glUseProgram(prog);
 }
 
 FGLDEF bool fgl_create_texture(uint32_t* id, int target, int width, int height, void* pixels){
