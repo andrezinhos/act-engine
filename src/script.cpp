@@ -167,7 +167,7 @@ void script::start_funcs(){
     core_table["win_flag"] = [](engine::flags flag){ engine::core::win_flag(flag); };
     core_table["get_fps"] = [](){
         std::string fps_string = "FPS: " + std::to_string(engine::time::get_frames());
-        mktxt::render_text(fps_string.c_str(), {10, 50}, 30, White);
+        mk_render_text(fps_string.c_str(), {10, 50}, 30);
     };
     core_table["delta"] = engine::time::get_delta;
 
@@ -221,18 +221,6 @@ void script::start_funcs(){
     render["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
     render["cam_end"] = mkr::CameraEnd;
     render["cursor"] = [](Cursor cur) { mkr::setCursorMode(cur); };
-
-    render["animation_frames"] = [](Anim2D& anim, sol::table frames){
-        Rectangle r;
-        for(auto& frame : frames){
-            sol::table f = frame.second.as<sol::table>();
-            r.x = f[1].get<float>();
-            r.y = f[2].get<float>();
-            r.width = f[3].get<float>();
-            r.height = f[4].get<float>();
-            anim.source.frames.push_back(r);
-        }
-    },
 
     state["render"] = render;
 }

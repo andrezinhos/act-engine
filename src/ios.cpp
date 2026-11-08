@@ -53,7 +53,7 @@ void engine::io::input_update(){
     prev = curr;
 
 	for (int key = 0; key < MAXKEY; key++){
-		curr.at(key) = glfwGetKey(wmain.main, key) == 1;
+		curr.at(key) = glfwGetKey(engine::core::mainw.data, key) == 1;
 	}
 }
 
@@ -111,7 +111,7 @@ bool window::init(int w, int h, std::string_view t){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
     data = glfwCreateWindow(w, h, t.data(), moni, nullptr);
     if (!data){
@@ -141,6 +141,25 @@ bool window::should_close(){
 
 void window::destroy(){
     glfwDestroyWindow(data);
+    glfwTerminate();
+}
+
+void window::icon(std::string_view path){
+    GLFWimage ico = {};
+
+    ico.pixels = stbi_load(
+        path.data(),
+        &ico.width,
+        &ico.height,
+        0, 4
+    );
+
+    if (!ico.pixels){
+        return;
+    }
+
+    glfwSetWindowIcon(data, 1, &ico);
+    stbi_image_free(ico.pixels);
 }
 
 bool window::context(){
@@ -165,6 +184,7 @@ bool window::context(){
 }
 
 void window::swap(){
+    glfwPollEvents();
     glfwSwapBuffers(data);
 }
 

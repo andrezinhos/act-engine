@@ -38,7 +38,7 @@ namespace engine {
 struct Sfx;
 struct Stream;
 struct Texture;
-struct Font;
+struct font;
 
 struct GLFWwindow;
 struct GLFWmonitor;
@@ -78,6 +78,7 @@ struct window{
     void swap();
     void pos_center();
     void destroy();
+    void icon(std::string_view path);
 };
 
 struct camera{
@@ -127,7 +128,7 @@ namespace engine{
         Texture* get_tex(int id);
         Sfx* get_sfx(int id);
         Stream* get_music(int id);
-        Font* get_font(int id);
+        font* get_font(int id);
 
         void clear_tex();
         void clear_sfx();

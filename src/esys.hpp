@@ -2,6 +2,7 @@
 #include "animation.hpp"
 #include "mktxt.hpp"
 #include "pwra.h"
+#include "mkr.h"
 
 struct Sound{
     Sfx* data;
@@ -44,14 +45,14 @@ struct Sprite{
 };
 
 struct Text{
-    Font* source;
-    Vec2 position;
+    font* source;
+    vec2 position;
     int id;
 
     void load(const char*  path);
     void pos(int x, int y);
     void spacing(double space);
-    void draw(const char*  text, float size, color color);
+    void draw(const char* text, float size, color color);
 };
 
 struct Anim2D{

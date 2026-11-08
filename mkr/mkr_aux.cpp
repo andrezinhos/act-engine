@@ -54,7 +54,7 @@ Shader mkr::DefaultShader() {
     frag_file = NULL;
 
     fgl_create_shader_prog(&shader.id);
-    fgl_attach_shader(shader.id, vs, fs);
+    fgl_link_shader_prog(shader.id, vs, fs);
 
     fgl_uniform_location(shader.id, &shader.umodel, "uMvp");
     fgl_uniform_location(shader.id, &shader.utex, "uTexture");

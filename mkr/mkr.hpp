@@ -17,7 +17,6 @@ struct Mesh{
 
 typedef struct {
     Cursor cursor;
-    GLFWimage icon;
 	GLFWmonitor* moni;
 	const GLFWvidmode* mode;
     GLFWwindow* main;
@@ -55,7 +54,6 @@ public:
     static void flush();
     static bool configInit();
 
-    static void setWindowIcon(const char* path);
     static void setCursorMode(Cursor cur);
     static bool startWindow(int width, int height, const char* title);
 

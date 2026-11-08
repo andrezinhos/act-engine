@@ -2,11 +2,12 @@
     FAST GRAPHICS LIBRARY
 
     this is a library I made for making
-    more easy to work with graphics and opengl
+    more easy to work with
+    graphics and opengl functions
 
     is part of my utility libs, Terrible Libs
 
-    use if you like
+    use if you like it
 */
 
 #pragma once
@@ -46,30 +47,35 @@ FGLDEF size_t vertex_size(size_t data);
 FGLDEF size_t element_size(size_t data);
 
 FGLDEF void fgl_enable_blend(bool flag);
-
 FGLDEF void fgl_clear_screen(color color);
-
 FGLDEF void fgl_hardware_info();
-FGLDEF bool fgl_create_array(fgl_buffer* _buf);
-FGLDEF bool fgl_create_buffer(fgl_buffer* _buf);
+
+FGLDEF bool fgl_create_array(uint32_t* vao);
+FGLDEF bool fgl_create_buffer(uint32_t* vbo, uint32_t* ebo);
+
+FGLDEF bool fgl_array_valid(const uint32_t vao);
+FGLDEF bool fgl_buffer_valid(const uint32_t buffer);
+FGLDEF bool fgl_shader_prog_valid(const uint32_t prog);
 
 FGLDEF void fgl_element_connect(fgl_buffer* _buf);
 FGLDEF void fgl_buffer_connect(fgl_buffer* _buf);
-
-FGLDEF void fgl_bind_arr(fgl_buffer* _buf);
+FGLDEF void fgl_bind_arr(const uint32_t vao);
 FGLDEF void fgl_unbind_arr();
 
-FGLDEF bool fgl_data_static(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata);
-FGLDEF bool fgl_data_dynamic(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata);
-FGLDEF bool fgl_sub_data(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata);
-
-FGLDEF void fgl_arr_attrib(fgl_buffer* _buf, int attrib_sz, int layout, int offset);
+FGLDEF bool fgl_data_static(uint32_t* buffer, size_t size, const void* vdata);
+FGLDEF bool fgl_data_dynamic(uint32_t* buffer, size_t size, const void* data);
+FGLDEF bool fgl_sub_data(uint32_t* buffer, size_t size, const void* data);
+FGLDEF void fgl_arr_attrib(const uint32_t vao, int layout, int attrib_sz, int offset);
 
 FGLDEF bool fgl_create_shader(uint32_t* shader, int target);
-FGLDEF char* fgl_load_shader_source(const char* s_path);
-FGLDEF bool fgl_compile_shader_source(uint32_t shader, const char* s_path);
 FGLDEF bool fgl_create_shader_prog(uint32_t* shader);
-FGLDEF bool fgl_attach_shader(uint32_t prog, uint32_t vs, uint32_t fs);
+
+FGLDEF bool fgl_compile_shader_source(uint32_t shader, const char* s_path);
+FGLDEF void fgl_get_shader_log(const uint32_t shader);
+
+FGLDEF bool fgl_link_shader_prog(uint32_t prog, uint32_t vs, uint32_t fs);
+FGLDEF void fgl_get_shader_prog_log(const uint32_t prog);
+FGLDEF char* fgl_load_shader_source(const char* s_path);
 
 FGLDEF void fgl_uniform_location(uint32_t shader, uint32_t* uniform, const char* loc);
 FGLDEF void fgl_uniform_mat(uint32_t* shader, uint32_t* loc, const float* value);
@@ -82,7 +88,6 @@ FGLDEF void fgl_texture_filter(uint32_t id, int filter);
 FGLDEF void fgl_texture_repeat(uint32_t id);
 
 FGLDEF void fgl_texture_bind(int unit, uint32_t id);
-
 FGLDEF void fgl_draw_elements(size_t count, void* offset);
 
 FGLDEF void fgl_delete_buffer(uint32_t* buffer);
@@ -154,10 +159,10 @@ FGLDEF void fgl_hardware_info(){
     printf("[INFO] GL VERSION: %s\n", glver);
 }
 
-FGLDEF bool fgl_create_array(fgl_buffer* _buf){
-    glCreateBuffers(1, &_buf->vao);
+FGLDEF bool fgl_create_array(uint32_t* vao){
+    glCreateVertexArrays(1, vao);
 
-    if (_buf->vao == 0){
+    if (*vao == 0){
         printf("error: vertex array failed\n");
         return false;
     }
@@ -165,20 +170,37 @@ FGLDEF bool fgl_create_array(fgl_buffer* _buf){
     return true;
 }
 
-FGLDEF bool fgl_create_buffer(fgl_buffer* _buf){
-    glCreateBuffers(1, &_buf->vbo);
-    glCreateBuffers(1, &_buf->ebo);
+FGLDEF bool fgl_create_buffer(uint32_t* vbo, uint32_t* ebo){
+    if (ebo == NULL){
+        printf("warning: must create a ebo buffer\n");
+        return false;
+    }
 
-    if (_buf->vbo == 0){
+    glCreateBuffers(1, vbo);
+    glCreateBuffers(1, ebo);
+
+    if (*vbo == 0){
         printf("error: vertex buffer failed\n");
         return false;
     }
-    if (_buf->ebo == 0){
+    if (*ebo == 0){
         printf("error: vertex element buffer failed\n");
         return false;
     }
 
     return true;
+}
+
+FGLDEF bool fgl_array_valid(const uint32_t vao){
+    return glIsVertexArray(vao) == GL_TRUE;
+}
+
+FGLDEF bool fgl_buffer_valid(const uint32_t buffer){
+    return glIsBuffer(buffer) == GL_TRUE;
+}
+
+FGLDEF bool fgl_shader_prog_valid(const uint32_t prog){
+    return glIsProgram(prog) == GL_TRUE;
 }
 
 FGLDEF void fgl_element_connect(fgl_buffer* _buf){
@@ -189,79 +211,67 @@ FGLDEF void fgl_buffer_connect(fgl_buffer* _buf){
     glVertexArrayVertexBuffer(_buf->vao, 0, _buf->vbo, 0, 8 * sizeof(float));
 }
 
-FGLDEF void fgl_bind_arr(fgl_buffer *_buf){
-    glBindVertexArray(_buf->vao);
+FGLDEF void fgl_bind_arr(const uint32_t vao){
+    glBindVertexArray(vao);
 }
 
 FGLDEF void fgl_unbind_arr(){
     glBindVertexArray(0);
 }
 
-FGLDEF bool fgl_data_static(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata){
-    if (_buf->vbo == 0){
-        printf("error: vertex buffer is not valid\n");
-        return false;
-    }
-    if (_buf->ebo == 0){
-        printf("error: vertex element buffer is not valid\n");
+FGLDEF bool fgl_data_static(uint32_t* buffer, size_t size, const void* data){
+    if (!fgl_buffer_valid(*buffer)){
+        printf("error: buffer is not valid to bind\n");
         return false;
     }
 
-    glNamedBufferData(_buf->vbo, vsize, vdata, GL_STATIC_DRAW);
-    glNamedBufferData(_buf->ebo, isize, idata, GL_STATIC_DRAW);
+    glNamedBufferData(*buffer, size, data, GL_STATIC_DRAW);
 
     return true;
 }
 
-FGLDEF bool fgl_data_dynamic(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata){
-    if (_buf->vbo == 0){
-        printf("error: vertex buffer is not valid\n");
-        return false;
-    }
-    if (_buf->ebo == 0){
-        printf("error: vertex element buffer is not valid\n");
+FGLDEF bool fgl_data_dynamic(uint32_t* buffer, size_t size, const void* data){
+    if (!fgl_buffer_valid(*buffer)){
+        printf("error: buffer is not valid to bind\n");
         return false;
     }
 
-    glNamedBufferData(_buf->vbo, vsize, vdata, GL_DYNAMIC_DRAW);
-    glNamedBufferData(_buf->ebo, isize, idata, GL_DYNAMIC_DRAW);
-
+    glNamedBufferData(*buffer, size, data, GL_DYNAMIC_DRAW);
     return true;
 }
 
-FGLDEF bool fgl_sub_data(fgl_buffer* _buf, size_t vsize, size_t isize, const void* vdata, const void* idata){
-    if (_buf->vbo == 0){
-        printf("error: vertex buffer is not valid\n");
-        return false;
-    }
-    if (_buf->ebo == 0){
-        printf("error: vertex element buffer is not valid\n");
+FGLDEF bool fgl_sub_data(uint32_t* buffer, size_t size, const void* data){
+    if (!fgl_buffer_valid(*buffer)){
+        printf("error: buffer is not valid to bind\n");
         return false;
     }
 
-    glNamedBufferSubData(_buf->vbo, 0, vsize, vdata);
-    glNamedBufferSubData(_buf->ebo, 0, isize, idata);
-
+    glNamedBufferSubData(*buffer, 0, size, data);
     return true;
 }
 
-FGLDEF void fgl_arr_attrib(fgl_buffer *_buf, int layout, int attrib_sz, int offset){
+FGLDEF void fgl_arr_attrib(const uint32_t vao, int layout, int attrib_sz, int offset){
     glVertexArrayAttribFormat(
-        _buf->vao,
+        vao,
         layout,
         attrib_sz,
         GL_FLOAT, GL_FALSE,
         offset * sizeof(float)
     );
-    glVertexArrayAttribBinding(_buf->vao, layout, 0);
-    glEnableVertexArrayAttrib(_buf->vao, layout);
+    glVertexArrayAttribBinding(vao, layout, 0);
+    glEnableVertexArrayAttrib(vao, layout);
 }
 
 FGLDEF bool fgl_create_shader(uint32_t* shader, int target){
     *shader = glCreateShader(target);
 
     if (*shader == 0){
-        printf("error: cannot create shader\n");
+        if (target == GL_VERTEX_SHADER){
+            printf("error: cannot create vertex shader\n");
+        }
+        if (target == GL_FRAGMENT_SHADER){
+            printf("error: cannot create fragment shader\n");
+        }
         return false;
     }
 
@@ -272,15 +282,11 @@ FGLDEF bool fgl_create_shader_prog(uint32_t* shader){
     *shader = glCreateProgram();
 
     if (*shader == 0){
-        printf("error: cannot create program\n");
+        printf("error: cannot create shader program\n");
         return false;
     }
 
     return true;
-}
-
-FGLDEF char* fgl_load_shader_source(const char* s_path){
-    return load_file(s_path);
 }
 
 FGLDEF bool fgl_compile_shader_source(uint32_t shader, const char* path){
@@ -291,16 +297,21 @@ FGLDEF bool fgl_compile_shader_source(uint32_t shader, const char* path){
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
     if (!success){
-        char log[512] = {};
-        glGetShaderInfoLog(shader, sizeof(log), NULL, log);
-        printf("shader log: %s", log);
+        printf("error: failed to compile shader\n");
         return false;
     }
 
     return true;
 }
 
-FGLDEF bool fgl_attach_shader(uint32_t prog, uint32_t vs, uint32_t fs){
+FGLDEF void fgl_get_shader_log(const uint32_t shader){
+    char log[512] = {};
+    glGetShaderInfoLog(shader, sizeof(log), NULL, log);
+    printf("shader log: %s", log);
+    fflush(stdout);
+}
+
+FGLDEF bool fgl_link_shader_prog(uint32_t prog, uint32_t vs, uint32_t fs){
     glAttachShader(prog, vs);
     glAttachShader(prog, fs);
     glLinkProgram(prog);
@@ -309,13 +320,22 @@ FGLDEF bool fgl_attach_shader(uint32_t prog, uint32_t vs, uint32_t fs){
     glGetProgramiv(prog, GL_LINK_STATUS, &success);
 
     if (!success){
-        char log[512] = {};
-        glGetProgramInfoLog(prog, sizeof(log), NULL, log);
-        printf("program log: %s", log);
+        printf("error: failed to link shader program\n");
         return false;
     }
 
     return true;
+}
+
+FGLDEF void fgl_get_shader_prog_log(const uint32_t prog){
+    char log[512] = {};
+    glGetProgramInfoLog(prog, sizeof(log), NULL, log);
+    printf("program log: %s", log);
+    fflush(stdout);
+}
+
+FGLDEF char* fgl_load_shader_source(const char* s_path){
+    return load_file(s_path);
 }
 
 FGLDEF void fgl_uniform_location(uint32_t shader, uint32_t* uniform, const char* loc){
@@ -371,7 +391,7 @@ FGLDEF void fgl_texture_bind(int unit, uint32_t id){
 }
 
 FGLDEF void fgl_draw_elements(size_t count, void* offset){
-    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_BYTE, offset);
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, offset);
 }
 
 FGLDEF void fgl_delete_buffer(uint32_t* buffer){

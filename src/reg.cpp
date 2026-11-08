@@ -2,13 +2,13 @@
 #include "mktxt.hpp"
 #include "pwra.h"
 #include "core.hpp"
-#include <stdio.h>
 #include <string_view>
+#include "mkr.h"
 
 static std::vector<std::unique_ptr<Texture>> texmap = {};
 static std::vector<std::unique_ptr<Sfx>> soundmap = {};
 static std::vector<std::unique_ptr<Stream>> musicmap = {};
-static std::vector<std::unique_ptr<Font>> fontmap = {};
+static std::vector<std::unique_ptr<font>> fontmap = {};
 
 void engine::reg::init(){
     texmap.reserve(256);
@@ -48,10 +48,10 @@ int engine::reg::stream_register(std::string_view path){
 }
 
 int engine::reg::font_register(std::string_view path){
-    auto font = std::make_unique<Font>();
-    *font = mktxt::load_font(path.data());
+    auto f = std::make_unique<font>();
+    *f = mk_load_font(path.data());
 
-    fontmap.push_back(std::move(font));
+    fontmap.push_back(std::move(f));
 
     return fontmap.size() - 1;
 }
@@ -68,7 +68,7 @@ Stream* engine::reg::get_music(int id) {
     return musicmap[id].get();
 };
 
-Font* engine::reg::get_font(int id) {
+font* engine::reg::get_font(int id) {
     return fontmap[id].get();
 };
 
@@ -95,7 +95,7 @@ void engine::reg::clear_stream(){
 
 void engine::reg::clear_font(){
     for (auto& font : fontmap){
-        if (font) mktxt::unload_font(font.get());
+        if (font) mk_delete_font(font.get());
     }
     fontmap.clear();
 }

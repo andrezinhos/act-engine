@@ -17,6 +17,7 @@ set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3.a)
 
 add_library(mkr_c STATIC
   glad.c
+  mklib.c
   mktext.c
   mktex.c
   mkgeo.c
@@ -37,7 +38,6 @@ target_compile_options(mkr_c PRIVATE
   -Wall
   -Wextra
   -O0
-  -g
   # -march=x86-64-v2
   -DDEBUG
 )
@@ -46,12 +46,11 @@ target_compile_options(mkr PRIVATE
   -Wall
   -Wextra
   -O0
-  -g
   # -march=x86-64-v2
   -DDEBUG
 )
 
-set_target_properties(mkr PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+# set_target_properties(mkr PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
 target_include_directories(mkr_c PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}

@@ -1,4 +1,5 @@
 #include "esys.hpp"
+#include "mkr.h"
 #include "mkr.hpp"
 #include "mktex.hpp"
 #include "pwra.h"
@@ -115,10 +116,10 @@ void Text::spacing(double space){
 
 void Text::draw(const char* text, float size, color color){
     if (source){
-        mktxt::render_text_extended(source, text, position, size, color);
+        mk_render_text_extended(source, text, position, size);
     }
     else {
-        mktxt::render_text(text, position, size, color);
+        mk_render_text(text, position, size);
     }
 }
 

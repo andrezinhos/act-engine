@@ -70,8 +70,6 @@ extern void mk_unload_gbatch();
 extern bool mk_init();
 extern void mk_shutdown();
 
-extern void mk_std_vertex_size(vec2 position, vec2 size, color color, float u0, float v0, float u1, float v1);
-
 extern texture mk_load_tex_memory(void* data, int width, int height);
 extern void mk_delete_tex(texture* tex);
 
@@ -79,24 +77,31 @@ extern void mk_render_tex_region(texture* tex, rectangle source, vec2 position, 
 extern void mk_render_tex(texture* tex, vec2 position, vec2 size);
 extern void mk_render_rectangle(vec2 position, vec2 size, color color);
 
+extern font mk_load_font(const char* path);
+extern void mk_delete_font(font* font);
+
+extern void mk_render_text_extended(font* font, const char* text, vec2 position, float min_sz);
+extern void mk_render_text(const char* text, vec2 position, float min_sz);
+
 extern mesh mk_gen_mesh_data(size_t verts, size_t indices);
 extern void mk_push_mesh(mesh* mesh, bool dynamic);
-extern mesh mk_gen_quad(int width, int height);
-
 extern void mk_delete_mesh(mesh* mesh);
+extern mesh mk_gen_quad(int width, int height, int x, int y, color color);
+
+extern void mk_arena_push_position(arena_v* arena, vec3 position);
+extern void mk_arena_push_color(arena_v* arena, color color);
+extern void mk_arena_push_uv(arena_v* arena, float u, float v);
 
 extern void mk_push_vertex_position(vec3 position);
 extern void mk_push_vertex_color(color color);
 extern void mk_push_vertex_uv(float u, float v);
 
-extern void mk_push_call(uint32_t count, uint32_t start, uint32_t* tex);
-
+extern void mk_push_call(uint32_t start, uint32_t count, uint32_t* tex);
 extern void mk_push_indices(uint32_t base);
-
 extern void mk_clear_screen(color color);
 
-extern void flush_limit();
-extern void flush();
+extern void mk_flush_limit();
+extern void mk_flush();
 
 extern void mk_render_begin();
 extern void mk_render_end();

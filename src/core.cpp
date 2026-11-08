@@ -40,11 +40,14 @@ void engine::core::initial_scene(std::unique_ptr<Scene> initial){
             currScene->Init();
         }
 
-        mkr::ScreenClear(Black);
+        mk_clear_screen(Black);
         currScene->Update(time::get_delta());
 
         mkr::RenderBegin();
+        mk_render_begin();
+        mk_ortho_start({{0.0f, 0.0f}, 0.0f, 1.0f}, mainw.width, mainw.height);
         currScene->Draw();
+        mk_render_end();
         mkr::RenderEnd();
         mainw.swap();
     }
@@ -62,7 +65,7 @@ void engine::core::main_window(int width, int height, std::string_view title){
     wmain.win_height = height;
     bool win_started = mkr::startWindow(width, height, title.data());
 
-    mainw.init(width, height, title);
+    mainw.init(width, height, "WINDOW TEST");
     mainw.width = width;
     mainw.height = height;
 
@@ -72,7 +75,8 @@ void engine::core::main_window(int width, int height, std::string_view title){
 
         time::start_time();
         mkr::Initialize();
-        mkr::setWindowIcon("eng/w_icon.png");
+        mk_init();
+        mainw.icon("eng/w_icon.png");
         pwra_start_audio();
         reg::init();
         std::cout << "[INFO] ENGINE INITIALIZED\n";
@@ -83,13 +87,13 @@ void engine::core::main_window(int width, int height, std::string_view title){
 }
 
 bool special_esc(){
-	return glfwGetKey(wmain.main, 256) == 1;
+	return glfwGetKey(engine::core::mainw.data, 256) == 1;
 }
 
 bool engine::core::loop(){
-    if (glfwWindowShouldClose(wmain.main) || special_esc()) {
-        return false;
-    }
+    // if (glfwWindowShouldClose(wmain.main) || special_esc()) {
+    //     return false;
+    // }
 
     if (mainw.should_close() || special_esc()){
         return false;
@@ -104,5 +108,6 @@ void engine::core::finish(){
     reg::clear();
     pwra_end_audio();
     mainw.destroy();
+    mk_shutdown();
     mkr::Shutdown();
 }

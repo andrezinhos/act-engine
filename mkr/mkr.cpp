@@ -17,12 +17,6 @@ void frameCallback(GLFWwindow* window, int w, int h){
     wmain.win_height = h;
 }
 
-void mkr::setWindowIcon(const char* path){
-    wmain.icon.pixels = stbi_load(path, &wmain.icon.width, &wmain.icon.height, 0, 4);
-    glfwSetWindowIcon(wmain.main, 1, &wmain.icon);
-    stbi_image_free(wmain.icon.pixels);
-}
-
 void mkr::setCursorMode(Cursor cur){
     if (cur == NORMAL) glfwSetInputMode(wmain.main, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     if (cur == HIDDEN) glfwSetInputMode(wmain.main, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -142,7 +136,7 @@ Shader mkr::LoadShader(const char* vsPath, const char* fsPath) {
     frag_file = NULL;
 
     fgl_create_shader_prog(&shader.id);
-    fgl_attach_shader(shader.id, vs, fs);
+    fgl_link_shader_prog(shader.id, vs, fs);
 
     fgl_delete_shader(vs);
     fgl_delete_shader(fs);

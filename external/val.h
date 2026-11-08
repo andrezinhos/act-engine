@@ -300,8 +300,7 @@ VALDEF void val_arenad_add_call(arena_dc* arena, uint32_t count, uint32_t start,
 }
 
 VALDEF void val_arenad_add_count(arena_dc* arena, uint32_t count){
-    arena->data[arena->count].count += count;
-    arena->count += 1;
+    arena->data[arena->count - 1].count += count;
 }
 
 VALDEF void val_arenad_reset(arena_dc* arena){
