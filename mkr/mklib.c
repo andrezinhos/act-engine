@@ -44,9 +44,6 @@ mesh mk_gen_mesh_data(size_t verts, size_t indices){
     val_arenav_init(&m.verts, verts);
     val_arenai_init(&m.indices, indices);
 
-    m.verts.count = verts;
-    m.indices.count = indices;
-
     fgl_create_array(&m.buffer.vao);
     fgl_create_buffer(&m.buffer.vbo, &m.buffer.ebo);
 
@@ -82,8 +79,8 @@ void mk_push_mesh(mesh* mesh, bool dynamic){
         );
     }
 
-    fgl_element_connect(&mesh->buffer);
-    fgl_buffer_connect(&mesh->buffer);
+    fgl_element_connect(mesh->buffer.vao, mesh->buffer.ebo);
+    fgl_buffer_connect(mesh->buffer.vao, mesh->buffer.vbo, 8 * sizeof(float));
 
     fgl_arr_attrib(mesh->buffer.vao, FGL_POSITION_LAYOUT, FGL_POSITION_VALUE, 0);
     fgl_arr_attrib(mesh->buffer.vao, FGL_COLOR_LAYOUT, FGL_COLOR_VALUE, 3);

@@ -1,5 +1,3 @@
-#include "esys.hpp"
-#include "mkr.hpp"
 #include "core.hpp"
 #include "script.hpp"
 #include "pwra.h"
@@ -7,61 +5,38 @@
 #define SOL_NO_RTTI 1
 #define SOL_NOEXCEPT_FUNCTION_TYPE 1
 #include "sol.hpp"
-#include <string_view>
 
 sol::state state;
 sol::table scene_table;
 
-void LuaScene::Init(){
+void lscene::init(){
     scene_table = sol::nil;
-    auto result = state.do_file(file);
+    auto result = state.do_file(file.data());
     scene_table = result;
-    if (scene_table["Init"].valid()) scene_table["Init"]();
+    if (scene_table["init"].valid()) {
+        scene_table["init"]();
+    }
 }
 
-void LuaScene::Update(float dt){
-    if (scene_table["Update"].valid()) scene_table["Update"](dt);
+void lscene::update(float dt){
+    if (scene_table["update"].valid()){
+        scene_table["update"](dt);
+    }
 }
 
-void LuaScene::Draw(){
-    if (scene_table["Draw"].valid()) scene_table["Draw"]();
+void lscene::draw(){
+    if (scene_table["draw"].valid()){
+        scene_table["draw"]();
+    }
 }
 
-void LuaScene::Exit(){
-    if (scene_table["Exit"].valid()) scene_table["Exit"]();
+void lscene::exit(){
+    if (scene_table["exit"].valid()){
+        scene_table["exit"]();
+    }
 }
 
-void script::start_types(){
-    state.new_usertype<Vec2>("Vec2",
-        sol::no_constructor,
-        "x", &Vec2::x,
-        "y", &Vec2::y,
-        "zero", &Vec2Zero
-    );
-
-    state.new_usertype<Vec3>("Vec3",
-        sol::no_constructor,
-        "x", &Vec3::x,
-        "y", &Vec3::y,
-        "z", &Vec3::z,
-        "zero", &Vec3Zero,
-        "one", &Vec3One
-    );
-
-    state.new_usertype<Camera2D>("Cam2D",
-        sol::constructors<Camera2D(Vec2, float, float)>(),
-        "position", &Camera2D::position,
-        "rotation", &Camera2D::rotation,
-        "zoom", &Camera2D::zoom
-    );
-
-    //this is needed in case of accessing texture parameters
-    state.new_usertype<Texture>("Tex2D",
-        sol::no_constructor,
-        "width", &Texture::width,
-        "height", &Texture::height
-    );
-
+void engine::script::start_types(){
 	state.new_enum("key",
 		"w", engine::keys::W,
 		"a", engine::keys::A,
@@ -86,10 +61,6 @@ void script::start_types(){
 	state["max"] = engine::flags::maximized;
 	state["full"] = engine::flags::fullscreen;
 
-	state["normal"] = Cursor::NORMAL;
-	state["hidden"] = Cursor::HIDDEN;
-	state["disabled"] = Cursor::DISABLED;
-
 	state["red"] = Red;
 	state["green"] = Green;
 	state["blue"] = Blue;
@@ -97,135 +68,31 @@ void script::start_types(){
 	state["black"] = Black;
 }
 
-void script::load_conteiners(){
-    state.new_usertype<Rect>("Rect",
-        "source", &Rect::source,
+void engine::script::load_conteiners(){
 
-        "pos", &Rect::pos,
-        "size", &Rect::size,
-        "draw", &Rect::draw
-    );
-
-    state.new_usertype<Sprite>("Sprite",
-        "source", &Sprite::source,
-        "position", &Sprite::position,
-
-        "load", &Sprite::load,
-        "pos", &Sprite::pos,
-        "size", &Sprite::size,
-        "draw", &Sprite::draw,
-        "draw_area", &Sprite::draw_area
-    );
-
-    state.new_usertype<Sound>("Sound",
-        "load", &Sound::load,
-        "play", &Sound::play,
-        "pitch", &Sound::pitch
-    );
-
-    state.new_usertype<Music>("Music",
-        "load", &Music::load,
-
-        "play", &Music::play,
-        "stop", &Music::stop,
-        "pause", &Music::pause,
-        "resume", &Music::resume
-    );
-
-    state.new_usertype<Text>("Text",
-        "position", &Text::position,
-
-        "load", &Text::load,
-        "pos", &Text::pos,
-        "spacing", &Text::spacing,
-        "draw", &Text::draw
-    );
-
-    state.new_usertype<Anim2D>("Anim2D",
-        "duration", &Anim2D::duration,
-        "load", &Anim2D::load,
-        "pos", &Anim2D::pos,
-        "size", &Anim2D::size,
-        "playing", &Anim2D::playing,
-
-        "add_frame", &Anim2D::add_frame,
-        "play", &Anim2D::play,
-        "draw", &Anim2D::draw
-    );
 }
 
-void script::init_script(){
+void engine::script::init_script(){
     state.open_libraries(sol::lib::base, sol::lib::package);
     start_types();
     load_conteiners();
 }
 
-void script::start_funcs(){
-    /* CORE FUNCS */
+void engine::script::start_funcs(){
     sol::table core_table = state.create_table();
 
-    core_table["win_flag"] = [](engine::flags flag){ engine::core::win_flag(flag); };
-    core_table["get_fps"] = [](){
-        std::string fps_string = "FPS: " + std::to_string(engine::time::get_frames());
-        mk_render_text(fps_string.c_str(), {10, 50}, 30);
-    };
-    core_table["delta"] = engine::time::get_delta;
-
-    core_table["initial_scene"] = [](const std::string& file){
-        std::string path = "assets/scenes/"+file;
-        engine::core::initial_scene(std::make_unique<LuaScene>(path));
+    core_table["win_flag"] = [](flags flag){
+        engine::core::win_flag(flag);
     };
 
-    core_table["change_scene"] = [](const std::string& file){
-        std::string path = "assets/scenes/"+file;
-        engine::core::set_scene(std::make_unique<LuaScene>(path));
-    };
-
-    core_table["start"] = [](int width, int height, std::string_view title){
-        engine::core::main_window(width, height, title.data());
+    core_table["init"] = [](int w, int h, std::string_view title){
+        engine::core::main_window(w, h, title);
     };
 
     state["eng"] = core_table;
-
-    /* IO FUNCS */
-
-    sol::table ios_table = state.create_table();
-
-    ios_table["debug"] = [](const char* msg){
-        printf("[DEBUG] %s\n", msg);
-    };
-
-    ios_table["err"] = [](const char* msg){
-        printf("[ERROR] %s\n", msg);
-    };
-
-    ios_table["key_down"] = [](engine::keys key){ return engine::io::key_down(key); };
-    ios_table["key_pressed"] = [](engine::keys key){ return engine::io::key_pressed(key); };
-
-    state["ios"] = ios_table;
-
-    /* AUDIO FUNCS */
-
-    sol::table audio_table = state.create_table();
-
-    audio_table["master_vol"] = [](double vol){ pwra_set_master_volume(vol); };
-
-    state["audio"] = audio_table;
-
-    /* RENDER FUNCS */
-
-    sol::table render = state.create_table();
-
-    render["win_width"] = mkr::GetWindowWidth;
-    render["win_height"] = mkr::GetWindowHeight;
-    render["cam_begin"] = [](Camera2D& cam){ mkr::CameraBegin(cam); };
-    render["cam_end"] = mkr::CameraEnd;
-    render["cursor"] = [](Cursor cur) { mkr::setCursorMode(cur); };
-
-    state["render"] = render;
 }
 
-void script::load_script_file(){
+void engine::script::load_script_file(){
     start_funcs();
     state.script_file("assets/scripts/init.lua");
 }

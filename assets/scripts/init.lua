@@ -1,9 +1,3 @@
-eng.win_flag(resizable)
-eng.start(800, 600, "Window")
-
-eng.initial_scene("menu.lua")
-
--- render.cursor(hidden);
-
--- cam.position.x = smile.position.x - (render.win_width()/2) + (smile.texture.width /2)
--- cam.position.y = smile.position.y - (render.win_height()/2) + (smile.texture.height /2)
+eng.win_flag(full)
+eng.init(800, 600, "Window")
+-- eng.initial_scene("menu.lua")

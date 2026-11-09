@@ -1,10 +1,53 @@
 #include "esys.hpp"
 #include "mkr.h"
-#include "mkr.hpp"
-#include "mktex.hpp"
 #include "pwra.h"
 #include "core.hpp"
-#include <vector>
+
+void Sound::load(const char* path){
+    id = engine::reg::sfx_register(path);
+    data = engine::reg::get_sfx(id);
+}
+
+void Sound::play(){
+    if (data) {
+        pwra_play_sfx(data);
+    }
+}
+
+void Sound::pitch(double amount){
+    if (data) {
+        pwra_set_pitch(data, amount);
+    }
+}
+
+void Music::load(const char* path){
+    id = engine::reg::stream_register(path);
+    data = engine::reg::get_music(id);
+}
+
+void Music::play(){
+    if (data) {
+        pwra_play_stream(data);
+    }
+}
+
+void Music::stop(){
+    if (data) {
+        pwra_stop_stream(data);
+    }
+}
+
+void Music::pause(){
+    if (data) {
+        pwra_pause_stream(data);
+    }
+}
+
+void Music::resume(){
+    if (data) {
+        pwra_resume_stream(data);
+    }
+}
 
 void Rect::pos(float x, float y){
     source.x = x;
@@ -17,147 +60,9 @@ void Rect::size(int x, int y){
 }
 
 void Rect::draw(color color){
-    mkr::RenderRectangle(
+    mk_render_rectangle(
         {(float)source.x, (float)source.y},
         {(float)source.width, (float)source.height},
         color
     );
-}
-
-void Sprite::load(const char* path){
-    id = engine::reg::tex_register(path);
-    source = engine::reg::get_tex(id);
-}
-
-void Sprite::pos(float x, float y){
-    position.x = x;
-    position.y = y;
-}
-
-void Sprite::size(int x, int y){
-    if (source){
-        source->width = x;
-        source->height = y;
-    }
-}
-
-void Sprite::draw(){
-    if (source){
-        Vec2 size = {
-            static_cast<float>(source->width),
-            static_cast<float>(source->height)
-        };
-        mktex::render_tex(source, position, size, White);
-    }
-}
-
-void Sprite::draw_area(Rect& rec){
-    if (source){
-        Vec2 size = {
-            static_cast<float>(source->width),
-            static_cast<float>(source->height)
-        };
-        mktex::render_tex_rect(source, rec.source, position, size, White);
-    }
-}
-
-void Sound::load(const char* path){
-    id = engine::reg::sfx_register(path);
-    data = engine::reg::get_sfx(id);
-}
-
-void Sound::play(){
-    if (data) pwra_play_sfx(data);
-}
-
-void Sound::pitch(double amount){
-    if (data) pwra_set_pitch(data, amount);
-}
-
-void Music::load(const char* path){
-    id = engine::reg::stream_register(path);
-    data = engine::reg::get_music(id);
-}
-
-void Music::play(){
-    if (data) pwra_play_stream(data);
-}
-
-void Music::stop(){
-    if (data) pwra_stop_stream(data);
-}
-
-void Music::pause(){
-    if (data) pwra_pause_stream(data);
-}
-
-void Music::resume(){
-    if (data) pwra_resume_stream(data);
-}
-
-void Text::load(const char* path){
-    id = engine::reg::font_register(path);
-    source = engine::reg::get_font(id);
-}
-
-void Text::pos(int x, int y){
-    position.x = x;
-    position.y = y;
-}
-
-void Text::spacing(double space){
-    if (source) {
-        source->spacing = static_cast<float>(space);
-    }
-    else {
-        dstate->dfont.spacing = static_cast<float>(space);
-    }
-}
-
-void Text::draw(const char* text, float size, color color){
-    if (source){
-        mk_render_text_extended(source, text, position, size);
-    }
-    else {
-        mk_render_text(text, position, size);
-    }
-}
-
-void Anim2D::duration(double dur){
-    source.duration = dur / 12.0;
-}
-
-void Anim2D::load(const char* path){
-    id = engine::reg::tex_register(path);
-    ref = engine::reg::get_tex(id);
-}
-
-void Anim2D::add_frame(int x, int y, int w, int h){
-    Rectangle rect;
-
-    rect.x = x;
-    rect.y = y;
-    rect.width = w;
-    rect.height = h;
-
-    source.frames.push_back(rect);
-}
-
-void Anim2D::play(bool loop){
-    anim::PlayAnimation(source, loop);
-}
-
-void Anim2D::pos(int x, int y){
-    position.x = x;
-    position.y = y;
-}
-
-void Anim2D::size(double size){
-    size_val = size;
-}
-
-void Anim2D::draw(){
-    if (ref) {
-        anim::RenderAnimation(source, ref, position, size_val, White);
-    }
 }

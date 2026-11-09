@@ -1,4 +1,6 @@
-// #define TFB_IMPL
+#define STB_TRUETYPE_IMPLEMENTATION
+#define TFB_IMPL
+
 #include "mkr.h"
 #include "tfb.h"
 #include "bml.h"

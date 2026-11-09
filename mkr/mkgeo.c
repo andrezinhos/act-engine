@@ -6,31 +6,8 @@
 #include "tgt.h"
 
 bool mk_load_default_quad(){
-    // val_arenav_init(&dquad.verts, 4);
-    // val_arenai_init(&dquad.indices, 6);
-
-    // dquad.verts.count = 4;
-    // dquad.indices.count = 6;
-
-    // fgl_create_array(&dquad.buffer);
-    // fgl_create_buffer(&dquad.buffer);
-
     dquad = mk_gen_mesh_data(4, 6);
     mk_push_mesh(&dquad, false);
-
-    // fgl_data_static(
-        // &dquad.buffer,
-        // sizeof(vertex) * dquad.verts.count,
-        // sizeof(uint32_t) * dquad.indices.count,
-        // dquad.verts.data, dquad.indices.data
-    // );
-
-    // fgl_element_connect(&dquad.buffer);
-    // fgl_buffer_connect(&dquad.buffer);
-
-    // fgl_arr_attrib(&dquad.buffer, FGL_POSITION_VALUE, FGL_POSITION_LAYOUT, 0);
-    // fgl_arr_attrib(&dquad.buffer, FGL_COLOR_VALUE, FGL_COLOR_LAYOUT, 3);
-    // fgl_arr_attrib(&dquad.buffer, FGL_TEXTURE_VALUE, FGL_TEXTURE_LAYOUT, 6);
 
     return true;
 }
@@ -48,9 +25,6 @@ mesh mk_gen_quad(int width, int height, int x, int y, color color){
 
     m = mk_gen_mesh_data(4, 6);
     mk_push_mesh(&m, false);
-
-    m.indices.count = 6;
-    m.verts.count = 4;
 
     uint32_t base = m.indices.count;
 
@@ -76,7 +50,7 @@ mesh mk_gen_quad(int width, int height, int x, int y, color color){
     mk_arena_push_color(&m.verts, color);
     mk_arena_push_uv(&m.verts, 0.0f, 1.0f);
 
-    // val_arenav_inc_count(&m.verts);
+    val_arenav_inc_count(&m.verts);
 
     mk_push_indices(base);
 
@@ -121,8 +95,8 @@ bool mk_load_gbatch(){
         NULL
     );
 
-    fgl_element_connect(&dbat.buffer);
-    fgl_buffer_connect(&dbat.buffer);
+    fgl_element_connect(dbat.buffer.vao, dbat.buffer.ebo);
+    fgl_buffer_connect(dbat.buffer.vao, dbat.buffer.vbo, 8 * sizeof(float));
 
     fgl_arr_attrib(dbat.buffer.vao, FGL_POSITION_LAYOUT, FGL_POSITION_VALUE, 0);
     fgl_arr_attrib(dbat.buffer.vao, FGL_COLOR_LAYOUT, FGL_COLOR_VALUE, 3);
@@ -140,33 +114,36 @@ void mk_unload_gbatch(){
     fgl_delete_arr(&dbat.buffer.vao);
 }
 
-void mk_render_rectangle(vec2 position, vec2 size, color color){
+void mk_render_rectangle(vec2 position, vec2 size, color c){
     mk_flush_limit();
 
     uint32_t index_start = val_arenav_size(&dbat.verts);
     uint32_t base = val_arenai_size(&dbat.indices);
 
     mk_push_vertex_position((vec3){position.x, position.y, 0.0f});
-    mk_push_vertex_color(color);
+
+    mk_push_vertex_color(c);
     mk_push_vertex_uv(0.0f, 0.0f);
 
     val_arenav_inc_count(&dbat.verts);
 
     mk_push_vertex_position((vec3){position.x + size.x, position.y, 0.0f});
-    mk_push_vertex_color(color);
+    mk_push_vertex_color(c);
     mk_push_vertex_uv(1.0f, 0.0f);
 
     val_arenav_inc_count(&dbat.verts);
 
     mk_push_vertex_position((vec3){position.x + size.x, position.y + size.y, 0.0f});
-    mk_push_vertex_color(color);
+    mk_push_vertex_color(c);
     mk_push_vertex_uv(1.0f, 1.0f);
 
     val_arenav_inc_count(&dbat.verts);
 
     mk_push_vertex_position((vec3){position.x, position.y + size.y, 0.0f});
-    mk_push_vertex_color(color);
+    mk_push_vertex_color(c);
     mk_push_vertex_uv(0.0f, 1.0f);
+
+    val_arenav_inc_count(&dbat.verts);
 
     mk_push_indices(index_start);
 

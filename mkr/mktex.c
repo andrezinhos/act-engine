@@ -7,11 +7,7 @@ bool mk_load_default_texture(){
     dtex.width = 1;
     dtex.height = 1;
 
-    uint32_t color[] = {
-        0xFFFFFF, 0x000000,
-        0x000000, 0xFFFFFF
-    };
-
+    uint32_t color = 0xFFFFFFFF;
     fgl_create_texture(&dtex.id, GL_TEXTURE_2D, dtex.width, dtex.height, &color);
 
     if (dtex.id == 0){

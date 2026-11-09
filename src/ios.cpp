@@ -1,7 +1,6 @@
 #include "core.hpp"
 #include "fgl.h"
 #include "glfw/glfw3.h"
-#include "mkr.hpp"
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -103,7 +102,7 @@ image::~image(){
     height = 0;
 }
 
-bool window::init(int w, int h, std::string_view t){
+bool window::config(){
     if (!glfwInit()){
         return false;
     }
@@ -111,8 +110,12 @@ bool window::init(int w, int h, std::string_view t){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
+    return true;
+}
+
+bool window::init(int w, int h, std::string_view t){
     data = glfwCreateWindow(w, h, t.data(), moni, nullptr);
     if (!data){
         std::cout << "error: failed to create window\n";
@@ -189,7 +192,7 @@ void window::swap(){
 }
 
 void window::pos_center(){
-    if (flags_active[2] == 1){
+    if (flags[2] == 0){
         moni = glfwGetPrimaryMonitor();
         vid = glfwGetVideoMode(moni);
 

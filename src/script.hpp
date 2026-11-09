@@ -1,22 +1,14 @@
 #pragma once
-#include "scene.hpp"
+#include "core.hpp"
 #include <string>
 
-namespace script{
-    void start_funcs();
-    void start_types();
-    void load_conteiners();
-    void init_script();
-    void load_script_file();
-};
-
-class LuaScene : public Scene{
+class lscene : public engine::scene {
 private:
     std::string file;
 public:
-    LuaScene(const std::string& path) : file(path) {}
-    void Init() override;
-    void Update(float dt) override;
-    void Draw() override;
-    void Exit() override;
+    lscene(std::string_view path) : file(path) {}
+    void init() override;
+    void update(float dt) override;
+    void draw() override;
+    void exit() override;
 };

@@ -1,7 +1,5 @@
 #pragma once
-#include "bml.h"
 #include "mkr.h"
-#include "scene.hpp"
 #include <memory>
 #include <string_view>
 #include <cstdint>
@@ -33,11 +31,17 @@ namespace engine {
         F4 = 293,
         F5 = 294,
     };
+
+    enum class cursor{
+        normal,
+        hidden,
+        disabled,
+    };
 };
 
 struct Sfx;
 struct Stream;
-struct Texture;
+struct texture;
 struct font;
 
 struct GLFWwindow;
@@ -67,11 +71,15 @@ struct window{
     GLFWmonitor* moni = nullptr;
     const GLFWvidmode* vid = nullptr;
 
+    int flags[3];
+
     int width = 0;
     int height = 0;
 
     window() = default;
+    ~window() = default;
 
+    bool config();
     bool init(int w, int h, std::string_view t);
     bool should_close();
     bool context();
@@ -86,12 +94,30 @@ struct camera{
 };
 
 namespace engine{
+    class scene{
+    public:
+        virtual ~scene() = default;
+
+        virtual void init() = 0;
+        virtual void update(float dt) = 0;
+        virtual void draw() = 0;
+        virtual void exit() {};
+    };
+
+    namespace script{
+        void start_funcs();
+        void start_types();
+        void load_conteiners();
+        void init_script();
+        void load_script_file();
+    };
+
     namespace core {
         extern window mainw;
         bool loop();
         void finish();
-        void set_scene(std::unique_ptr<Scene> scene);
-        void initial_scene(std::unique_ptr<Scene> initial);
+        void set_scene(std::unique_ptr<scene> scene);
+        void initial_scene(std::unique_ptr<scene> initial);
 
         void win_flag(flags flag);
         void main_window(int width, int height, std::string_view title);
@@ -125,7 +151,7 @@ namespace engine{
         int stream_register(std::string_view path);
         int font_register(std::string_view path);
 
-        Texture* get_tex(int id);
+        texture* get_tex(int id);
         Sfx* get_sfx(int id);
         Stream* get_music(int id);
         font* get_font(int id);
@@ -137,5 +163,4 @@ namespace engine{
 
         void clear();
     };
-
 };

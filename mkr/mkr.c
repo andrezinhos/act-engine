@@ -1,4 +1,4 @@
-// #define FGL_IMPL
+#define FGL_IMPL
 #define BML_IMPL
 
 #include "mkr.h"
@@ -78,27 +78,27 @@ void mk_unload_default_shader(){
 
 bool mk_init(){
     if (mk_load_default_shader()){
-        printf("\t[INFO] DEFAULT SHADER - OK\n");
+        printf("[INFO] DEFAULT SHADER - OK\n");
     }
 
     if (mk_load_default_texture()){
-        printf("\t[INFO] DEFAULT TEXTURE - OK\n");
+        printf("[INFO] DEFAULT TEXTURE - OK\n");
     }
 
     if (mk_load_default_quad()){
-        printf("\t[INFO] DEFAULT SHAPES - OK\n");
+        printf("[INFO] DEFAULT SHAPES - OK\n");
     }
 
     if (mk_load_default_font()){
-        printf("\t[INFO] DEFAULT FONT - OK\n");
+        printf("[INFO] DEFAULT FONT - OK\n");
     }
 
-    printf("\t[INFO] SOLVING INTERNALS...\n");
+    printf("[INFO] SOLVING INTERNALS...\n");
     mk_load_gbatch();
 
     fgl_enable_blend(true);
 
-    printf("\t[INFO] DEFAULT STATE - OK\n");
+    printf("[INFO] DEFAULT STATE - OK\n");
     return true;
 }
 
@@ -109,7 +109,7 @@ void mk_shutdown(){
     mk_unload_default_texture();
     mk_unload_default_shader();
 
-    printf("\t[INFO] DEFAULT STATE UNLOADED\n");
+    printf("[INFO] DEFAULT STATE UNLOADED\n");
 }
 
 void mk_clear_screen(color color){

@@ -57,8 +57,8 @@ FGLDEF bool fgl_array_valid(const uint32_t vao);
 FGLDEF bool fgl_buffer_valid(const uint32_t buffer);
 FGLDEF bool fgl_shader_prog_valid(const uint32_t prog);
 
-FGLDEF void fgl_element_connect(fgl_buffer* _buf);
-FGLDEF void fgl_buffer_connect(fgl_buffer* _buf);
+FGLDEF void fgl_element_connect(const uint32_t vao, const uint32_t ebo);
+FGLDEF void fgl_buffer_connect(const uint32_t vao, const uint32_t vbo, size_t stride);
 FGLDEF void fgl_bind_arr(const uint32_t vao);
 FGLDEF void fgl_unbind_arr();
 
@@ -203,12 +203,12 @@ FGLDEF bool fgl_shader_prog_valid(const uint32_t prog){
     return glIsProgram(prog) == GL_TRUE;
 }
 
-FGLDEF void fgl_element_connect(fgl_buffer* _buf){
-    glVertexArrayElementBuffer(_buf->vao, _buf->ebo);
+FGLDEF void fgl_element_connect(const uint32_t vao, const uint32_t ebo){
+    glVertexArrayElementBuffer(vao, ebo);
 }
 
-FGLDEF void fgl_buffer_connect(fgl_buffer* _buf){
-    glVertexArrayVertexBuffer(_buf->vao, 0, _buf->vbo, 0, 8 * sizeof(float));
+FGLDEF void fgl_buffer_connect(const uint32_t vao, const uint32_t vbo, size_t stride){
+    glVertexArrayVertexBuffer(vao, 0, vbo, 0, stride);
 }
 
 FGLDEF void fgl_bind_arr(const uint32_t vao){

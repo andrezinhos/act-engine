@@ -1,11 +1,10 @@
 #pragma once
-#include "mktypes.h"
-#include "mkmath.hpp"
+#include "bml.h"
 #include "tgt.h"
 #include <vector>
 
 struct Sheet{
-    std::vector<Rectangle> frames;
+    std::vector<rectangle> frames;
     int currFrame;
     float counter;
     double duration;
@@ -15,5 +14,5 @@ struct Sheet{
 class anim{
 public:
     static void PlayAnimation(Sheet& sheet, bool loop);
-    static void RenderAnimation(Sheet& sheet, Texture* tex, Vec2 position, float size, color color);
+    static void RenderAnimation(Sheet& sheet, texture* tex, vec2 position, float size, color color);
 };

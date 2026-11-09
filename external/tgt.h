@@ -47,10 +47,10 @@ typedef struct shader{
     uint32_t uview;
 } shader;
 
-#define White (color){1.0f, 1.0f, 1.0f}
-#define Black (color){0.0f, 0.0f, 0.0f}
-#define Red (color){1.0f, 0.0f, 0.0f}
-#define Green (color){0.0f, 1.0f, 0.0f}
-#define Blue (color){0.0f, 0.0f, 1.0f}
+#define White  (color){1.0f, 1.0f, 1.0f}
+#define Black  (color){0.0f, 0.0f, 0.0f}
+#define Red    (color){1.0f, 0.0f, 0.0f}
+#define Green  (color){0.0f, 1.0f, 0.0f}
+#define Blue   (color){0.0f, 0.0f, 1.0f}
 #define Yellow (color){1.0f, 1.0f, 0.0f}
-#define Cyan (color){1.0f, 0.0f, 1.0f}
+#define Cyan   (color){1.0f, 0.0f, 1.0f}

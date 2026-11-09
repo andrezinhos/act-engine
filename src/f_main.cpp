@@ -1,6 +1,6 @@
-#include "script.hpp"
+#include "core.hpp"
 
 int main(){
-    script::init_script();
-    script::load_script_file();
+    engine::script::init_script();
+    engine::script::load_script_file();
 }

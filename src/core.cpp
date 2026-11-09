@@ -1,30 +1,29 @@
 #include "core.hpp"
 #include "mkr.h"
 #include "pwra.h"
-#include "mkr.hpp"
-#include "scene.hpp"
+#include "glfw/glfw3.h"
 #include <iostream>
 
-constexpr std::string_view VERSION = "0.15.10";
+constexpr std::string_view VERSION = "0.16.1";
 
-static std::unique_ptr<Scene> currScene = nullptr;
-static std::unique_ptr<Scene> nextScene = nullptr;
+static std::unique_ptr<engine::scene> currScene = nullptr;
+static std::unique_ptr<engine::scene> nextScene = nullptr;
 
 window engine::core::mainw = {};
 
 void engine::core::win_flag(flags flag){
-    if (flag == flags::resizable) flags_active[0] = 1;
-    if (flag == flags::maximized) flags_active[1] = 1;
-    if (flag == flags::fullscreen) flags_active[2] = 1;
+    if (flag == flags::resizable) mainw.flags[0] = 1;
+    if (flag == flags::maximized) mainw.flags[1] = 1;
+    if (flag == flags::fullscreen) mainw.flags[2] = 1;
 }
 
-void engine::core::set_scene(std::unique_ptr<Scene> scene){
+void engine::core::set_scene(std::unique_ptr<scene> scene){
     nextScene = std::move(scene);
 }
 
-void engine::core::initial_scene(std::unique_ptr<Scene> initial){
+void engine::core::initial_scene(std::unique_ptr<scene> initial){
     currScene = std::move(initial);
-    currScene->Init();
+    currScene->init();
 
     while(loop()) {
         if (!time::clock()) {
@@ -35,20 +34,18 @@ void engine::core::initial_scene(std::unique_ptr<Scene> initial){
         io::input_update();
 
         if (nextScene){
-            if (currScene) currScene->Exit();
+            if (currScene) currScene->exit();
             currScene = std::move(nextScene);
-            currScene->Init();
+            currScene->init();
         }
 
         mk_clear_screen(Black);
-        currScene->Update(time::get_delta());
+        currScene->update(time::get_delta());
 
-        mkr::RenderBegin();
         mk_render_begin();
         mk_ortho_start({{0.0f, 0.0f}, 0.0f, 1.0f}, mainw.width, mainw.height);
-        currScene->Draw();
+        currScene->draw();
         mk_render_end();
-        mkr::RenderEnd();
         mainw.swap();
     }
 
@@ -56,25 +53,25 @@ void engine::core::initial_scene(std::unique_ptr<Scene> initial){
 }
 
 void engine::core::main_window(int width, int height, std::string_view title){
-
-    if (mkr::configInit()) {
+    if (mainw.config()){
         std::cout << "ACT ENGINE v" << VERSION << "\n";
     }
 
-    wmain.win_width = width;
-    wmain.win_height = height;
-    bool win_started = mkr::startWindow(width, height, title.data());
+    if (mainw.flags[0] == 1) {
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+    }
 
-    mainw.init(width, height, "WINDOW TEST");
-    mainw.width = width;
-    mainw.height = height;
+    bool win_start = mainw.init(width, height, title);
 
-    if (win_started){
+    if (mainw.flags[1] == 1) {
+        glfwMaximizeWindow(mainw.data);
+    }
 
+    if (win_start){
+        mainw.pos_center();
         mainw.context();
 
         time::start_time();
-        mkr::Initialize();
         mk_init();
         mainw.icon("eng/w_icon.png");
         pwra_start_audio();
@@ -91,10 +88,6 @@ bool special_esc(){
 }
 
 bool engine::core::loop(){
-    // if (glfwWindowShouldClose(wmain.main) || special_esc()) {
-    //     return false;
-    // }
-
     if (mainw.should_close() || special_esc()){
         return false;
     }
@@ -109,5 +102,4 @@ void engine::core::finish(){
     pwra_end_audio();
     mainw.destroy();
     mk_shutdown();
-    mkr::Shutdown();
 }

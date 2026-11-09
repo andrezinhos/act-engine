@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 project(act-engine)
 
-set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-
 # standard version of C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 set(LUA_HEADERS ${CMAKE_SOURCE_DIR}/external/lua/src)
@@ -16,7 +14,6 @@ set(GLFW_LIB ${CMAKE_SOURCE_DIR}/external/glfw/libglfw3dll.a)
 
 set(MKR_HEADERS ${CMAKE_SOURCE_DIR}/mkr)
 set(MKR_LIB ${CMAKE_SOURCE_DIR}/mkr/lib/libmkr.a)
-set(MKR_LIB_NEW ${CMAKE_SOURCE_DIR}/mkr/lib/libmkr_c.a)
 
 set(PWRA_HEADERS ${CMAKE_SOURCE_DIR}/pwra)
 set(PWRA_LIB ${CMAKE_SOURCE_DIR}/pwra/lib/libpwra.dll.a)
@@ -30,9 +27,8 @@ set(ENGINE_CORE
 set(ENGINE_SYS
   src/ios.cpp
   src/script.cpp
-  src/animation.cpp
-  src/esys.cpp
-  # src/lecs.cpp
+  # src/animation.cpp
+  # src/esys.cpp
 )
 
 # executable files
@@ -72,14 +68,13 @@ target_link_libraries(app PRIVATE
   ${GLFW_LIB}
   ${LUA_LIB}
   ${MKR_LIB}
-  ${MKR_LIB_NEW}
   ${PWRA_LIB}
 )
 
 # OS libs
 if(WIN32)
   message("WINDOWS COMPILATION")
-  target_link_libraries(app PRIVATE user32 shell32)
+  target_link_libraries(app PRIVATE user32 shell32 gdi32 opengl32)
 
 else(UNIX)
 # todo: unix links

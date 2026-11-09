@@ -1,11 +1,9 @@
-#include "mktex.hpp"
-#include "mktxt.hpp"
 #include "pwra.h"
 #include "core.hpp"
 #include <string_view>
 #include "mkr.h"
 
-static std::vector<std::unique_ptr<Texture>> texmap = {};
+static std::vector<std::unique_ptr<texture>> texmap = {};
 static std::vector<std::unique_ptr<Sfx>> soundmap = {};
 static std::vector<std::unique_ptr<Stream>> musicmap = {};
 static std::vector<std::unique_ptr<font>> fontmap = {};
@@ -18,12 +16,12 @@ void engine::reg::init(){
 }
 
 int engine::reg::tex_register(std::string_view path){
-    auto tex = std::make_unique<Texture>();
+    auto tex = std::make_unique<texture>();
 
     image image;
     image.load(path);
 
-    *tex = mktex::load_tex_src(image.data, image.width, image.height);
+    *tex = mk_load_tex_memory(image.data, image.width, image.height);
     texmap.push_back(std::move(tex));
 
     return texmap.size() - 1;
@@ -56,7 +54,7 @@ int engine::reg::font_register(std::string_view path){
     return fontmap.size() - 1;
 }
 
-Texture* engine::reg::get_tex(int id) {
+texture* engine::reg::get_tex(int id) {
     return texmap[id].get();
 };
 
@@ -74,7 +72,7 @@ font* engine::reg::get_font(int id) {
 
 void engine::reg::clear_tex(){
     for (auto& tex : texmap){
-        if (tex) mktex::unload_tex(tex.get());
+        if (tex) mk_delete_tex(tex.get());
     }
     texmap.clear();
 }

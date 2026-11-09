@@ -1,7 +1,6 @@
 #include "animation.hpp"
-#include "mkr.hpp"
+#include "mkr.h"
 #include "core.hpp"
-#include "mktex.hpp"
 
 void anim::PlayAnimation(Sheet& sheet, bool loop){
     if (sheet.end && !loop) return;
@@ -23,12 +22,12 @@ void anim::PlayAnimation(Sheet& sheet, bool loop){
     }
 }
 
-void anim::RenderAnimation(Sheet& sheet, Texture* tex, Vec2 position, float size, color color){
-    mktex::render_tex_rect(
+void anim::RenderAnimation(Sheet& sheet, texture* tex, vec2 position, float size, color color){
+    mk_render_tex_region(
         tex,
         sheet.frames[sheet.currFrame],
         position,
-        (Vec2){size, size},
+        {size, size},
         color
     );
 }
