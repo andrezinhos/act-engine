@@ -28,7 +28,7 @@ set(ENGINE_SYS
   src/ios.cpp
   src/script.cpp
   # src/animation.cpp
-  # src/esys.cpp
+  src/esys.cpp
 )
 
 # executable files

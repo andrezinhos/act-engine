@@ -1,30 +1,22 @@
 {
     "diagnostics.globals": [
         "eng",
-        "vsync",
         "resizable",
         "max",
         "full",
-        "Vec2",
+        "vec2",
         "Cam2D",
         "render",
         "key",
         "ios",
-        "Vec3",
         "black",
         "white",
-        "Sprite",
-        "Sound",
+        "sound",
         "normal",
         "hidden",
         "disabled",
-        "Music",
-        "Text",
-        "Rect",
-        "stereo",
+        "music",
         "audio",
-        "high",
-        "Anim2D",
         "green"
     ]
 }

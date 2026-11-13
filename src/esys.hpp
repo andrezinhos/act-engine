@@ -2,30 +2,22 @@
 #include "pwra.h"
 #include "mkr.h"
 
-struct Sound{
+class sound{
     Sfx* data;
     int id;
-
-    void load(const char*  path);
+public:
+    sound(std::string_view path);
     void play();
     void pitch(double amount);
 };
 
-struct Music{
+class music{
     Stream* data;
     int id;
-
-    void load(const char*  path);
+public:
+    music(std::string_view path);
     void play();
     void stop();
     void pause();
     void resume();
-};
-
-struct Rect{
-    rectangle source;
-
-    void pos(float x, float y);
-    void size(int x, int y);
-    void draw(color color);
 };

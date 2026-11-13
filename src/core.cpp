@@ -11,12 +11,6 @@ static std::unique_ptr<engine::scene> nextScene = nullptr;
 
 window engine::core::mainw = {};
 
-void engine::core::win_flag(flags flag){
-    if (flag == flags::resizable) mainw.flags[0] = 1;
-    if (flag == flags::maximized) mainw.flags[1] = 1;
-    if (flag == flags::fullscreen) mainw.flags[2] = 1;
-}
-
 void engine::core::set_scene(std::unique_ptr<scene> scene){
     nextScene = std::move(scene);
 }
@@ -59,6 +53,16 @@ void engine::core::main_window(int width, int height, std::string_view title){
 
     if (mainw.flags[0] == 1) {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+    }
+
+    if (mainw.flags[2] == 1){
+        mainw.moni = glfwGetPrimaryMonitor();
+        mainw.vid = glfwGetVideoMode(mainw.moni);
+
+        glfwWindowHint(GLFW_RED_BITS, mainw.vid->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, mainw.vid->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, mainw.vid->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, mainw.vid->refreshRate);
     }
 
     bool win_start = mainw.init(width, height, title);

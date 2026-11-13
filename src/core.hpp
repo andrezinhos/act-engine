@@ -54,7 +54,6 @@ struct image{
     int height = 0;
     int ch = 0;
 
-    image() = default;
     ~image();
 
     image(const image&) = delete;
@@ -72,12 +71,11 @@ struct window{
     const GLFWvidmode* vid = nullptr;
 
     int flags[3];
-
     int width = 0;
     int height = 0;
 
-    window() = default;
-    ~window() = default;
+    window(const window&) = delete;
+    window& operator=(const window&) = delete;
 
     bool config();
     bool init(int w, int h, std::string_view t);
@@ -87,10 +85,15 @@ struct window{
     void pos_center();
     void destroy();
     void icon(std::string_view path);
+    void flag(engine::flags f);
+    void cursor(engine::cursor c);
 };
 
 struct camera{
-
+    camera_data_2d data;
+    void init();
+    void reset();
+    void use_2d();
 };
 
 namespace engine{
@@ -118,8 +121,6 @@ namespace engine{
         void finish();
         void set_scene(std::unique_ptr<scene> scene);
         void initial_scene(std::unique_ptr<scene> initial);
-
-        void win_flag(flags flag);
         void main_window(int width, int height, std::string_view title);
     };
 

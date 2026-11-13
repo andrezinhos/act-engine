@@ -1,4 +1,5 @@
 #include "core.hpp"
+#include "esys.hpp"
 #include "script.hpp"
 #include "pwra.h"
 #define SOL_NO_EXCEPTIONS 1
@@ -61,6 +62,10 @@ void engine::script::start_types(){
 	state["max"] = engine::flags::maximized;
 	state["full"] = engine::flags::fullscreen;
 
+	state["normal"] = engine::cursor::normal;
+	state["hidden"] = engine::cursor::hidden;
+	state["disabled"] = engine::cursor::disabled;
+
 	state["red"] = Red;
 	state["green"] = Green;
 	state["blue"] = Blue;
@@ -69,7 +74,18 @@ void engine::script::start_types(){
 }
 
 void engine::script::load_conteiners(){
+    state.new_usertype<sound>("sound",
+        sol::constructors<sound(std::string_view)>(),
+        "play", &sound::play
+    );
 
+    state.new_usertype<music>("music",
+        sol::constructors<music(std::string_view)>(),
+        "play", &music::play,
+        "stop", &music::stop,
+        "resume", &music::resume,
+        "pause", &music::pause
+    );
 }
 
 void engine::script::init_script(){
@@ -82,11 +98,20 @@ void engine::script::start_funcs(){
     sol::table core_table = state.create_table();
 
     core_table["win_flag"] = [](flags flag){
-        engine::core::win_flag(flag);
+        engine::core::mainw.flag(flag);
+    };
+
+    core_table["win_cursor"] = [](cursor c){
+        engine::core::mainw.cursor(c);
     };
 
     core_table["init"] = [](int w, int h, std::string_view title){
         engine::core::main_window(w, h, title);
+    };
+
+    core_table["initial_scene"] = [](const std::string& file){
+        std::string path = "assets/scenes/"+file;
+        engine::core::initial_scene(std::make_unique<lscene>(path));
     };
 
     state["eng"] = core_table;

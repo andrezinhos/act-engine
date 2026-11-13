@@ -3,66 +3,48 @@
 #include "pwra.h"
 #include "core.hpp"
 
-void Sound::load(const char* path){
+sound::sound(std::string_view path){
     id = engine::reg::sfx_register(path);
     data = engine::reg::get_sfx(id);
 }
 
-void Sound::play(){
-    if (data) {
+void sound::play(){
+    if (data){
         pwra_play_sfx(data);
     }
 }
 
-void Sound::pitch(double amount){
-    if (data) {
+void sound::pitch(double amount){
+    if (data){
         pwra_set_pitch(data, amount);
     }
 }
 
-void Music::load(const char* path){
+music::music(std::string_view path){
     id = engine::reg::stream_register(path);
     data = engine::reg::get_music(id);
 }
 
-void Music::play(){
-    if (data) {
+void music::play(){
+    if (data){
         pwra_play_stream(data);
     }
 }
 
-void Music::stop(){
-    if (data) {
+void music::stop(){
+    if (data){
         pwra_stop_stream(data);
     }
 }
 
-void Music::pause(){
-    if (data) {
+void music::pause(){
+    if (data){
         pwra_pause_stream(data);
     }
 }
 
-void Music::resume(){
-    if (data) {
+void music::resume(){
+    if (data){
         pwra_resume_stream(data);
     }
-}
-
-void Rect::pos(float x, float y){
-    source.x = x;
-    source.y = y;
-}
-
-void Rect::size(int x, int y){
-    source.width = x;
-    source.height = y;
-}
-
-void Rect::draw(color color){
-    mk_render_rectangle(
-        {(float)source.x, (float)source.y},
-        {(float)source.width, (float)source.height},
-        color
-    );
 }

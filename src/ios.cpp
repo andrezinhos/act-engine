@@ -202,3 +202,31 @@ void window::pos_center(){
         glfwSetWindowPos(data, centerx, centery);
     }
 }
+
+void window::flag(engine::flags f){
+    if (f == engine::flags::resizable) {
+        flags[0] = 1;
+    }
+
+    if (f == engine::flags::maximized) {
+        flags[1] = 1;
+    }
+
+    if (f == engine::flags::fullscreen) {
+        flags[2] = 1;
+    }
+}
+
+void window::cursor(engine::cursor c){
+    if (c == engine::cursor::normal) {
+        glfwSetInputMode(data, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    if (c == engine::cursor::hidden) {
+        glfwSetInputMode(data, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    }
+
+    if (c == engine::cursor::disabled) {
+        glfwSetInputMode(data, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+}
