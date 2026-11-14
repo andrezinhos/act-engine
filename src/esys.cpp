@@ -2,6 +2,7 @@
 #include "mkr.h"
 #include "pwra.h"
 #include "core.hpp"
+#include <vector>
 
 sound::sound(std::string_view path){
     id = engine::reg::sfx_register(path);
@@ -48,3 +49,6 @@ void music::resume(){
         pwra_resume_stream(data);
     }
 }
+
+constexpr int MAX_ENTS = 50;
+static std::vector<entity> ents = {};

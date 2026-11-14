@@ -20,7 +20,6 @@ int engine::reg::tex_register(std::string_view path){
 
     image image;
     image.load(path);
-
     *tex = mk_load_tex_memory(image.data, image.width, image.height);
     texmap.push_back(std::move(tex));
 

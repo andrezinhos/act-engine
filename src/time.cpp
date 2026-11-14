@@ -21,7 +21,7 @@ float engine::time::get_delta(){
     return delta;
 }
 
-int engine::time::get_frames() {
+int engine::time::frames() {
     return fps;
 }
 

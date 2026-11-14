@@ -114,7 +114,23 @@ void engine::script::start_funcs(){
         engine::core::initial_scene(std::make_unique<lscene>(path));
     };
 
+    core_table["debug"] = [](std::string_view log){
+        std::cout << "[DEBUG] " << log << "\n";
+    };
+
+    core_table["error"] = [](std::string_view log){
+        std::cout << "[ERROR] " << log << "\n";
+    };
+
+    core_table["fps"] = [](){
+        std::string fps_str = "FPS: "+std::to_string(engine::time::frames());
+        mk_render_text(fps_str.c_str(), {30, 50}, 32);
+    };
+
+    core_table["delta"] = &engine::time::get_delta;
+
     state["eng"] = core_table;
+
 }
 
 void engine::script::load_script_file(){

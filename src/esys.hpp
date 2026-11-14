@@ -1,6 +1,7 @@
 #pragma once
 #include "pwra.h"
 #include "mkr.h"
+#include <cstdint>
 
 class sound{
     Sfx* data;
@@ -20,4 +21,13 @@ public:
     void stop();
     void pause();
     void resume();
+};
+
+struct entity{
+    uint32_t id;
+    bool active;
+};
+
+namespace esys{
+    int create_ent();
 };

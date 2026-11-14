@@ -54,6 +54,7 @@ struct image{
     int height = 0;
     int ch = 0;
 
+    image() = default;
     ~image();
 
     image(const image&) = delete;
@@ -127,7 +128,7 @@ namespace engine{
     namespace time{
         void start_time();
         float get_delta();
-        int get_frames();
+        int frames();
 
         void wait();
         void wait_for(double value);

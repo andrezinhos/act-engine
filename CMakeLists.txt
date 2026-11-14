@@ -44,7 +44,6 @@ target_precompile_headers(app PRIVATE
 
 target_compile_options(app PRIVATE
   -Wall
-  -Wextra
   -O0
   -g
   # -march=x86-64-v2
@@ -73,7 +72,7 @@ target_link_libraries(app PRIVATE
 
 # OS libs
 if(WIN32)
-  message("WINDOWS COMPILATION")
+  message("\nWINDOWS COMPILATION")
   target_link_libraries(app PRIVATE user32 shell32 gdi32 opengl32)
 
 else(UNIX)
