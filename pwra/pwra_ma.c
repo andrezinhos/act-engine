@@ -20,7 +20,7 @@
 #define MA_ENABLE_WASAPI
 #define MA_ENABLE_ALSA
 #define MA_ENABLE_COREAUDIO
-
 #define MA_SUPPORT_VORBIS
+
 #define MINIAUDIO_IMPLEMENTATION
 #include "miniaudio.h"

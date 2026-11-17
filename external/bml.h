@@ -32,6 +32,7 @@ extern "C" {
 
 BMLDEF float bml_deg2rad(float angle);
 
+BMLDEF vec2 bml_vec2_set(float x, float y);
 BMLDEF vec2 bml_vec2_zero();
 BMLDEF vec2 bml_vec2_add(vec2 a, vec2 b);
 BMLDEF vec2 bml_vec2_sub(vec2 a, vec2 b);
@@ -68,6 +69,10 @@ BMLDEF matrix bml_mat_ortho(float left, float right, float top, float bottom, fl
 
 BMLDEF float bml_deg2rad(float angle){
     return angle * (PI / 180.0f);
+}
+
+BMLDEF vec2 bml_vec2_set(float x, float y){
+    return (vec2){x, y};
 }
 
 BMLDEF vec2 bml_vec2_zero(){

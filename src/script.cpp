@@ -74,13 +74,25 @@ void engine::script::start_types(){
 }
 
 void engine::script::load_conteiners(){
+    state.new_usertype<vec2>("vec2",
+        "set", &bml_vec2_set,
+        "x", &vec2::x,
+        "y", &vec2::y,
+        "zero", &bml_vec2_zero
+    );
+
+    state.new_usertype<entity>("entity",
+        "id", &entity::id,
+        "active", &entity::active
+    );
+
     state.new_usertype<sound>("sound",
-        sol::constructors<sound(std::string_view)>(),
+        "load", &sound::load,
         "play", &sound::play
     );
 
     state.new_usertype<music>("music",
-        sol::constructors<music(std::string_view)>(),
+        "load", &music::load,
         "play", &music::play,
         "stop", &music::stop,
         "resume", &music::resume,
@@ -105,7 +117,7 @@ void engine::script::start_funcs(){
         engine::core::mainw.cursor(c);
     };
 
-    core_table["init"] = [](int w, int h, std::string_view title){
+    core_table["init_win"] = [](int w, int h, std::string_view title){
         engine::core::main_window(w, h, title);
     };
 
@@ -131,6 +143,13 @@ void engine::script::start_funcs(){
 
     state["eng"] = core_table;
 
+    sol::table sys_table = state.create_table();
+
+    sys_table["new_ent"] = &esys::create_ent;
+    sys_table["ent_pos"] = &esys::ortho::ent_pos;
+    sys_table["ent_scale"] = &esys::ortho::ent_scale;
+
+    state["sys"] = sys_table;
 }
 
 void engine::script::load_script_file(){

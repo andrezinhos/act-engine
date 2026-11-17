@@ -4,23 +4,33 @@
 #include <cstdint>
 
 class sound{
-    Sfx* data;
-    int id;
+    Sfx* data = nullptr;
+    int id = -1;
 public:
-    sound(std::string_view path);
+    sound() = default;
+    bool load(std::string_view path);
     void play();
     void pitch(double amount);
 };
 
 class music{
-    Stream* data;
-    int id;
+    Stream* data = nullptr;
+    int id = -1;
 public:
-    music(std::string_view path);
+    music() = default;
+    bool load(std::string_view path);
     void play();
     void stop();
     void pause();
     void resume();
+};
+
+class camera{
+    camera_data_2d data;
+public:
+    camera(vec2 position, float rotation, float zoom);
+    void reset();
+    void use();
 };
 
 struct entity{
@@ -28,6 +38,21 @@ struct entity{
     bool active;
 };
 
+struct transform_2d{
+    uint32_t id;
+
+    vec2 position;
+    vec2 scale;
+
+    transform_2d();
+};
+
 namespace esys{
-    int create_ent();
+    void init();
+    uint32_t create_ent();
+
+    namespace ortho{
+        void ent_pos(uint32_t id, vec2 position);
+        void ent_scale(uint32_t id, vec2 scale);
+    }
 };

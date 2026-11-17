@@ -13,12 +13,6 @@ typedef struct color{
     float b;
 } color;
 
-// typedef enum cursor {
-//     NORMAL,
-//     HIDDEN,
-//     DISABLED
-// } cursor;
-
 typedef struct texture {
     uint32_t id;
     int width;

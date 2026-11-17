@@ -76,6 +76,7 @@ VALDEF bool val_arenai_empty(arena_i* arena);
 VALDEF size_t val_arenai_size(arena_i* arena);
 VALDEF bool val_arenai_limit(arena_i* arena, size_t value);
 
+
 VALDEF bool val_arenad_init(arena_dc* arena, size_t amount);
 VALDEF void val_arenad_free(arena_dc* arena);
 VALDEF void val_arenad_add_call(arena_dc* arena, uint32_t count, uint32_t start, uint32_t* texref);

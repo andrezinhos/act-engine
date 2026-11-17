@@ -1,6 +1,7 @@
 #include "pwra.h"
 #include <stddef.h>
-#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 uint8_t* pwra_read_file(const char* path, size_t* size){
     FILE* file = fopen(path, "rb");
@@ -34,7 +35,7 @@ uint8_t* pwra_read_file(const char* path, size_t* size){
     return buffer;
 }
 
-int pwra_load_sfx(const char* path, Sfx* sfx){
+bool pwra_load_sfx(const char* path, Sfx* sfx){
     size_t size = 0;
     sfx->data = pwra_read_file(path, &size);
 
@@ -43,7 +44,7 @@ int pwra_load_sfx(const char* path, Sfx* sfx){
 
     if (decres != MA_SUCCESS){
         check_error("[ERROR] CANNOT DECODE SOUND FILE", decres);
-        return 1;
+        return false;
     }
 
     ma_result result = ma_sound_init_from_data_source(
@@ -58,21 +59,21 @@ int pwra_load_sfx(const char* path, Sfx* sfx){
         ma_decoder_uninit(&sfx->decoder);
         free(sfx->data);
         check_error("[ERROR] CANNOT LOAD SOUND FILE:", result);
-        return 1;
+        return false;
     }
 
     printf("[INFO] AUDIO FILE LOADED: %s\n", path);
 
-    return 0;
+    return true;
 }
 
-int pwra_load_stream(const char* path, Stream* stream){
+bool pwra_load_stream(const char* path, Stream* stream){
 
     ma_decoder_config dec_config = ma_decoder_config_init_default();
     ma_result decres = ma_decoder_init_file(path, &dec_config, &stream->decoder);
     if (decres != MA_SUCCESS){
         check_error("[ERROR] CANNOT DECODE SOUND FILE", decres);
-        return 1;
+        return false;
     }
 
     ma_result result = ma_sound_init_from_data_source(
@@ -86,11 +87,11 @@ int pwra_load_stream(const char* path, Stream* stream){
     if (result != MA_SUCCESS){
         ma_decoder_uninit(&stream->decoder);
         check_error("[ERROR] CANNOT LOAD SOUND FILE:", result);
-        return 1;
+        return false;
     }
 
     printf("[INFO] AUDIO FILE LOADED: %s\n", path);
-    return 0;
+    return true;
 }
 
 void pwra_unload_sfx(Sfx *sfx){

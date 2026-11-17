@@ -1,5 +1,4 @@
 #pragma once
-#include "mkr.h"
 #include <memory>
 #include <string_view>
 #include <cstdint>
@@ -90,12 +89,7 @@ struct window{
     void cursor(engine::cursor c);
 };
 
-struct camera{
-    camera_data_2d data;
-    void init();
-    void reset();
-    void use_2d();
-};
+
 
 namespace engine{
     class scene{

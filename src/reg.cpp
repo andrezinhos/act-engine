@@ -1,7 +1,7 @@
-#include "pwra.h"
 #include "core.hpp"
-#include <string_view>
 #include "mkr.h"
+#include "pwra.h"
+#include <string_view>
 
 static std::vector<std::unique_ptr<texture>> texmap = {};
 static std::vector<std::unique_ptr<Sfx>> soundmap = {};
@@ -21,6 +21,11 @@ int engine::reg::tex_register(std::string_view path){
     image image;
     image.load(path);
     *tex = mk_load_tex_memory(image.data, image.width, image.height);
+
+    if (tex){
+        std::cout << "[INFO] TEXTURE LOADED: " << path << "\n";
+    }
+
     texmap.push_back(std::move(tex));
 
     return texmap.size() - 1;
@@ -29,7 +34,10 @@ int engine::reg::tex_register(std::string_view path){
 int engine::reg::sfx_register(std::string_view path){
     auto sfx = std::make_unique<Sfx>();
 
-    pwra_load_sfx(path.data(), sfx.get());
+    if (!pwra_load_sfx(path.data(), sfx.get())){
+        return -1;
+    }
+
     soundmap.push_back(std::move(sfx));
 
     return soundmap.size() - 1;
@@ -38,7 +46,10 @@ int engine::reg::sfx_register(std::string_view path){
 int engine::reg::stream_register(std::string_view path){
     auto music = std::make_unique<Stream>();
 
-    pwra_load_stream(path.data(), music.get());
+    if (!pwra_load_stream(path.data(), music.get())){
+        return -1;
+    }
+
     musicmap.push_back(std::move(music));
 
     return musicmap.size() - 1;

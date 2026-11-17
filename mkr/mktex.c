@@ -30,7 +30,9 @@ texture mk_load_tex_memory(void* data, int width, int height){
     tex.width = width;
     tex.height = height;
 
-    fgl_create_texture(&tex.id, GL_TEXTURE_2D, width, height, data);
+    if (!fgl_create_texture(&tex.id, GL_TEXTURE_2D, width, height, data)){
+        printf("error: failed to create texture\n");
+    }
 
     fgl_texture_repeat(tex.id);
     fgl_texture_filter(tex.id, GL_NEAREST);

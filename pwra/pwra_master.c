@@ -1,4 +1,5 @@
 #include "pwra.h"
+#include <stdio.h>
 
 Master master;
 
@@ -13,14 +14,12 @@ void audio_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_ui
     (void)pInput;
 }
 
-int pwra_start_audio(){
+bool pwra_start_audio(){
     printf("[INFO] STARTING AUDIO...\n");
     ma_engine_config e_config = ma_engine_config_init();
 
-    if (!master.custom_opts){
-        master.channels = 2;
-        master.sampleRate = 48000;
-    }
+    master.channels = 2;
+    master.sampleRate = 48000;
 
     e_config.channels = master.channels;
     e_config.sampleRate = master.sampleRate;
@@ -29,31 +28,31 @@ int pwra_start_audio(){
     ma_result einit = ma_engine_init(&e_config, &master.engine);
     if (einit != MA_SUCCESS){
         printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", einit);
-        return 1;
+        return false;
     }
 
     ma_result sginit = ma_sound_group_init(&master.engine, 0, NULL, &master.sound_group);
     if (sginit != MA_SUCCESS){
         printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", sginit);
-        return 1;
+        return false;
     }
 
     ma_result estart = ma_engine_start(&master.engine);
     if (estart != MA_SUCCESS){
         printf("[ERROR] COULDN'T INITIALIZE AUDIO: %d\n", estart);
         ma_engine_uninit(&master.engine);
-        return 1;
+        return false;
     }
 
     ma_device* pDevice = ma_engine_get_device(&master.engine);
     printf("[INFO] BACKEND: %s | ", ma_get_backend_name(pDevice->pContext->backend));
-    
+
     if (master.channels == 2){
         printf("STEREO CHANNEL : %d Hz\n", master.sampleRate);
     }
-    
+
     printf("[INFO] AUDIO INITIALIZED\n");
-    return 0;
+    return true;
 }
 
 void pwra_end_audio(){

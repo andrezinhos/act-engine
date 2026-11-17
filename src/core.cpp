@@ -1,4 +1,5 @@
 #include "core.hpp"
+#include "esys.hpp"
 #include "mkr.h"
 #include "pwra.h"
 #include "glfw/glfw3.h"
@@ -80,6 +81,7 @@ void engine::core::main_window(int width, int height, std::string_view title){
         mainw.icon("eng/w_icon.png");
         pwra_start_audio();
         reg::init();
+        esys::init();
         std::cout << "[INFO] ENGINE INITIALIZED\n";
     }
     else{

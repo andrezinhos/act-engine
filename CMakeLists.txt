@@ -44,14 +44,16 @@ target_precompile_headers(app PRIVATE
 
 target_compile_options(app PRIVATE
   -Wall
+  -Wextra
   -O0
-  -g
   # -march=x86-64-v2
   -DDEBUG
   -fno-rtti
 )
 
-# set_target_properties(app PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+# set_target_properties(app
+#   PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE
+# )
 
 # general headers
 target_include_directories(app PRIVATE
