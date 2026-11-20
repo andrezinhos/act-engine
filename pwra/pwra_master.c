@@ -45,7 +45,7 @@ bool pwra_start_audio(){
     }
 
     ma_device* pDevice = ma_engine_get_device(&master.engine);
-    printf("[INFO] BACKEND: %s | ", ma_get_backend_name(pDevice->pContext->backend));
+    printf("[INFO] AUDIO BACKEND: %s | ", ma_get_backend_name(pDevice->pContext->backend));
 
     if (master.channels == 2){
         printf("STEREO CHANNEL : %d Hz\n", master.sampleRate);

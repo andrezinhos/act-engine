@@ -42,6 +42,8 @@ BMLDEF float bml_vec2_magnitude(vec2 v);
 BMLDEF vec2 bml_vec2_normalize(vec2 v);
 BMLDEF float bml_vec2_dot(vec2 a, vec2 b);
 
+
+BMLDEF vec3 bml_vec3_set(float x, float y, float z);
 BMLDEF vec3 bml_vec3_zero();
 BMLDEF vec3 bml_vec3_add(vec3 a, vec3 b);
 BMLDEF vec3 bml_vec3_sub(vec3 a, vec3 b);
@@ -108,6 +110,7 @@ BMLDEF vec2 bml_vec2_div(vec2 a, vec2 b){
 BMLDEF float bml_vec2_magnitude(vec2 v){
     return hypot(v.x, v.y);
 }
+
 BMLDEF vec2 bml_vec2_normalize(vec2 v){
     float len = bml_vec2_magnitude(v);
 
@@ -123,6 +126,11 @@ BMLDEF vec2 bml_vec2_normalize(vec2 v){
 
 BMLDEF float bml_vec2_dot(vec2 a, vec2 b){
     return (a.x*b.x) + (a.y*b.y);
+}
+
+
+BMLDEF vec3 bml_vec3_set(float x, float y, float z){
+    return (vec3){x, y, z};
 }
 
 BMLDEF vec3 bml_vec3_zero(){

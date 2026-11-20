@@ -5,7 +5,7 @@
 #include "glfw/glfw3.h"
 #include <iostream>
 
-constexpr std::string_view VERSION = "0.16.1";
+constexpr std::string_view VERSION = "0.16.2";
 
 static std::unique_ptr<engine::scene> currScene = nullptr;
 static std::unique_ptr<engine::scene> nextScene = nullptr;
@@ -90,7 +90,10 @@ void engine::core::main_window(int width, int height, std::string_view title){
 }
 
 bool special_esc(){
-	return glfwGetKey(engine::core::mainw.data, 256) == 1;
+	return glfwGetKey(
+	    engine::core::mainw.data,
+		GLFW_KEY_ESCAPE
+	) == GLFW_PRESS;
 }
 
 bool engine::core::loop(){

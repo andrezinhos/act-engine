@@ -39,8 +39,6 @@ struct entity{
 };
 
 struct transform_2d{
-    uint32_t id;
-
     vec2 position;
     vec2 scale;
 
@@ -54,5 +52,10 @@ namespace esys{
     namespace ortho{
         void ent_pos(uint32_t id, vec2 position);
         void ent_scale(uint32_t id, vec2 scale);
+
+        void ent_load_tex(uint32_t id, std::string_view path);
+        void move_x(uint32_t id, float x);
+        void move_y(uint32_t id, float y);
+        void ent_render(uint32_t id);
     }
 };

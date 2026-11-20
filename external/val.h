@@ -36,6 +36,15 @@ typedef struct arena_dc{
     size_t count;
 } arena_dc;
 
+typedef struct arena_f{
+    rectangle* data;
+    size_t cap;
+    size_t count;
+
+    int duration;
+    int currf;
+} arena_f;
+
 #ifdef VAL_STATIC
     #define VALDEF static inline
 #else
@@ -88,6 +97,10 @@ VALDEF uint32_t* val_arenad_back_tex(arena_dc* arena);
 
 VALDEF size_t val_arenad_size(arena_dc* arena);
 VALDEF bool val_arenad_limit(arena_dc* arena, size_t value);
+
+
+VALDEF bool val_arenaf_init(arena_f* arena, size_t amount);
+VALDEF void val_arenaf_free(arena_f* arena);
 
 #ifdef VAL_IMPL
 
@@ -340,6 +353,27 @@ VALDEF bool val_arenad_limit(arena_dc* arena, size_t value){
     }
 
     return result;
+}
+
+VALDEF bool val_arenaf_init(arena_f* arena, size_t amount){
+    arena->data = (rectangle*)malloc(sizeof(rectangle) * amount);
+
+    if (arena->data == NULL){
+        printf("failed to init arena frames\n");
+        return false;
+    }
+
+    arena->cap = amount;
+    arena->count = 0;
+
+    return true;
+}
+
+VALDEF void val_arenaf_free(arena_f* arena){
+    free(arena->data);
+    arena->data = NULL;
+    arena->cap = 0;
+    arena->count = 0;
 }
 
 #endif // VAL_IMPL

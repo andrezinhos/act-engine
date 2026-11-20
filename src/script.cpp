@@ -75,13 +75,24 @@ void engine::script::start_types(){
 
 void engine::script::load_conteiners(){
     state.new_usertype<vec2>("vec2",
+        sol::no_constructor,
         "set", &bml_vec2_set,
         "x", &vec2::x,
         "y", &vec2::y,
         "zero", &bml_vec2_zero
     );
 
+    state.new_usertype<vec3>("vec3",
+        sol::no_constructor,
+        "set", &bml_vec3_set,
+        "x", &vec3::x,
+        "y", &vec3::y,
+        "z", &vec3::z,
+        "zero", &bml_vec2_zero
+    );
+
     state.new_usertype<entity>("entity",
+        sol::no_constructor,
         "id", &entity::id,
         "active", &entity::active
     );
@@ -117,13 +128,16 @@ void engine::script::start_funcs(){
         engine::core::mainw.cursor(c);
     };
 
-    core_table["init_win"] = [](int w, int h, std::string_view title){
-        engine::core::main_window(w, h, title);
-    };
+    core_table["init_win"] = &engine::core::main_window;
 
     core_table["initial_scene"] = [](const std::string& file){
         std::string path = "assets/scenes/"+file;
         engine::core::initial_scene(std::make_unique<lscene>(path));
+    };
+
+    core_table["new_scene"] = [](const std::string& file){
+        std::string path = "assets/scenes/"+file;
+        engine::core::set_scene(std::make_unique<lscene>(path));
     };
 
     core_table["debug"] = [](std::string_view log){
@@ -136,10 +150,13 @@ void engine::script::start_funcs(){
 
     core_table["fps"] = [](){
         std::string fps_str = "FPS: "+std::to_string(engine::time::frames());
-        mk_render_text(fps_str.c_str(), {30, 50}, 32);
+        mk_render_text(fps_str.c_str(), {10, 30}, 32);
     };
 
     core_table["delta"] = &engine::time::get_delta;
+
+    core_table["key_pressed"] = &engine::io::key_pressed;
+    core_table["key_down"] = &engine::io::key_down;
 
     state["eng"] = core_table;
 
@@ -148,6 +165,9 @@ void engine::script::start_funcs(){
     sys_table["new_ent"] = &esys::create_ent;
     sys_table["ent_pos"] = &esys::ortho::ent_pos;
     sys_table["ent_scale"] = &esys::ortho::ent_scale;
+
+    sys_table["load_tex"] = &esys::ortho::ent_load_tex;
+    sys_table["render"] = &esys::ortho::ent_render;
 
     state["sys"] = sys_table;
 }

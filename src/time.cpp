@@ -3,7 +3,7 @@
 #include <thread>
 #include <chrono>
 
-constexpr double FPS_TARGET = 1.0 / 72.0;
+// constexpr double FPS_TARGET = 1.0 / 72.0;
 
 namespace {
     double lastTime = 0.0;
@@ -41,7 +41,7 @@ bool engine::time::clock(){
     double newTime = glfwGetTime();
     double elapsed = newTime - lastTime;
 
-    if (elapsed < FPS_TARGET){
+    if (elapsed < 0.001){
         return false;
     }
     else {
@@ -50,7 +50,9 @@ bool engine::time::clock(){
 
     delta = elapsed;
     lastTime = newTime;
-    if (delta > 0.1) delta = 0.1;
+    if (delta > 0.1) {
+        delta = 0.1;
+    }
     return true;
 }
 
