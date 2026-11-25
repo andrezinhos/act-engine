@@ -89,8 +89,6 @@ struct window{
     void cursor(engine::cursor c);
 };
 
-
-
 namespace engine{
     class scene{
     public:
@@ -156,7 +154,6 @@ namespace engine{
         void clear_sfx();
         void clear_stream();
         void clear_font();
-
         void clear();
     };
 };

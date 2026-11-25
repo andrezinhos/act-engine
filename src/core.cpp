@@ -107,6 +107,7 @@ bool engine::core::loop(){
 void engine::core::finish(){
     currScene.reset();
     nextScene.reset();
+    esys::aclear();
     reg::clear();
     pwra_end_audio();
     mainw.destroy();

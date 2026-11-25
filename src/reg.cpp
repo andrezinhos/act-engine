@@ -1,6 +1,7 @@
 #include "core.hpp"
 #include "mkr.h"
 #include "pwra.h"
+#include "esys.hpp"
 #include <string_view>
 
 static std::vector<std::unique_ptr<texture>> texmap = {};

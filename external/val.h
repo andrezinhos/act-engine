@@ -41,8 +41,8 @@ typedef struct arena_f{
     size_t cap;
     size_t count;
 
-    int duration;
     int currf;
+    float duration;
 } arena_f;
 
 #ifdef VAL_STATIC
@@ -101,6 +101,10 @@ VALDEF bool val_arenad_limit(arena_dc* arena, size_t value);
 
 VALDEF bool val_arenaf_init(arena_f* arena, size_t amount);
 VALDEF void val_arenaf_free(arena_f* arena);
+
+VALDEF void val_arenaf_duration(arena_f* arena, float time);
+VALDEF void val_arenaf_add_frame(arena_f* arena, float x, float y, float w, float h);
+VALDEF void val_arenaf_check(arena_f* arena);
 
 #ifdef VAL_IMPL
 
@@ -359,12 +363,13 @@ VALDEF bool val_arenaf_init(arena_f* arena, size_t amount){
     arena->data = (rectangle*)malloc(sizeof(rectangle) * amount);
 
     if (arena->data == NULL){
-        printf("failed to init arena frames\n");
+        printf("error: failed to init arena frames\n");
         return false;
     }
 
     arena->cap = amount;
     arena->count = 0;
+    arena->currf = 0;
 
     return true;
 }
@@ -372,8 +377,35 @@ VALDEF bool val_arenaf_init(arena_f* arena, size_t amount){
 VALDEF void val_arenaf_free(arena_f* arena){
     free(arena->data);
     arena->data = NULL;
-    arena->cap = 0;
     arena->count = 0;
+    arena->cap = 0;
+}
+
+VALDEF void val_arenaf_duration(arena_f* arena, float time){
+    arena->duration = time;
+}
+
+VALDEF void val_arenaf_add_frame(arena_f* arena, float x, float y, float w, float h){
+    if (arena->count >= arena->cap){
+        return;
+    }
+
+    arena->data[arena->count++] = (rectangle){
+        x, y, w, h
+    };
+}
+
+VALDEF void val_arenaf_check(arena_f *arena){
+    for (size_t i = 0; i < arena->cap; i++){
+        printf(
+            "frame %zu: %.2f | %.2f | %.2f | %.2f\n",
+            i,
+            arena->data[i].x,
+            arena->data[i].y,
+            arena->data[i].width,
+            arena->data[i].height
+        );
+    }
 }
 
 #endif // VAL_IMPL

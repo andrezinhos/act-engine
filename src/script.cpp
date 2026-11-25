@@ -169,6 +169,11 @@ void engine::script::start_funcs(){
     sys_table["load_tex"] = &esys::ortho::ent_load_tex;
     sys_table["render"] = &esys::ortho::ent_render;
 
+    sys_table["new_animation"] = &esys::animation::new_animation;
+    sys_table["add_frame"] = &esys::animation::add_frame;
+    sys_table["play_anim"] = &esys::animation::play;
+    sys_table["render_anim"] = &esys::animation::render_animation;
+
     state["sys"] = sys_table;
 }
 

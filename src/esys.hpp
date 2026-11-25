@@ -45,9 +45,23 @@ struct transform_2d{
     transform_2d();
 };
 
+struct sheet{
+    arena_f frames;
+    float counter;
+    bool end;
+};
+
 namespace esys{
     void init();
+    void aclear();
     uint32_t create_ent();
+
+    namespace animation{
+        void new_animation(uint32_t id, int frames, float frames_duration);
+        void add_frame(uint32_t id, double x, double y, double w, double h);
+        void play(uint32_t id, bool loop);
+        void render_animation(uint32_t id);
+    };
 
     namespace ortho{
         void ent_pos(uint32_t id, vec2 position);

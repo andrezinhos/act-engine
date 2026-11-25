@@ -27,7 +27,6 @@ set(ENGINE_CORE
 set(ENGINE_SYS
   src/ios.cpp
   src/script.cpp
-  # src/animation.cpp
   src/esys.cpp
 )
 
@@ -44,7 +43,6 @@ target_precompile_headers(app PRIVATE
 
 target_compile_options(app PRIVATE
   -Wall
-  -Wextra
   -O0
   # -march=x86-64-v2
   -DDEBUG
